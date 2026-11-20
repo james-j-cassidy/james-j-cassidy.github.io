@@ -1,0 +1,130 @@
+// Primitives: raw palette. Components never use these directly.
+:root {
+  --navy-900: #0a1530;
+  --navy-800: #0f1f45;
+  --slate-600: #3a4a66;
+  --slate-300: #a9bbd9;
+  --ice-100: #e8f0ff;
+  --ice-50: #f4f8ff;
+  --white: #ffffff;
+  --blue-800: #083f94;
+  --blue-700: #0b4fb8;
+  --cyan-300: #5cc8ff;
+  --purple-700: #6d28d9;
+  --purple-300: #a78bfa;
+
+  // Spacing scale (4px steps at default text size)
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  // Shape
+  --radius-sm: 0.375rem;
+  --radius-md: 0.75rem;
+  --radius-full: 999px;
+
+  // Accessibility
+  --target-min: 44px; // WCAG 2.5.5 AAA minimum touch target
+
+  // Typography
+  --font-sans:
+    system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue",
+    Arial, sans-serif;
+
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --text-3xl: clamp(2rem, 1.5rem + 2vw, 3rem);
+
+  --leading-tight: 1.2;
+  --leading-body: 1.5; // WCAG 1.4.8 AAA: at least 1.5 in paragraphs
+  --measure: 70ch; // WCAG 1.4.8 AAA: lines no wider than 80 characters
+
+  :lang(ko) {
+    --font-sans:
+      "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", system-ui,
+      sans-serif;
+    word-break: keep-all; // break Korean lines between words, not mid-word
+  }
+
+  :lang(fa) {
+    --font-sans: "Segoe UI", Tahoma, "Noto Sans Arabic", system-ui, sans-serif;
+  }
+
+  :lang(vi) {
+    --leading-body: 1.7; // room for stacked diacritics
+  }
+
+  // Motion
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+}
+
+// Semantic tokens: components use only these. Themes remap them.
+@mixin light-theme {
+  color-scheme: light;
+  --color-bg: var(--ice-50);
+  --color-surface: var(--white);
+  --color-text: var(--navy-900);
+  --color-text-muted: var(--slate-600);
+  --color-accent: var(--blue-800);
+  --color-accent-bg: var(--blue-700);
+  --color-on-accent: var(--white);
+  --color-decor: var(--purple-700);
+  --color-focus: var(--blue-800);
+}
+
+@mixin dark-theme {
+  color-scheme: dark;
+  --color-bg: var(--navy-900);
+  --color-surface: var(--navy-800);
+  --color-text: var(--ice-100);
+  --color-text-muted: var(--slate-300);
+  --color-accent: var(--cyan-300);
+  --color-accent-bg: var(--cyan-300);
+  --color-on-accent: var(--navy-900);
+  --color-decor: var(--purple-300);
+  --color-focus: var(--cyan-300);
+}
+
+:root,
+[data-theme="light"] {
+  @include light-theme;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include dark-theme;
+  }
+}
+
+[data-theme="dark"] {
+  @include dark-theme;
+}
+
+// Reduced motion: honor the device setting unless the visitor has chosen
+// otherwise on the site; data-motion="reduce" forces it on.
+@mixin reduced-motion {
+  --duration-fast: 0ms;
+  --duration-base: 0ms;
+  --duration-slow: 0ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion]) {
+    @include reduced-motion;
+  }
+}
+
+[data-motion="reduce"] {
+  @include reduced-motion;
+}

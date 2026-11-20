@@ -1,0 +1,14 @@
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: 2px;
+}
