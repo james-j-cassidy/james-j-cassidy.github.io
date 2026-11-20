@@ -1,0 +1,13 @@
+// Sticky keeps the header in normal flow, so main needs no top padding,
+// and it adapts automatically when the header squashes on scroll.
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100; // below the skip link (1000)
+
+  display: flex;
+  flex-direction: column;
+
+  background: var(--color-surface);
+  color: var(--color-text);
+}

@@ -1,0 +1,7 @@
+.tabBar {
+  display: flex;
+  align-items: stretch;
+  padding-inline: var(--space-4);
+  min-block-size: var(--space-12); // temporary: visible until content lands
+  border-block-end: 1px solid var(--color-text-muted);
+}
