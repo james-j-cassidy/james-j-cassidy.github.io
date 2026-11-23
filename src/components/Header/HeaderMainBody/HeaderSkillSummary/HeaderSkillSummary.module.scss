@@ -1,0 +1,127 @@
+@use "../../../../styles/mixins";
+
+// Glowing purple bar on the inline start (bright at the top, fading down),
+// then the skill name and summary. A size container, so the name scales with its space.
+.summary {
+  container-type: inline-size;
+  position: relative;
+  padding-inline-start: var(--space-4);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: 4px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(
+      180deg,
+      var(--purple-300),
+      var(--color-decor) 55%,
+      color-mix(in srgb, var(--color-decor) 25%, transparent)
+    );
+    box-shadow: 0 0 8px var(--color-decor); // decorative glow
+  }
+}
+
+// All skills share one grid cell; the cell grows to the largest one.
+.stack {
+  display: grid;
+}
+
+.panel,
+.sizer {
+  grid-area: 1 / 1;
+  min-inline-size: 0;
+}
+
+.sizer {
+  visibility: hidden; // keeps its space, but is not seen, read or focusable
+}
+
+// Scales with the summary's width (cqi = 1% of it), between the xl and 3xl sizes,
+// so a long single word like "Development" still fits. Balanced wrapping avoids
+// one-word last lines; hyphens and overflow-wrap are last resorts for very long words.
+.name {
+  margin: 0 0 var(--space-2);
+  font-size: clamp(var(--text-xl), 13cqi, var(--text-3xl));
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  text-wrap: balance;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+// Reads as the heading; the underline and arrow appear on hover or focus.
+.nameLink {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-underline-offset: 0.12em;
+  }
+}
+
+// Small arrow after the name, marking it as a link without color alone (WCAG 1.4.1).
+.nameArrow {
+  @include mixins.stroke-icon(0.6em);
+  margin-inline-start: 0.2em;
+  vertical-align: 0.1em;
+  color: var(--color-accent);
+  stroke-width: 2.5;
+
+  &:dir(rtl) {
+    transform: scaleX(-1);
+  }
+}
+
+.text {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: var(--leading-body);
+  overflow-wrap: break-word;
+}
+
+// "Learn more" shows on phones only (display: none also keeps it out of the link's name).
+.learnMore {
+  display: none;
+  margin-inline-start: var(--space-2);
+  color: var(--color-accent);
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+// Read by screen readers after the name on wider screens: ", view full page".
+.fullPageSuffix {
+  @include mixins.visually-hidden;
+}
+
+// Phones: one row. Name plus "Learn more"; the summary text is on the skill's full page.
+@media (max-width: 40rem) {
+  // Fills the row beside the pause button. (A size container has no content width
+  // of its own, so it needs to be told to grow.)
+  .summary {
+    flex: 1 1 0;
+    min-inline-size: 0;
+  }
+
+  .name {
+    margin: 0;
+    font-size: var(--text-xl);
+  }
+
+  .text {
+    display: none;
+  }
+
+  .learnMore {
+    display: inline;
+  }
+
+  .fullPageSuffix {
+    display: none;
+  }
+}

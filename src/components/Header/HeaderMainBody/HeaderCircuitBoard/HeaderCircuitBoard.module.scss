@@ -1,0 +1,66 @@
+// Fills the main body behind its content (the main body is an isolated stacking context,
+// so z-index -1 sits above its background and below everything else). Never takes clicks.
+.board {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+// Copper traces: the accent color at low strength, so they stay quiet behind content.
+.trace {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-accent) 28%, transparent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke var(--duration-base) var(--ease-out);
+
+  // Reduced motion: the trace nearest the pointer lights up in place instead of animating.
+  &[data-active] {
+    stroke: color-mix(in srgb, var(--color-accent) 80%, transparent);
+  }
+}
+
+.via {
+  fill: var(--color-bg);
+  stroke: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  stroke-width: 1.5;
+}
+
+.pin {
+  fill: color-mix(in srgb, var(--color-accent) 50%, transparent);
+}
+
+.glowInner {
+  stop-color: color-mix(in srgb, var(--color-accent) 14%, transparent);
+}
+
+.glowOuter {
+  stop-color: transparent;
+}
+
+// Flashes when current reaches the CPU (animated from script; hidden otherwise).
+.cpuRing {
+  fill: none;
+  stroke: var(--color-accent);
+  opacity: 0;
+  filter: drop-shadow(0 0 8px var(--color-accent));
+}
+
+// A moving pulse of current: one bright dash on a copy of the trace.
+.pulse {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px var(--color-accent));
+}
+
+// The collapsed header has no board.
+:global(header[data-collapsed]) .board {
+  display: none;
+}

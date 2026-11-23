@@ -1,0 +1,35 @@
+// Home link wrapping the monogram. At least 44x44 for the AAA target size (2.5.5).
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  min-inline-size: var(--target-min);
+  min-block-size: var(--target-min);
+  border-radius: var(--radius-md);
+}
+
+// viewBox is 100 x 68, so width follows height at that ratio.
+.mark {
+  display: block;
+  block-size: 3rem;
+  inline-size: calc(3rem * 100 / 68);
+}
+
+// Letters: brushed-metal look, light at the top fading toward muted at the bottom.
+.letterTop {
+  stop-color: var(--color-text);
+}
+
+.letterBottom {
+  stop-color: var(--color-text-muted);
+}
+
+// Swoosh: deep blue sweeping into the theme accent.
+.swooshStart {
+  stop-color: var(--blue-700);
+}
+
+.swooshEnd {
+  stop-color: var(--color-accent);
+}

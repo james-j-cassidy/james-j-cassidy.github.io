@@ -1,0 +1,38 @@
+@use "../../../../styles/mixins";
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.option {
+  @include mixins.dropdown-option;
+  text-decoration: none;
+
+  &[aria-current="true"] {
+    font-weight: 600;
+  }
+}
+
+// Phone menu screen: tall full-width rows with dividers.
+.list[data-variant="menu"] .option {
+  min-block-size: 3.5rem;
+  padding-inline: var(--space-2);
+  border-block-end: 1px solid
+    color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: 0;
+  font-size: var(--text-lg);
+}
+
+// Shrink-wrapped, so an RTL name still sits at the row's start like the others.
+.name {
+  flex: none;
+}
+
+// Pushed to the row's end; the row follows the page direction.
+.check {
+  @include mixins.stroke-icon(1.125rem);
+  margin-inline-start: auto;
+  color: var(--color-accent);
+}

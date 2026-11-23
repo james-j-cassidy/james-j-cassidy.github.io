@@ -1,0 +1,29 @@
+// Ring around the portrait: accent border with a soft outer glow and a faint inner one.
+.frame {
+  flex: none;
+  // The wheel stage sets --portrait-size; the fallback covers use outside it.
+  inline-size: var(--portrait-size, clamp(12rem, 10rem + 6vw, 16rem));
+  aspect-ratio: 1;
+  padding: var(--space-1);
+  border: 3px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  box-shadow:
+    0 0 24px -4px var(--color-accent),
+    inset 0 0 12px -4px var(--color-accent); // decorative glow
+}
+
+.portrait {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+// Collapsed header: a thinner ring and a softer glow at the small size.
+:global(header[data-collapsed]) .frame {
+  padding: 2px;
+  border-width: 2px;
+  box-shadow: 0 0 10px -3px var(--color-accent);
+}

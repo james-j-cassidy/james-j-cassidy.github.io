@@ -1,0 +1,24 @@
+@use "../../../../styles/mixins";
+
+// Anchor for the dropdown panel.
+.selector {
+  position: relative;
+  flex: none;
+}
+
+.button {
+  @include mixins.header-control;
+  gap: var(--space-1);
+}
+
+.icon {
+  @include mixins.stroke-icon;
+}
+
+.chevron {
+  @include mixins.dropdown-chevron;
+}
+
+.panel {
+  @include mixins.dropdown-panel;
+}

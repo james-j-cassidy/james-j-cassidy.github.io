@@ -1,0 +1,57 @@
+@use "../../../../../styles/mixins";
+
+.screen {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+// Header row with the same glowing line as the top bar.
+.bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: 4rem;
+  padding: var(--space-2) var(--space-3);
+  @include mixins.glow-rule;
+}
+
+.title {
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  padding-inline: var(--space-2);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.iconButton {
+  @include mixins.header-control;
+  flex: none;
+  padding-inline: var(--space-2);
+}
+
+.icon {
+  @include mixins.stroke-icon(1.5rem);
+  stroke-width: 2.25;
+}
+
+// Back points against the reading direction, so it flips in RTL.
+.backIcon:dir(rtl) {
+  transform: scaleX(-1);
+}
+
+.body {
+  display: grid;
+  flex: 1;
+  align-content: start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  overflow-y: auto;
+}
+
+.visuallyHidden {
+  @include mixins.visually-hidden;
+}

@@ -1,0 +1,130 @@
+@use "../../../../styles/mixins";
+
+// Corner cut for the tab plates (top start, bottom end), matching the skill card.
+$cut: 0.75rem;
+$plate: polygon(
+  #{$cut} 0,
+  100% 0,
+  100% calc(100% - #{$cut}),
+  calc(100% - #{$cut}) 100%,
+  0 100%,
+  0 #{$cut}
+);
+
+// Phones use the menu's section list instead.
+.tabs {
+  inline-size: 100%;
+  max-inline-size: 64rem;
+
+  @media (max-width: 40rem) {
+    display: none;
+  }
+}
+
+// Six equal plates with a small gap; long labels wrap onto two lines.
+.list {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+// Plate: a dim accent border and a dark fill, drawn as two clipped layers so the focus
+// ring (outline) stays visible.
+.tab {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-inline-size: 0;
+  min-block-size: 4.5rem;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text);
+  font-size: clamp(var(--text-sm), 0.6rem + 0.6vw, var(--text-base));
+  line-height: var(--leading-tight);
+  text-align: center;
+  text-decoration: none;
+  transition: filter var(--duration-base) var(--ease-out);
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    clip-path: $plate;
+  }
+
+  &::before {
+    inset: 0;
+    background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+    transition: background var(--duration-base) var(--ease-out);
+  }
+
+  &::after {
+    inset: 1px;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-accent) 8%, var(--color-surface)),
+      var(--color-bg)
+    );
+  }
+
+  &:hover::before {
+    background: color-mix(in srgb, var(--color-accent) 75%, transparent);
+  }
+
+  // Current section: full accent border, lit fill, glow, bold text.
+  &[aria-current] {
+    font-weight: 700;
+    filter: drop-shadow(
+      0 0 8px color-mix(in srgb, var(--color-accent) 70%, transparent)
+    );
+
+    &::before {
+      background: var(--color-accent);
+    }
+
+    &::after {
+      background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-accent) 26%, var(--color-surface)),
+        var(--color-surface)
+      );
+    }
+  }
+}
+
+.icon {
+  @include mixins.stroke-icon(1.5rem);
+  color: var(--color-accent);
+  stroke-width: 1.75;
+}
+
+// Two-word labels wrap onto two lines, as in the mock.
+.label {
+  max-inline-size: 8em;
+  overflow-wrap: anywhere; // a very long word (or 200% text) wraps instead of overflowing
+}
+
+// Lit trace along the bottom of the current tab (decorative).
+.tab[aria-current] .label::after {
+  content: "";
+  position: absolute;
+  inset-inline: 25%;
+  inset-block-end: 0.35rem;
+  block-size: 2px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent);
+}

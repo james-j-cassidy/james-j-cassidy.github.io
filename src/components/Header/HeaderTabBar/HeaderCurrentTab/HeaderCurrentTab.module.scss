@@ -1,0 +1,26 @@
+@use "../../../../styles/mixins";
+
+// Phones only; wider screens show all the tabs.
+.currentTab {
+  display: none;
+
+  @media (max-width: 40rem) {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-inline-size: 0;
+    min-block-size: var(--target-min);
+    margin: 0;
+    font-weight: 700;
+    line-height: var(--leading-tight);
+  }
+}
+
+.icon {
+  @include mixins.stroke-icon(1.5rem);
+  color: var(--color-accent);
+}
+
+.visuallyHidden {
+  @include mixins.visually-hidden;
+}

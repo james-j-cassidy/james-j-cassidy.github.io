@@ -1,0 +1,37 @@
+// Vertical panning stays with the browser; sideways movement reaches the swipe handler.
+.deck {
+  touch-action: pan-y;
+  overflow-x: clip; // the sliding section never adds a sideways scrollbar
+}
+
+// The incoming section slides in from the side it comes from (mirrored in RTL).
+// Reduced motion zeroes the duration.
+.deck[data-direction="1"] > section:not([hidden]) {
+  animation: enter-forward var(--duration-slow) var(--ease-out);
+}
+
+.deck[data-direction="-1"] > section:not([hidden]) {
+  animation: enter-back var(--duration-slow) var(--ease-out);
+}
+
+@keyframes enter-forward {
+  from {
+    opacity: 0;
+    translate: 3rem 0;
+  }
+}
+
+@keyframes enter-back {
+  from {
+    opacity: 0;
+    translate: -3rem 0;
+  }
+}
+
+.deck:dir(rtl)[data-direction="1"] > section:not([hidden]) {
+  animation-name: enter-back;
+}
+
+.deck:dir(rtl)[data-direction="-1"] > section:not([hidden]) {
+  animation-name: enter-forward;
+}

@@ -1,0 +1,8 @@
+# Keep LF line endings in the working copy on every OS, matching Prettier and the editor settings.
+* text=auto eol=lf
+
+# Binary assets: never touch.
+*.webp binary
+*.png binary
+*.jpg binary
+*.ico binary

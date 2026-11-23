@@ -1,0 +1,179 @@
+@use "../../../../styles/mixins";
+
+$hexagon: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+
+// Fills the stage around the portrait. The stage sets --portrait-size, --ring-radius and --tile-size.
+// --wheel-offset puts the selected skill on the side facing the summary.
+.wheel {
+  --wheel-offset: 0deg;
+  --wheel-rotation: calc(var(--wheel-offset) - var(--turn) * var(--step));
+
+  position: absolute;
+  inset: 0;
+  pointer-events: none; // only the tiles take clicks, so the portrait stays reachable
+
+  &:dir(rtl) {
+    --wheel-offset: 180deg;
+  }
+}
+
+// Shared centering for the decorative rings.
+@mixin centered-ring($diameter) {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  inline-size: $diameter;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: var(--radius-full);
+}
+
+// Faint circle the tiles ride on (decorative).
+.track {
+  @include centered-ring(calc(var(--ring-radius) * 2));
+  border: 1px solid color-mix(in srgb, var(--color-accent) 40%, transparent);
+}
+
+// Glowing arcs hugging the portrait, plus a faint dashed ring between them and the tiles
+// (decorative).
+.arcs {
+  @include centered-ring(calc(var(--portrait-size) + var(--space-4)));
+  border: 3px solid transparent;
+  border-block-start-color: var(--color-accent);
+  border-inline-end-color: var(--color-accent);
+  rotate: -30deg;
+  filter: drop-shadow(0 0 6px var(--color-accent));
+}
+
+.arcsOpposite {
+  @include centered-ring(calc(var(--portrait-size) + var(--space-4)));
+  border: 2px solid transparent;
+  border-block-end-color: color-mix(
+    in srgb,
+    var(--color-accent) 70%,
+    transparent
+  );
+  rotate: -30deg;
+  filter: drop-shadow(0 0 4px var(--color-accent));
+}
+
+.dashedRing {
+  @include centered-ring(
+    calc(
+      var(--portrait-size) + (var(--ring-radius) * 2 - var(--portrait-size)) / 2
+    )
+  );
+  border: 1px dashed color-mix(in srgb, var(--color-accent) 35%, transparent);
+}
+
+.tiles {
+  position: absolute;
+  inset: 0;
+}
+
+// Each tile: rotate to its slot, move out to the ring, then turn back upright.
+// The wheel's rotation is added to the slot angle, and both animate together,
+// so tiles stay upright the whole way round. Reduced motion zeroes the duration.
+// Tiles are always dark (like the mock), so the brand-colored icons read in every theme.
+.tile {
+  position: absolute;
+  inset-block-start: 50%;
+  left: 50%; // physical on purpose: the rotation math is physical too
+  inline-size: var(--tile-size);
+  block-size: var(--tile-size);
+  margin: calc(var(--tile-size) / -2) 0 0 calc(var(--tile-size) / -2);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ice-100);
+  cursor: pointer;
+  pointer-events: auto;
+  isolation: isolate;
+  filter: drop-shadow(
+    0 0 5px color-mix(in srgb, var(--color-accent) 60%, transparent)
+  );
+  // Scale comes last inside transform, so it grows the tile in place. (The separate
+  // `scale` property would apply first and push the tile off the ring.)
+  --tile-scale: 1;
+  transform: rotate(calc(var(--i) * var(--step) + var(--wheel-rotation)))
+    translateX(var(--ring-radius))
+    rotate(calc(-1 * (var(--i) * var(--step) + var(--wheel-rotation))))
+    scale(var(--tile-scale));
+  transition: transform var(--duration-slow) var(--ease-out);
+
+  // Hexagon border and fill layers, clipped so the focus ring (outline) stays visible.
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    clip-path: $hexagon;
+  }
+
+  &::before {
+    inset: 0;
+    background: var(--color-accent);
+  }
+
+  &::after {
+    inset: 2px;
+    background: linear-gradient(180deg, var(--navy-800), var(--navy-900));
+  }
+
+  &:hover::after {
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--cyan-300) 18%, var(--navy-800)),
+      var(--navy-900)
+    );
+  }
+
+  // Selected: larger, bright purple fill with a purple glow.
+  // Size and fill both mark it, not color alone.
+  &[aria-selected="true"] {
+    --tile-scale: 1.25;
+    filter: drop-shadow(0 0 10px var(--purple-300)); // decorative glow
+
+    &::before {
+      background: var(--purple-300);
+    }
+
+    &::after {
+      background: linear-gradient(
+        180deg,
+        var(--purple-700),
+        color-mix(in srgb, var(--purple-700) 55%, var(--navy-900))
+      );
+    }
+  }
+}
+
+.icon {
+  @include mixins.stroke-icon(58%);
+  stroke-width: 1.75;
+}
+
+.iconText {
+  fill: var(--ice-100);
+  stroke: none;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.iconFill {
+  fill: var(--ice-100);
+  stroke: none;
+}
+
+.visuallyHidden {
+  @include mixins.visually-hidden;
+}
+
+// The collapsed header shows only the portrait.
+:global(header[data-collapsed]) .wheel {
+  display: none;
+}

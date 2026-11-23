@@ -1,0 +1,37 @@
+@use "../../../../../../../styles/mixins";
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Tall full-width rows with dividers, like the theme and language screens.
+.link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: 3.5rem;
+  padding-inline: var(--space-3);
+  border-block-end: 1px solid
+    color-mix(in srgb, var(--color-accent) 30%, transparent);
+  color: var(--color-text);
+  font-size: var(--text-lg);
+  text-decoration: none;
+
+  &:hover {
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+
+  // Current section: lit row, accent bar on the inline start, bold text.
+  &[aria-current] {
+    border-inline-start: 3px solid var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    font-weight: 700;
+  }
+}
+
+.icon {
+  @include mixins.stroke-icon(1.5rem);
+  color: var(--color-accent);
+}
