@@ -1,0 +1,54 @@
+@use "../../../../styles/mixins";
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+// Chevron buttons point the reading direction, so they flip in RTL.
+.stepButton {
+  @include mixins.header-control;
+  padding-inline: var(--space-2);
+
+  &:dir(rtl) .icon {
+    transform: scaleX(-1);
+  }
+}
+
+.counter {
+  min-inline-size: 4ch;
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums; // digits keep their width as the count changes
+  text-align: center;
+}
+
+// Round pause / play button, set apart from the step buttons.
+.playButton {
+  @include mixins.header-control;
+  margin-inline-start: var(--space-3);
+  border-width: 2px;
+  border-radius: var(--radius-full);
+}
+
+.icon {
+  @include mixins.stroke-icon(1.25rem);
+  stroke-width: 2.5;
+}
+
+.filled {
+  fill: currentColor;
+  stroke-linejoin: round;
+}
+
+// Phones: only the pause button stays (WCAG 2.2.2); skills are picked on the wheel itself.
+@media (max-width: 40rem) {
+  .stepButton,
+  .counter {
+    display: none;
+  }
+
+  .playButton {
+    margin-inline-start: 0;
+  }
+}

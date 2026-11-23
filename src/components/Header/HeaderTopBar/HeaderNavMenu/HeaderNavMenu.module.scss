@@ -1,0 +1,9 @@
+// Phones only; wider screens show search, theme and language in the top bar itself.
+.navMenu {
+  display: none;
+  margin-inline-start: auto;
+
+  @media (max-width: 40rem) {
+    display: block;
+  }
+}

@@ -1,0 +1,10 @@
+@use "../../../../../styles/mixins";
+
+.button {
+  @include mixins.header-control;
+}
+
+.icon {
+  @include mixins.stroke-icon(1.5rem);
+  stroke-width: 2.25;
+}

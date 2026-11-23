@@ -1,0 +1,239 @@
+// Centered column: name, title, highlight badge, skills.
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  max-inline-size: var(--measure);
+  text-align: center;
+}
+
+.name {
+  margin: 0;
+  font-size: var(--text-3xl);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.01em;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+}
+
+// How far the plate's pointed ends cut in. Fixed, so the angle stays the same at any width.
+$cut: 1rem;
+$plate: polygon(
+  #{$cut} 0,
+  calc(100% - #{$cut}) 0,
+  100% 50%,
+  calc(100% - #{$cut}) 100%,
+  #{$cut} 100%,
+  0 50%
+);
+
+// Badge row: line | plate | line. The lines meet the plate's points (decorative).
+.highlightsRow {
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  margin-block: var(--space-3) var(--space-2);
+
+  &::before,
+  &::after {
+    content: "";
+    flex: 1 1 0;
+    max-inline-size: 5rem;
+    block-size: 1px;
+    background: var(--color-accent);
+    box-shadow: 0 0 6px var(--color-accent); // decorative glow
+  }
+
+  &::before {
+    margin-inline-start: auto;
+  }
+
+  &::after {
+    margin-inline-end: auto;
+  }
+}
+
+// Angled plate: border and fill are two clipped layers, glow on the plate itself.
+.highlights {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: var(--space-2) calc(#{$cut} + var(--space-3));
+  list-style: none;
+  filter: drop-shadow(0 0 6px var(--color-accent)); // decorative glow
+  // Scales down on narrow screens so the plate always fits a phone.
+  font-size: clamp(var(--text-base), 0.75rem + 2vw, var(--text-xl));
+  font-weight: 700;
+  line-height: var(--leading-tight);
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    clip-path: $plate;
+  }
+
+  &::before {
+    inset: 0;
+    background: var(--color-accent);
+  }
+
+  &::after {
+    inset: 1.5px;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-accent) 16%, var(--color-surface)),
+      var(--color-surface)
+    );
+  }
+}
+
+.highlight {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+// viewBox is 74 x 68, so width follows height at that ratio.
+.usafSymbol {
+  flex: none;
+  block-size: 1.6em;
+  inline-size: calc(1.6em * 74 / 68);
+}
+
+.usafEdge {
+  stroke: #5d6878;
+  stroke-width: 0.6;
+  stroke-linejoin: round;
+}
+
+// Vertical accent bar between highlights; border-inline-start flips for RTL.
+.highlight + .highlight {
+  margin-inline-start: clamp(var(--space-3), 2vw, var(--space-6));
+  padding-inline-start: clamp(var(--space-3), 2vw, var(--space-6));
+  border-inline-start: 2px solid var(--color-accent);
+}
+
+.skillGroups {
+  font-size: var(--text-lg);
+  line-height: var(--leading-body);
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Each skill and its trailing bullet stay together, so a narrow screen wraps after a bullet,
+// never in front of one.
+.skill {
+  white-space: nowrap;
+}
+
+// Bullet after every skill but the last. The "/ ''" alt text keeps screen readers from reading it.
+.skill:not(:last-child)::after {
+  content: "•" / "";
+  margin-inline: var(--space-3);
+  color: var(--color-accent);
+}
+
+// Phones: smaller type and tighter spacing so the header fits on one screen.
+// Line height stays at 1.5 for the skills text (WCAG 1.4.8).
+@media (max-width: 40rem) {
+  .name {
+    font-size: var(--text-2xl);
+  }
+
+  .title {
+    font-size: var(--text-base);
+  }
+
+  .highlightsRow {
+    margin-block: var(--space-2) var(--space-1);
+  }
+
+  .highlights {
+    padding-block: var(--space-1);
+    font-size: var(--text-base);
+  }
+
+  .skillGroups {
+    font-size: var(--text-sm);
+  }
+}
+
+// Collapsed header: name and title stacked at the start, the badge beside them; the
+// skills line and the badge's side lines hide. Phones also drop the title and badge.
+:global(header[data-collapsed]) {
+  .profileInfo {
+    display: grid;
+    grid-template-areas:
+      "name badge"
+      "title badge";
+    grid-template-columns: auto auto;
+    align-items: center;
+    column-gap: var(--space-6);
+    row-gap: 0;
+    max-inline-size: none;
+    text-align: start;
+  }
+
+  .name {
+    grid-area: name;
+    font-size: var(--text-xl);
+  }
+
+  .title {
+    grid-area: title;
+    font-size: var(--text-sm);
+  }
+
+  .highlightsRow {
+    grid-area: badge;
+    margin: 0;
+
+    &::before,
+    &::after {
+      display: none;
+    }
+  }
+
+  .highlights {
+    padding-block: var(--space-1);
+    font-size: var(--text-base);
+  }
+
+  .skillGroups {
+    display: none;
+  }
+
+  @media (max-width: 40rem) {
+    .profileInfo {
+      grid-template-areas: "name";
+      grid-template-columns: auto;
+    }
+
+    .name {
+      font-size: var(--text-base);
+    }
+
+    .title,
+    .highlightsRow {
+      display: none;
+    }
+  }
+}

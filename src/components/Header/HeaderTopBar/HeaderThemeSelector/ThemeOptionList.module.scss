@@ -1,0 +1,39 @@
+@use "../../../../styles/mixins";
+
+.group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+
+// The dropdown's button and the menu screen's title already name the group visibly.
+.legend {
+  @include mixins.visually-hidden;
+}
+
+.option {
+  @include mixins.dropdown-option;
+}
+
+// Phone menu screen: tall full-width rows with dividers.
+.group[data-variant="menu"] .option {
+  min-block-size: 3.5rem;
+  padding-inline: var(--space-2);
+  border-block-end: 1px solid
+    color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: 0;
+  font-size: var(--text-lg);
+}
+
+.radio {
+  flex: none;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  margin: 0;
+  accent-color: var(--color-accent);
+}
+
+.icon {
+  @include mixins.stroke-icon;
+}

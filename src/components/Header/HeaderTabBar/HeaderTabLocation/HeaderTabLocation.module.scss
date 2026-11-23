@@ -1,0 +1,41 @@
+// Shown only where the primary input is touch (a touch laptop gets it; a tablet with a
+// mouse does not).
+.location {
+  display: none;
+
+  @media (pointer: coarse) {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  @media (pointer: coarse) and (max-width: 40rem) {
+    gap: var(--space-1);
+  }
+}
+
+// Each mark is a rounded bar. The current one is longer and lit with a glow, so it stands
+// out by size as well as color. Reduced motion zeroes the width change's duration.
+.mark {
+  inline-size: 1.75rem;
+  block-size: 0.3rem;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  transition: inline-size var(--duration-base) var(--ease-out);
+
+  &[data-current] {
+    inline-size: 2.75rem;
+    background: var(--color-accent);
+    box-shadow: 0 0 8px var(--color-accent); // decorative glow
+  }
+
+  // Phones: smaller marks so the section name keeps one line beside them.
+  @media (max-width: 40rem) {
+    inline-size: 0.6rem;
+
+    &[data-current] {
+      inline-size: 1.25rem;
+    }
+  }
+}

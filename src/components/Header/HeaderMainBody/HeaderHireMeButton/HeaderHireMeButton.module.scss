@@ -1,0 +1,134 @@
+@use "../../../../styles/mixins";
+
+// How far the angled ends cut in. Fixed, so the angle stays the same at any width.
+$cut: 1.5rem;
+$plate: polygon(
+  #{$cut} 0,
+  calc(100% - #{$cut}) 0,
+  100% 50%,
+  calc(100% - #{$cut}) 100%,
+  #{$cut} 100%,
+  0 50%
+);
+
+// Angled plate with a glowing accent border.
+// The border and fill are two clipped layers (::before, ::after) so the glow
+// (filter on the link itself) is not clipped away, and the focus ring stays visible.
+.hireMe {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-block-size: 3.5rem;
+  padding-inline: calc(#{$cut} + var(--space-8));
+  color: var(--color-text);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  text-decoration: none;
+  filter: drop-shadow(0 0 8px var(--color-accent)); // decorative glow
+  transition: filter var(--duration-base) var(--ease-out);
+
+  // Border layer.
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    clip-path: $plate;
+  }
+
+  &::before {
+    inset: 0;
+    background: var(--color-accent);
+  }
+
+  // Fill layer, inset by the border width.
+  &::after {
+    inset: 2px;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-accent) 22%, var(--color-surface)),
+      var(--color-surface)
+    );
+  }
+
+  &:hover {
+    filter: drop-shadow(0 0 14px var(--color-accent));
+  }
+}
+
+.label {
+  white-space: nowrap;
+}
+
+.icon {
+  @include mixins.stroke-icon(2rem);
+  stroke-width: 1.75;
+}
+
+// Arrow points toward the reading direction and nudges forward on hover.
+.arrow {
+  @include mixins.stroke-icon(1.75rem);
+  stroke-width: 2.25;
+  transition: translate var(--duration-base) var(--ease-out);
+
+  &:dir(rtl) {
+    transform: scaleX(-1);
+  }
+
+  .hireMe:hover & {
+    translate: 0.25rem 0;
+  }
+
+  .hireMe:hover &:dir(rtl) {
+    translate: -0.25rem 0;
+  }
+}
+
+// Phones: shorter button (still at least the 44px AAA target) and smaller type.
+@media (max-width: 40rem) {
+  .hireMe {
+    min-block-size: var(--target-min);
+    padding-inline: calc(#{$cut} + var(--space-6));
+    font-size: var(--text-xl);
+  }
+
+  .icon {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+  }
+
+  .arrow {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+}
+
+// Collapsed header: a shorter button (still at least the 44px AAA target).
+:global(header[data-collapsed]) {
+  .hireMe {
+    min-block-size: var(--target-min);
+    padding-inline: calc(#{$cut} + var(--space-4));
+    font-size: var(--text-lg);
+  }
+
+  .icon {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+  }
+
+  .arrow {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
+  @media (max-width: 40rem) {
+    .hireMe {
+      padding-inline: calc(#{$cut} + var(--space-2));
+      font-size: var(--text-base);
+    }
+  }
+}

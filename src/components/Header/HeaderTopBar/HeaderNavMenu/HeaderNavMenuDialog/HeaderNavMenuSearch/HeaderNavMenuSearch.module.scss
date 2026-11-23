@@ -1,0 +1,55 @@
+@use "../../../../../../styles/mixins";
+
+// The field fills the header between Back and Close. The focus ring goes on the whole
+// pill (focus-within), for a clear AAA focus indicator (2.4.13).
+.form {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  min-block-size: var(--target-min);
+  padding-inline: var(--space-3);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  box-shadow: 0 0 10px -4px var(--color-accent); // soft decorative glow
+
+  &:focus-within {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+  }
+}
+
+.icon {
+  @include mixins.stroke-icon;
+}
+
+.input {
+  flex: 1;
+  min-inline-size: 0;
+  min-block-size: var(--target-min);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: inherit;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1; // Firefox lowers placeholder opacity by default, which would cut contrast
+  }
+
+  &:focus-visible {
+    outline: none; // the pill shows the focus ring
+  }
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.visuallyHidden {
+  @include mixins.visually-hidden;
+}

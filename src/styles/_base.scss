@@ -1,3 +1,10 @@
+// Sizes include padding and border, so a 20rem card is 20rem wide.
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   background-color: var(--color-bg);
@@ -11,4 +18,13 @@ body {
 :focus-visible {
   outline: 3px solid var(--color-focus);
   outline-offset: 2px;
+}
+
+// View transitions (the phone menu's drill-down): the site's own timing. They are only
+// started when motion is allowed, and the reduced-motion tokens zero these durations too.
+::view-transition-group(*),
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: var(--duration-base);
+  animation-timing-function: var(--ease-out);
 }
