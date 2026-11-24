@@ -1,0 +1,38 @@
+// Scroll (from the part): the board's copper opens as a circle from the route's start,
+// and closes back into it on leaving (--bg-in, --bg-out).
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      60% 60% at 25% 60%,
+      color-mix(in srgb, var(--color-accent) 12%, transparent),
+      transparent 70%
+    ),
+    var(--color-bg);
+  clip-path: circle(
+    calc(var(--bg-in, 1) * (1 - var(--bg-out, 0)) * 150%) at 10% 55%
+  );
+  pointer-events: none;
+}
+
+.copper {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+.trace {
+  fill: none;
+  stroke: var(--color-decor);
+  stroke-opacity: 0.22;
+  stroke-width: 2;
+}
+
+.pads {
+  fill: none;
+  stroke: var(--color-decor);
+  stroke-opacity: 0.4;
+  stroke-width: 2;
+}

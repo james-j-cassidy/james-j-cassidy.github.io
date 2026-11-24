@@ -1,0 +1,90 @@
+@use "../../architecture";
+
+// A holographic screen.
+//
+// Scroll (from the part): rises from below the stage (--card-in), and sinks back on
+// leaving (--card-out).
+.card {
+  @include architecture.screen;
+  display: grid;
+  gap: clamp(var(--space-2), 2cqh, var(--space-4));
+  transform: translateY(
+    calc((1 - var(--card-in, 1) + var(--card-out, 0)) * 90cqh)
+  );
+}
+
+.sheet {
+  display: grid;
+  gap: clamp(var(--space-1), 1.4cqh, var(--space-3));
+
+  &[data-scanned] {
+    @include architecture.scan-in;
+  }
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 var(--space-3);
+}
+
+.number {
+  @include architecture.label;
+}
+
+.moved {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(var(--text-lg), 4.2cqh, 1.625rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+
+  @media (width < 48rem) {
+    font-size: var(--text-base);
+  }
+}
+
+.body {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+}
+
+.safety {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 3px solid var(--caution);
+
+  @include architecture.short-hidden(30rem);
+}
+
+.label {
+  @include architecture.label;
+  color: var(--caution);
+}
+
+.text {
+  margin: 0.125rem 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+}
+
+.source {
+  margin: 0;
+  padding-block-start: var(--space-2);
+  border-block-start: 1px solid
+    color-mix(in srgb, var(--color-decor) 45%, transparent);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.4;
+
+  @include architecture.short-hidden(30rem);
+}

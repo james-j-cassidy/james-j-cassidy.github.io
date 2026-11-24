@@ -1,0 +1,83 @@
+@use "../../architecture";
+
+// Scroll (from the part): the options slide in from the reading start one after
+// another (--slide), and away last first (--away).
+.changes {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.label {
+  @include architecture.label;
+  translate: calc(
+      ((var(--changes-out, 0) - (1 - var(--changes-in, 1))) * 120vw) *
+        var(--dir, 1)
+    )
+    0;
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+// An option: a radio dot and its words, at least 44 tall.
+.option {
+  --slide: clamp(0, calc((var(--changes-in, 1) - var(--order) * 0.1) / 0.6), 1);
+  --away: clamp(
+    0,
+    calc((var(--changes-out, 0) - (4 - var(--order)) * 0.1) / 0.6),
+    1
+  );
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--target-min);
+  padding: 0 var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 60%, transparent);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  translate: calc(((var(--away) - (1 - var(--slide))) * 120vw) * var(--dir, 1))
+    0;
+
+  &[aria-checked="true"] {
+    border-color: var(--color-accent);
+    background: color-mix(
+      in srgb,
+      var(--color-accent) 16%,
+      var(--color-surface)
+    );
+    box-shadow: 0 0 18px
+      color-mix(in srgb, var(--color-accent) 45%, transparent);
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+
+  @media (width < 48rem) {
+    padding: 0 var(--space-2);
+  }
+}
+
+.dot {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+
+  .option[aria-checked="true"] & {
+    background: radial-gradient(
+      circle,
+      var(--color-accent) 0 45%,
+      transparent 50%
+    );
+  }
+}

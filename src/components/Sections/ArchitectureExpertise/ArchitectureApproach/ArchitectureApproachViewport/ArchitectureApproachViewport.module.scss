@@ -1,0 +1,165 @@
+@use "../../../../../styles/mixins";
+
+// A holographic screen: accent frame with corner brackets and faint scan lines.
+//
+// Scroll (from the part): swings in like a door hinged on its far edge, from beyond
+// edge-on where its back is hidden (--screen-in), and swings shut the other way on
+// leaving (--screen-out). Past edge-on its back hides it, but layers inside can still
+// show, so there it also scales to nothing (--shown, 0 only beyond edge-on).
+.viewport {
+  --shown: calc(
+    clamp(0, (var(--screen-in, 1) - 0.02) * 1000, 1) *
+      clamp(0, (0.98 - var(--screen-out, 0)) * 1000, 1)
+  );
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: clamp(var(--space-1), 1cqh, var(--space-2));
+  padding: clamp(var(--space-3), 3cqh, var(--space-6));
+  border: 1px solid var(--color-accent);
+  background:
+    linear-gradient(var(--color-accent), var(--color-accent)) top left / 1.25rem
+      3px no-repeat,
+    linear-gradient(var(--color-accent), var(--color-accent)) top left / 3px
+      1.25rem no-repeat,
+    linear-gradient(var(--color-accent), var(--color-accent)) bottom right /
+      1.25rem 3px no-repeat,
+    linear-gradient(var(--color-accent), var(--color-accent)) bottom right / 3px
+      1.25rem no-repeat,
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 3px,
+      color-mix(in srgb, var(--color-accent) 6%, transparent) 3px 4px
+    ),
+    var(--color-surface);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--color-accent) 28%, transparent);
+  transform-origin: right center;
+  transform: rotateY(
+    calc((1 - var(--screen-in, 1)) * 100deg - var(--screen-out, 0) * 100deg)
+  );
+  backface-visibility: hidden;
+  scale: var(--shown);
+
+  &:dir(rtl) {
+    transform-origin: left center;
+    transform: rotateY(
+      calc((1 - var(--screen-in, 1)) * -100deg + var(--screen-out, 0) * 100deg)
+    );
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 var(--space-3);
+}
+
+.number {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+// Whether a conditional stage runs: a mark and words, never color alone.
+.state {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+
+  &[data-running] {
+    color: var(--color-accent);
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(var(--text-lg), 4.4cqh, 1.75rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.question {
+  margin: 0;
+  color: var(--color-accent);
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.summary {
+  margin: 0;
+  max-inline-size: var(--measure);
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+}
+
+.when {
+  font-weight: 700;
+}
+
+.outputs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.outputsLabel {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.outputList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.125rem var(--space-2);
+    border: 1px solid var(--color-decor);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+}
+
+// Short stages: the summary and outputs are still read, not shown.
+@container stage (height < 34rem) {
+  .summary,
+  .outputs {
+    @include mixins.visually-hidden;
+  }
+}
+
+// Phones: the title, question and drawing show; the rest is still read.
+@media (width < 48rem) {
+  .viewport {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .title {
+    font-size: var(--text-base);
+  }
+
+  .question {
+    font-size: var(--text-sm);
+  }
+
+  .summary,
+  .outputs {
+    @include mixins.visually-hidden;
+  }
+}

@@ -1,0 +1,77 @@
+@use "../../architecture";
+
+// A holographic screen.
+//
+// Scroll (from the part): slides in from the far side (--card-in), and off the reading
+// start on leaving (--card-out).
+.card {
+  @include architecture.screen;
+  transform: translateX(
+    calc(((1 - var(--card-in, 1)) - var(--card-out, 0)) * 120vw * var(--dir, 1))
+  );
+}
+
+.sheet {
+  display: grid;
+  gap: clamp(var(--space-2), 2cqh, var(--space-4));
+
+  &[data-scanned] {
+    @include architecture.scan-in;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(var(--text-lg), 4.2cqh, 1.625rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+
+  @media (width < 48rem) {
+    font-size: var(--text-base);
+  }
+}
+
+.label {
+  @include architecture.label;
+}
+
+.text {
+  margin: 0.125rem 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+}
+
+.role {
+  // Phones: while the part is down, only how it copes shows (both are read).
+  .card[data-down] & {
+    @include architecture.compact-hidden;
+  }
+}
+
+// How the system copes: lit while chaos has the part down.
+.failure {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 3px solid var(--color-decor);
+
+  .card[data-down] & {
+    border-color: var(--caution);
+  }
+
+  // Phones: hidden until the part is down (still read).
+  .card:not([data-down]) & {
+    @include architecture.compact-hidden;
+  }
+}
+
+.pattern {
+  margin: 0.125rem 0 0;
+  font-weight: 800;
+
+  .card[data-down] & {
+    color: var(--caution);
+  }
+}
+
+.downNow {
+  color: var(--fault);
+}

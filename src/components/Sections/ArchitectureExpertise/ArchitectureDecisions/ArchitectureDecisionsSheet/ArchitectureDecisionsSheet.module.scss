@@ -1,0 +1,258 @@
+@use "../../../../../styles/mixins";
+@use "../../architecture";
+
+// A blueprint sheet: the holographic frame over a fine grid.
+//
+// Scroll (from the part): unrolls from the top (--sheet-in), and rolls back up on
+// leaving (--sheet-out).
+.sheet {
+  @include architecture.screen;
+  background:
+    linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-accent) 7%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 1rem 1rem,
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-accent) 7%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 1rem 1rem,
+    var(--color-surface);
+  clip-path: inset(
+    0 0 calc((1 - var(--sheet-in, 1) + var(--sheet-out, 0)) * 100%) 0
+  );
+}
+
+.content {
+  display: grid;
+  gap: clamp(var(--space-1), 1.6cqh, var(--space-3));
+
+  &[data-scanned] {
+    @include architecture.scan-in;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.number {
+  @include architecture.label;
+}
+
+// "Accepted", stamped on: it lands from large as the sheet finishes unrolling (and
+// again with each new record), and lifts away first on leaving.
+.stamp {
+  margin: 0;
+  padding: 0 var(--space-2);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  rotate: -6deg;
+  scale: calc((1 + (1 - var(--stamp-in, 1)) * 2) * (1 - var(--stamp-out, 0)));
+
+  .content[data-scanned] & {
+    animation: stamp 400ms 300ms var(--ease-out) both;
+  }
+
+  :global([data-flow]) .content[data-scanned] & {
+    animation: none;
+  }
+}
+
+@keyframes stamp {
+  from {
+    scale: 2.6;
+  }
+
+  to {
+    scale: 1;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(var(--text-lg), 4.2cqh, 1.625rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+
+  @media (width < 48rem) {
+    font-size: var(--text-base);
+  }
+}
+
+.label {
+  @include architecture.label;
+}
+
+.text {
+  margin: 0.125rem 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+}
+
+.context {
+  @include architecture.short-hidden(30rem);
+}
+
+// The options weighed: one row per option, one column per criterion.
+.table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+
+  th,
+  td {
+    padding: 0.25rem var(--space-2);
+    border-block-end: 1px solid
+      color-mix(in srgb, var(--color-decor) 45%, transparent);
+    text-align: start;
+    vertical-align: middle;
+  }
+
+  thead th {
+    color: var(--color-text-muted);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+  }
+
+  tbody th {
+    font-weight: 700;
+  }
+
+  // The chosen option: lit, and marked in words.
+  tr[data-chosen] {
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  // Phones: fixed columns, so long headers wrap instead of widening the sheet.
+  @media (width < 48rem) {
+    table-layout: fixed;
+    font-size: 0.75rem;
+
+    th,
+    td {
+      padding-inline: 0.25rem;
+      overflow-wrap: anywhere;
+    }
+
+    thead th:first-child {
+      inline-size: 32%;
+    }
+  }
+}
+
+.caption {
+  @include architecture.label;
+  padding-block-end: 0.25rem;
+  text-align: start;
+
+  @include architecture.compact-hidden;
+}
+
+.chosen {
+  color: var(--color-accent);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.chosenWord {
+  @include architecture.compact-hidden;
+}
+
+// A score: up to three bars, then its word (the word is read on phones, not shown).
+.meter {
+  display: inline-flex;
+  align-items: end;
+  gap: 2px;
+  margin-inline-end: 0.375rem;
+  vertical-align: middle;
+}
+
+.bar {
+  inline-size: 5px;
+  border: 1px solid var(--color-accent);
+  border-radius: 1px;
+
+  &:nth-child(1) {
+    block-size: 6px;
+  }
+
+  &:nth-child(2) {
+    block-size: 10px;
+  }
+
+  &:nth-child(3) {
+    block-size: 14px;
+  }
+
+  &[data-on] {
+    background: var(--color-accent);
+  }
+}
+
+.score {
+  @include architecture.compact-hidden;
+
+  @container stage (height < 30rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+// The decision beside what it gains and what it accepts.
+.outcome {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-4);
+
+  @media (width < 48rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.decision {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 3px solid var(--color-accent);
+
+  .text {
+    font-weight: 700;
+  }
+}
+
+.consequences {
+  @include architecture.compact-hidden;
+}
+
+.list {
+  margin: 0 0 0.25rem;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+  line-height: 1.4;
+
+  li::before {
+    margin-inline-end: 0.375rem;
+    color: var(--color-accent);
+    font-weight: 800;
+  }
+
+  &[data-kind="gain"] li::before {
+    content: "+";
+  }
+
+  &[data-kind="cost"] li::before {
+    content: "−";
+    color: var(--caution);
+  }
+}
