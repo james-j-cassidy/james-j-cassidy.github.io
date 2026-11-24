@@ -24,6 +24,7 @@ const CATEGORY_ORDER: readonly StackCategory[] = [
   "ai",
   "editor",
   "diagramming",
+  "tracking",
   "assistant",
 ];
 

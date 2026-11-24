@@ -1,10 +1,15 @@
 import { useId } from "react";
-import type { JobMotif } from "../../../../../content/professionalJourney";
+import type {
+  JobMotif,
+  JobScene,
+} from "../../../../../content/professionalJourney";
+import JobPartScene from "../JobPartScene/JobPartScene";
 import styles from "./JobPartBackdrop.module.scss";
 
 interface JobPartBackdropProps {
   motif: JobMotif;
   monogram: string;
+  scene?: JobScene; // an employer's scene, in place of the monogram watermark
 }
 
 // Each motif is one pattern tile, drawn in the job's accent.
@@ -17,15 +22,20 @@ const TILES: Record<JobMotif, { size: [number, number]; d: string }> = {
   },
 };
 
-// A job's full-stage background, in its theme: the job's pattern and a large
-// watermark of the company's monogram. Decorative: hidden from screen readers.
-function JobPartBackdrop({ motif, monogram }: JobPartBackdropProps) {
+// A full-stage background, in its theme: the pattern, and either the employer's scene
+// (jobs) or a large watermark of the monogram (credentials, the tech stack).
+// Decorative: hidden from screen readers.
+function JobPartBackdrop({ motif, monogram, scene }: JobPartBackdropProps) {
   const tile = TILES[motif];
   // Unique per job: the pattern takes this job's accent.
   const patternId = `${useId().replace(/[^a-zA-Z0-9_-]/g, "")}-motif`;
 
   return (
-    <div className={styles.backdrop} aria-hidden="true">
+    <div
+      className={styles.backdrop}
+      data-scene={scene ? "" : undefined}
+      aria-hidden="true"
+    >
       <svg className={styles.pattern} width="100%" height="100%">
         <defs>
           <pattern
@@ -39,7 +49,11 @@ function JobPartBackdrop({ motif, monogram }: JobPartBackdropProps) {
         </defs>
         <rect width="100%" height="100%" fill={`url(#${patternId})`} />
       </svg>
-      <span className={styles.watermark}>{monogram}</span>
+      {scene ? (
+        <JobPartScene scene={scene} />
+      ) : (
+        <span className={styles.watermark}>{monogram}</span>
+      )}
     </div>
   );
 }

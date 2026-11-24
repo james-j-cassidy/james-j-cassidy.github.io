@@ -7,12 +7,24 @@
 
 export type JobMotif = "dots" | "lines" | "hex";
 
+// Line art of each employer's world, behind its part (JobPartScene).
+export type JobScene =
+  | "claims"
+  | "skyline"
+  | "homes"
+  | "parts"
+  | "naval"
+  | "citrus"
+  | "wellness"
+  | "orbit";
+
 export interface JobTheme {
   // Accent for text, borders and glows. Each shade must reach 7:1 (AAA) against the
   // page background of its theme.
-  accentDark: string; // on the dark background (#0a1530)
+  accentDark: string; // on the dark background (#0a1530) and the cards (#0f1f45)
   accentLight: string; // on the light background (#f4f8ff)
   motif: JobMotif; // the background pattern
+  scene: JobScene; // the employer's world, drawn behind the part
 }
 
 export interface JobHighlight {
@@ -129,9 +141,10 @@ export const JOBS: readonly Job[] = [
     ],
     theme: {
       // From the logo's red, #a83030, adjusted in lightness to reach AAA on each theme.
-      accentDark: "#ff837b", // 7.6:1 on #0a1530
+      accentDark: "#ff9a92", // 8.8:1 on #0a1530, 7.9:1 on the cards (#0f1f45)
       accentLight: "#992023", // 7.6:1 on #f4f8ff
       motif: "hex",
+      scene: "claims",
     },
   },
   {
@@ -182,9 +195,10 @@ export const JOBS: readonly Job[] = [
     tech: ["React", "Redux", "JavaScript", "C#", "AWS", "GCP", "Datadog"],
     theme: {
       // From the site's purple, #7a3ff1, adjusted in lightness to reach AAA on each theme.
-      accentDark: "#ad9afe", // 7.6:1 on #0a1530
+      accentDark: "#baadfe", // 9.0:1 on #0a1530, 8.1:1 on the cards (#0f1f45)
       accentLight: "#6417d3", // 7.6:1 on #f4f8ff
       motif: "lines",
+      scene: "skyline",
     },
   },
   {
@@ -233,9 +247,10 @@ export const JOBS: readonly Job[] = [
     tech: ["VB.NET", "JavaScript", "jQuery", "Aspose", "REST APIs"],
     theme: {
       // From the gold of the company's logo (#c6a15d), adjusted in lightness to reach AAA on each theme.
-      accentDark: "#c8a35f", // 7.6:1 on #0a1530
+      accentDark: "#d6b16d", // 8.9:1 on #0a1530, 8.0:1 on the cards (#0f1f45)
       accentLight: "#694b02", // 7.6:1 on #f4f8ff
       motif: "dots",
+      scene: "homes",
     },
   },
   {
@@ -285,9 +300,10 @@ export const JOBS: readonly Job[] = [
     tech: ["C#", "AngularJS", "PostgreSQL", "MS SQL", "WCF", "XAML"],
     theme: {
       // From the site's green, #85c241, adjusted in lightness to reach AAA on each theme.
-      accentDark: "#85c241", // 8.4:1 on #0a1530
+      accentDark: "#8ac746", // 8.9:1 on #0a1530, 7.9:1 on the cards (#0f1f45)
       accentLight: "#365901", // 7.6:1 on #f4f8ff
       motif: "hex",
+      scene: "parts",
     },
   },
   {
@@ -334,9 +350,10 @@ export const JOBS: readonly Job[] = [
     tech: ["C#", "AngularJS", "Nancy", "Dapper", "MS SQL", "NUnit"],
     theme: {
       // From the site's indigo, #30388f, adjusted in lightness to reach AAA on each theme.
-      accentDark: "#8fa2fd", // 7.5:1 on #0a1530
+      accentDark: "#a3b4fe", // 9.0:1 on #0a1530, 8.1:1 on the cards (#0f1f45)
       accentLight: "#30388f", // 9.4:1 on #f4f8ff
       motif: "lines",
+      scene: "naval",
     },
   },
   {
@@ -387,9 +404,10 @@ export const JOBS: readonly Job[] = [
     tech: ["C#", "WPF", "PRISM", "C", "C++", "WCF", "InstallAware"],
     theme: {
       // From the site's orange, #ff9b04, adjusted in lightness to reach AAA on each theme.
-      accentDark: "#ff9b04", // 8.5:1 on #0a1530
+      accentDark: "#ff9e1e", // 8.7:1 on #0a1530, 7.8:1 on the cards (#0f1f45)
       accentLight: "#754401", // 7.6:1 on #f4f8ff
       motif: "dots",
+      scene: "citrus",
     },
   },
   {
@@ -440,9 +458,10 @@ export const JOBS: readonly Job[] = [
     tech: ["Program management", "Agile", "PCI DSS", "iOS", "Android"],
     theme: {
       // From the logo's green, #458500, adjusted in lightness to reach AAA on each theme.
-      accentDark: "#76b949", // 7.6:1 on #0a1530
+      accentDark: "#84c758", // 8.9:1 on #0a1530, 7.9:1 on the cards (#0f1f45)
       accentLight: "#2e5b01", // 7.5:1 on #f4f8ff
       motif: "hex",
+      scene: "wellness",
     },
   },
   {
@@ -492,9 +511,10 @@ export const JOBS: readonly Job[] = [
     tech: ["C", "C++", "C#", "Pascal", "VB", "SQL", "Java"],
     theme: {
       // From Air Force blue, #00308f, adjusted in lightness to reach AAA on each theme.
-      accentDark: "#79a8ff", // 7.6:1 on #0a1530
+      accentDark: "#91b7fe", // 9.0:1 on #0a1530, 8.0:1 on the cards (#0f1f45)
       accentLight: "#00308f", // 10.8:1 on #f4f8ff
       motif: "dots",
+      scene: "orbit",
     },
   },
 ];

@@ -8,24 +8,35 @@ import StoryPart, {
 } from "../../Story/StoryPart/StoryPart";
 import LeadershipSky from "../LeadershipSky/LeadershipSky";
 import LeadershipTrustCard from "./LeadershipTrustCard/LeadershipTrustCard";
-import LeadershipTrustNetwork from "./LeadershipTrustNetwork/LeadershipTrustNetwork";
 import LeadershipTrustReasons from "./LeadershipTrustReasons/LeadershipTrustReasons";
+import LeadershipTrustTraits from "./LeadershipTrustTraits/LeadershipTrustTraits";
+import LeadershipTrustTree from "./LeadershipTrustTree/LeadershipTrustTree";
 import styles from "./LeadershipTrust.module.scss";
 
-// Built on trust: why people follow James. The team around him as a constellation, every
-// person linked to someone closer in, and the reasons they trust him.
+// Built on trust: why people follow James. A tree that grows from trust at its root, its
+// branches holding the traits that grow trust, beside the reasons people trust him.
 //
-// Enters: the warm glow opens around the constellation, the rings unfold from the
-// center one after another, spinning into place; the title drops in, the reasons slide
-// in from the far side one by one and the card rises from below.
-// Leaves: the rings spin back into the center, outermost first, the reasons and card
-// slide away and the glow closes.
+// Enters: the warm glow opens around the tree, which grows from the root up: roots,
+// trunk, fork, branches, then the buds on its tips; the title drops in, the reasons
+// slide in from the far side one by one and the card rises from below.
+// Leaves: the tree withdraws from its tips down, the reasons and card slide away and the
+// glow closes.
 //
-// Choosing a reason sends a ring of trust rippling out from the center through the whole
-// team, and the card tells it with an example from James's work.
+// Choosing a reason sends trust flowing up from the root to every branch, and the card
+// tells it with an example from James's work. Choosing a branch opens its trait (on
+// phones, a chip under the tree).
 function LeadershipTrust({ index }: StoryPartProps) {
   const { heading } = LEADERSHIP_PARTS.trust;
-  const { tag, reasons, reasonsLabel, proofLabel, you } = LEADERSHIP_TRUST;
+  const {
+    tag,
+    reasons,
+    reasonsLabel,
+    proofLabel,
+    traits,
+    treeLabel,
+    treeHint,
+    root,
+  } = LEADERSHIP_TRUST;
   const baseId = useId();
   const panelId = `${baseId}-reason`;
   const tabIdFor = (position: number) => `${baseId}-why-${position}`;
@@ -47,7 +58,13 @@ function LeadershipTrust({ index }: StoryPartProps) {
           <h3 className={styles.heading}>{heading}</h3>
         </header>
         <div className={styles.networkSlot}>
-          <LeadershipTrustNetwork ripple={ripples} you={you} />
+          <LeadershipTrustTree
+            traits={traits}
+            label={treeLabel}
+            hint={treeHint}
+            root={root}
+            flow={ripples}
+          />
         </div>
         <div className={styles.reasonsSlot}>
           <LeadershipTrustReasons
@@ -58,6 +75,9 @@ function LeadershipTrust({ index }: StoryPartProps) {
             panelId={panelId}
             onSelect={select}
           />
+        </div>
+        <div className={styles.traitsSlot}>
+          <LeadershipTrustTraits traits={traits} label={treeLabel} />
         </div>
         <div className={styles.cardSlot}>
           <LeadershipTrustCard

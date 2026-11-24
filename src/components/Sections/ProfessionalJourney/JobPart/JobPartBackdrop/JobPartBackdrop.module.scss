@@ -23,6 +23,11 @@
   stroke: var(--job-accent);
   stroke-opacity: 0.18;
   stroke-width: 1.5;
+
+  // Under a scene the pattern is only texture.
+  [data-scene] & {
+    stroke-opacity: 0.09;
+  }
 }
 
 // The company's monogram, huge and outlined, low on the far side.

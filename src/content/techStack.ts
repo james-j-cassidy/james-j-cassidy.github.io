@@ -28,6 +28,7 @@ export type StackCategory =
   | "ai"
   | "editor"
   | "diagramming"
+  | "tracking"
   | "assistant";
 
 export type StackSort = "roles" | "recent" | "category" | "name";
@@ -77,6 +78,7 @@ export const TECH_STACK_LABELS = {
     ai: "AI",
     editor: "Editor and IDE",
     diagramming: "Diagramming",
+    tracking: "Work tracking",
     assistant: "AI assistant",
   } satisfies Record<StackCategory, string>,
   position: (place: number, total: number) => `${place} of ${total}`,
@@ -427,6 +429,15 @@ export const STACK: readonly StackItem[] = [
     category: "diagramming",
     jobs: [],
     about: "Online diagramming for architecture, UML and flowcharts.",
+  },
+  {
+    id: "jira",
+    name: "Jira",
+    monogram: "Ji",
+    kind: "tools",
+    category: "tracking",
+    jobs: [],
+    about: "Atlassian's issue and project tracker, for planning and delivery.",
   },
   {
     id: "cursor",
