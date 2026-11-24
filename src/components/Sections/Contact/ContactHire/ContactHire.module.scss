@@ -1,0 +1,187 @@
+@use "../../../../styles/mixins";
+@use "../contact";
+
+// The open channel fills the stage: the backdrop and rings behind, the copy on the
+// reading-start side, the transmitter on the other. Its own movement replaces the
+// default carousel; nothing fades.
+.part {
+  @include mixins.story-piece(0, 0.45, --open-in);
+  @include mixins.story-piece(0.1, 0.7, --rings-in);
+  @include mixins.story-piece(0.15, 0.6, --tx-in);
+  @include mixins.story-piece(0.25, 0.65, --title-in);
+  @include mixins.story-piece(0.4, 0.8, --cta-in);
+  @include mixins.story-piece(0.5, 1, --topics-in);
+  @include mixins.story-piece(0, 0.45, --topics-out, --out);
+  @include mixins.story-piece(0.1, 0.6, --title-out, --out);
+  @include mixins.story-piece(0.25, 0.75, --tx-out, --out);
+  @include mixins.story-piece(0.3, 0.9, --rings-out, --out);
+  @include mixins.story-piece(0.55, 1, --open-out, --out);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+}
+
+// Opens as a circle from the transmitter, and closes back into it.
+.backdrop {
+  --rings: calc(var(--rings-in) * (1 - var(--rings-out)));
+  clip-path: circle(
+    calc(var(--open-in) * (1 - var(--open-out)) * 150%) at 72% 50%
+  );
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-8);
+  block-size: 100%;
+}
+
+.copy {
+  display: grid;
+  justify-items: start;
+  min-inline-size: 0;
+}
+
+// The title and its line slide in from the reading start, and off it again.
+.tag,
+.heading,
+.line {
+  transform: translateX(
+    calc(((1 - var(--title-in)) + var(--title-out)) * -120vw * var(--dir, 1))
+  );
+}
+
+.tag {
+  @include contact.tag;
+}
+
+.heading {
+  @include contact.heading;
+}
+
+.line {
+  @include contact.line;
+}
+
+// The button follows the title in, a beat later; it leaves with it.
+.cta {
+  margin-block-start: clamp(var(--space-3), 4cqh, var(--space-6));
+  transform: translateX(
+    calc(((1 - var(--cta-in)) + var(--title-out)) * -120vw * var(--dir, 1))
+  );
+}
+
+.form {
+  margin-block-start: clamp(var(--space-3), 4cqh, var(--space-6));
+}
+
+.formLabel {
+  margin: 0 0 var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transform: translateY(
+    calc((1 - var(--topics-in) + var(--topics-out)) * 60cqh)
+  );
+}
+
+.topics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, max-content));
+  gap: var(--space-2) var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Each topic rises in turn, and drops away in turn.
+.topic {
+  --own: clamp(0, calc(var(--topics-in) * 1.6 - var(--position) * 0.2), 1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+  transform: translateY(calc((1 - var(--own) + var(--topics-out)) * 60cqh));
+
+  svg {
+    @include mixins.stroke-icon(1.125rem);
+    color: var(--signal);
+    stroke-width: 3;
+  }
+}
+
+// The transmitter: James's portrait ringed in light, his logo beneath; powers up from
+// a point with a turn, and shrinks back to it.
+.transmitter {
+  position: relative;
+  justify-self: center;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  inline-size: min(100%, 52cqh);
+  scale: calc(var(--tx-in) * (1 - var(--tx-out)));
+  rotate: calc((1 - var(--tx-in) + var(--tx-out)) * -40deg);
+}
+
+.pulse {
+  position: absolute;
+  inset-block-start: 0;
+  inline-size: 72%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 6px var(--signal-soft),
+    0 0 60px 14px var(--signal-soft);
+}
+
+.portrait {
+  position: relative;
+  inline-size: 72%;
+  block-size: auto;
+  aspect-ratio: 1;
+  border: 3px solid var(--signal);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.logo {
+  inline-size: 70%;
+  block-size: auto;
+  filter: drop-shadow(0 0 14px var(--signal-soft));
+}
+
+@container stage (height < 32rem) {
+  .formLabel,
+  .topics {
+    @include mixins.visually-hidden;
+  }
+}
+
+// Phones: the transmitter above, the copy under it, centered.
+@media (width < 48rem) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    gap: var(--space-4);
+  }
+
+  .transmitter {
+    grid-row: 1;
+    inline-size: min(60%, 30cqh);
+  }
+
+  .copy {
+    justify-items: center;
+    text-align: center;
+  }
+
+  .form {
+    @include mixins.visually-hidden;
+  }
+}

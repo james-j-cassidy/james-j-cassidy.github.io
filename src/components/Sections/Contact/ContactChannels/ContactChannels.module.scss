@@ -1,0 +1,186 @@
+@use "../../../../styles/mixins";
+@use "../contact";
+
+// The channels fill the stage: the backdrop with rings from the top center, the title
+// above, the channel cards across the middle. Nothing fades.
+.part {
+  @include mixins.story-piece(0, 0.4, --open-in);
+  @include mixins.story-piece(0.05, 0.6, --rings-in);
+  @include mixins.story-piece(0.2, 0.6, --title-in);
+  @include mixins.story-piece(0.35, 1, --cards-in);
+  @include mixins.story-piece(0, 0.6, --cards-out, --out);
+  @include mixins.story-piece(0.3, 0.75, --title-out, --out);
+  @include mixins.story-piece(0.3, 0.9, --rings-out, --out);
+  @include mixins.story-piece(0.6, 1, --open-out, --out);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+}
+
+// Opens down from the top like a raised blind, and closes back up.
+.backdrop {
+  --rings: calc(var(--rings-in) * (1 - var(--rings-out)));
+  clip-path: inset(0 0 calc(max(1 - var(--open-in), var(--open-out)) * 100%) 0);
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: clamp(var(--space-4), 6cqh, var(--space-12));
+  block-size: 100%;
+}
+
+// Drops into place from above, and lifts away.
+.titleBar {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  transform: translateY(
+    calc((1 - var(--title-in) + var(--title-out)) * -90cqh)
+  );
+}
+
+.tag {
+  @include contact.tag;
+}
+
+.heading {
+  @include contact.heading;
+}
+
+.line {
+  @include contact.line;
+}
+
+.channels {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 18rem);
+  justify-content: center;
+  gap: var(--space-6);
+  inline-size: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Each channel arrives from the far side in turn, and goes on out the near side in turn.
+.channel {
+  --own-in: clamp(0, calc(var(--cards-in) * 1.6 - var(--position) * 0.3), 1);
+  --own-out: clamp(0, calc(var(--cards-out) * 1.6 - var(--position) * 0.3), 1);
+  display: grid;
+  transform: translateX(
+    calc((1 - var(--own-in) - var(--own-out)) * 120vw * var(--dir, 1))
+  );
+}
+
+// The whole card is the link: the sign, the name and what it is, and what it does.
+.link {
+  @include contact.card;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: start;
+  gap: var(--space-3);
+  min-block-size: var(--target-min);
+  padding: clamp(var(--space-4), 3cqh, var(--space-6));
+  color: var(--color-text);
+  text-decoration: none;
+  transition: box-shadow var(--duration-base) var(--ease-out);
+
+  &:hover {
+    box-shadow: 0 0 40px var(--signal-soft);
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.sign {
+  display: grid;
+  place-items: center;
+  inline-size: 3.5rem;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  background: var(--signal-faint);
+  color: var(--signal);
+
+  svg {
+    @include mixins.stroke-icon(1.75rem);
+  }
+}
+
+.text {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.name {
+  font-size: var(--text-xl);
+  font-weight: 800;
+}
+
+.detail {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--signal);
+  font-weight: 800;
+
+  svg {
+    @include mixins.stroke-icon(1.125rem);
+    transition: translate var(--duration-base) var(--ease-out);
+  }
+
+  .link:hover & svg {
+    translate: 0.25rem 0;
+  }
+
+  &:dir(rtl) svg {
+    scale: -1 1;
+  }
+}
+
+@container stage (height < 30rem) {
+  .line,
+  .detail {
+    @include mixins.visually-hidden;
+  }
+}
+
+// Phones: the channels in a column, each a row.
+@media (width < 48rem) {
+  .channels {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    gap: var(--space-3);
+  }
+
+  .link {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: none;
+    align-items: center;
+    padding: var(--space-3);
+  }
+
+  .sign {
+    inline-size: 2.75rem;
+  }
+
+  .name {
+    font-size: var(--text-lg);
+  }
+
+  .detail {
+    @include mixins.visually-hidden;
+  }
+}

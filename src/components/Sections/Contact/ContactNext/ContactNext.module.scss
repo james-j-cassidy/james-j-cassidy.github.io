@@ -1,0 +1,213 @@
+@use "../../../../styles/mixins";
+@use "../contact";
+
+// The last part fills the stage: rings from the reading-start edge, the title, the three
+// steps on one signal line, then the hours and the button. Nothing fades.
+.part {
+  @include mixins.story-piece(0, 0.4, --open-in);
+  @include mixins.story-piece(0.05, 0.6, --rings-in);
+  @include mixins.story-piece(0.15, 0.5, --title-in);
+  @include mixins.story-piece(0.3, 0.8, --line-in);
+  @include mixins.story-piece(0.7, 1, --close-in);
+  @include mixins.story-piece(0, 0.4, --close-out, --out);
+  @include mixins.story-piece(0.1, 0.6, --line-out, --out);
+  @include mixins.story-piece(0.3, 0.7, --title-out, --out);
+  @include mixins.story-piece(0.3, 0.9, --rings-out, --out);
+  @include mixins.story-piece(0.6, 1, --open-out, --out);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+}
+
+// Opens from the reading-start edge like a curtain drawn aside, and closes back.
+.backdrop {
+  --rings: calc(var(--rings-in) * (1 - var(--rings-out)));
+  clip-path: inset(0 calc(max(1 - var(--open-in), var(--open-out)) * 100%) 0 0);
+
+  &:dir(rtl) {
+    clip-path: inset(
+      0 0 0 calc(max(1 - var(--open-in), var(--open-out)) * 100%)
+    );
+  }
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+  gap: clamp(var(--space-4), 7cqh, var(--space-12));
+  block-size: 100%;
+}
+
+// Slides in from the reading start, and off it again.
+.titleBar {
+  transform: translateX(
+    calc(((1 - var(--title-in)) + var(--title-out)) * -120vw * var(--dir, 1))
+  );
+}
+
+.tag {
+  @include contact.tag;
+}
+
+.heading {
+  @include contact.heading;
+}
+
+// Three steps in a row on one line that draws across them.
+.track {
+  --line: calc(var(--line-in) * (1 - var(--line-out)));
+  position: relative;
+}
+
+.steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// The signal line through the step numbers' centers, drawn from the reading start.
+.signal {
+  position: absolute;
+  inset-block-start: 1.5rem;
+  inset-inline: 1.5rem;
+  block-size: 3px;
+  margin-block-start: -1.5px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(90deg, var(--signal), var(--signal-soft));
+  box-shadow: 0 0 14px var(--signal);
+  transform-origin: left;
+  scale: var(--line) 1;
+
+  &:dir(rtl) {
+    transform-origin: right;
+  }
+}
+
+// Each step lights as the line reaches it: the number grows from a point and the words
+// rise under it.
+.step {
+  --lit: clamp(0, calc((var(--line) - var(--position) * 0.33) * 4), 1);
+  position: relative;
+  display: grid;
+  align-content: start; // steps with shorter text keep their lines at the top
+  justify-items: start;
+  gap: var(--space-1);
+}
+
+.number {
+  display: grid;
+  place-items: center;
+  inline-size: 3rem;
+  aspect-ratio: 1;
+  margin-block-end: var(--space-2);
+  border: 2px solid var(--signal);
+  border-radius: 50%;
+  background: var(--color-surface);
+  box-shadow: 0 0 22px var(--signal-soft);
+  color: var(--signal);
+  font-size: var(--text-lg);
+  font-weight: 900;
+  scale: var(--lit);
+}
+
+.stepTitle,
+.stepText {
+  transform: translateY(calc((1 - var(--lit)) * 40cqh));
+}
+
+.stepTitle {
+  font-size: clamp(var(--text-base), 3.2cqh, var(--text-xl));
+  font-weight: 800;
+}
+
+.stepText {
+  color: var(--color-text-muted);
+  font-weight: 600;
+  line-height: var(--leading-body);
+}
+
+// The hours and the button rise into place together, and sink back.
+.close {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-8);
+  transform: translateY(calc((1 - var(--close-in) + var(--close-out)) * 90cqh));
+}
+
+.hours {
+  @include contact.card;
+  flex: 1 1 22rem;
+  max-inline-size: 40rem;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  font-weight: 600;
+  line-height: var(--leading-body);
+}
+
+.hoursLabel {
+  color: var(--signal);
+  font-weight: 800;
+}
+
+@container stage (height < 30rem) {
+  .stepText {
+    @include mixins.visually-hidden;
+  }
+}
+
+// Phones: the steps in a column on a line running down.
+@media (width < 48rem) {
+  .layout {
+    gap: var(--space-4);
+  }
+
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  .signal {
+    inset-block: 1.25rem;
+    inset-inline: 1.25rem auto;
+    inline-size: 3px;
+    block-size: auto;
+    margin: 0 0 0 -1.5px;
+    transform-origin: top;
+    scale: 1 var(--line);
+  }
+
+  .step {
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--space-3);
+    align-items: center;
+  }
+
+  .number {
+    grid-row: span 2;
+    inline-size: 2.5rem;
+    margin: 0;
+    font-size: var(--text-base);
+  }
+
+  .stepText {
+    @include mixins.visually-hidden;
+  }
+
+  .close {
+    justify-content: center;
+  }
+
+  .hours {
+    flex-basis: 100%;
+    font-size: var(--text-sm);
+  }
+}

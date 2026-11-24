@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>James Joseph Cassidy, Resume</title>
+    <!-- James's resume, printed to public/resume.pdf by build.mjs (npm run resume). From his LinkedIn profile and the site's own Professional Journey content: the same public-safe wording, no internal system names. Plain text in one column so applicant tracking systems read it in order; the color is the site's accent. No email or phone: the site's Hire Me form is the way to reach him. -->
+    <style>
+      @page {
+        size: Letter;
+        margin: 0.55in 0.6in;
+      }
+      :root {
+        --ink: #0f172a;
+        --muted: #334155;
+        --accent: #1e40af; /* 8.7:1 on white */
+        --rule: #93c5fd;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 9.6pt;
+        line-height: 1.38;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      header {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16pt;
+        padding-bottom: 7pt;
+        border-bottom: 2.5pt solid var(--accent);
+      }
+      .logo {
+        flex: none;
+        width: 70pt;
+        height: auto;
+        margin-bottom: -2pt;
+      }
+
+      .name {
+        flex: 1;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 24pt;
+        font-weight: 800;
+        letter-spacing: -0.01em;
+        line-height: 1.05;
+      }
+      .title {
+        margin: 3pt 0 0;
+        color: var(--accent);
+        font-size: 11pt;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .links {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        text-align: right;
+        font-size: 9pt;
+        line-height: 1.5;
+      }
+      h2 {
+        margin: 12pt 0 5pt;
+        padding-bottom: 2pt;
+        border-bottom: 1pt solid var(--rule);
+        color: var(--accent);
+        font-size: 10.5pt;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      p {
+        margin: 0;
+      }
+      .skills {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        gap: 2pt 10pt;
+        margin: 0;
+      }
+      .skills dt {
+        font-weight: 700;
+      }
+      .skills dd {
+        margin: 0;
+      }
+      .job {
+        margin-top: 8pt;
+        break-inside: avoid;
+      }
+      .job-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 12pt;
+      }
+      .role {
+        font-weight: 800;
+      }
+      .company {
+        color: var(--accent);
+        font-weight: 700;
+      }
+      .when {
+        flex: none;
+        color: var(--muted);
+        font-weight: 600;
+        text-align: right;
+      }
+      .summary {
+        margin-top: 2pt;
+        color: var(--muted);
+      }
+      ul.points {
+        margin: 3pt 0 0;
+        padding-left: 13pt;
+      }
+      ul.points li {
+        margin-top: 1.5pt;
+      }
+      ul.points li::marker {
+        color: var(--accent);
+      }
+      .education {
+        display: grid;
+        grid-template-columns: 1fr max-content;
+        gap: 3pt 12pt;
+        margin: 0;
+      }
+      .education dd {
+        margin: 0;
+        color: var(--muted);
+        font-weight: 600;
+        text-align: right;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <img class="logo" src="logo.svg" alt="" width="922" height="512" />
+      <div class="name">
+        <h1>James Joseph Cassidy</h1>
+        <p class="title">
+          Software Engineer &amp; Technical Leader · USAF Veteran
+        </p>
+      </div>
+      <ul class="links">
+        <li>
+          <a href="https://james-j-cassidy.github.io/"
+            >james-j-cassidy.github.io</a
+          >
+        </li>
+        <li>
+          <a href="https://www.linkedin.com/in/jamesjosephcassidy/"
+            >linkedin.com/in/jamesjosephcassidy</a
+          >
+        </li>
+        <li>
+          <a href="https://github.com/james-j-cassidy"
+            >github.com/james-j-cassidy</a
+          >
+        </li>
+        <li>Garden Grove, California</li>
+      </ul>
+    </header>
+    <h2>Summary</h2>
+    <p>
+      Software engineer and technical leader with 25+ years across military,
+      industrial and commercial software. Founding architect of a cloud-native
+      Azure platform of 27 Function Apps and 340+ HTTP endpoints, modernizing
+      class action administration from MS Access and SQL Server desktop tools.
+      Hands-on in .NET, React and PostgreSQL; supervises a team of up to 4
+      engineers and analysts, and earlier managed 54 people and completed 61
+      projects as an IT project manager. U.S. Air Force veteran with master's
+      degrees in Computer Science and Project Management.
+    </p>
+    <h2>Skills</h2>
+    <dl class="skills">
+      <dt>Architecture</dt>
+      <dd>
+        Platform and cloud-native architecture, API design, legacy
+        modernization, engineering standards, architecture documentation
+      </dd>
+      <dt>Development</dt>
+      <dd>
+        C#, .NET 10, Azure Functions, TypeScript, JavaScript, React 19, Vite,
+        Go, C, C++, WPF
+      </dd>
+      <dt>Cloud</dt>
+      <dd>Azure, Azure Static Web Apps, AWS, Terraform, Docker, CI/CD</dd>
+      <dt>Data</dt>
+      <dd>PostgreSQL, MS SQL Server, SQL, EF Core code-first migrations</dd>
+      <dt>Leadership</dt>
+      <dd>
+        Technical leadership, mentoring, project and program management,
+        AI-assisted development, automated testing
+      </dd>
+    </dl>
+    <h2>Experience</h2>
+    <section class="job">
+      <div class="job-head">
+        <p>
+          <span class="role">Data and Applications Supervisor</span> ·
+          <span class="company">CPT Group</span>
+        </p>
+        <p class="when">May 2024 – Present</p>
+      </div>
+      <p class="summary">
+        Leading the modernization of class action administration systems, from
+        MS Access and SQL Server desktop tools to a cloud-native Azure platform.
+        Founding architect of the platform, supervising a team of up to 4
+        engineers and analysts.
+      </p>
+      <ul class="points">
+        <li>
+          Founded and architected a .NET Azure Functions platform: 27 Function
+          Apps and 340+ HTTP endpoints on 6 shared private NuGet libraries, each
+          app with its own automated tests.
+        </li>
+        <li>
+          Migrated all 27 apps and 6 shared libraries from .NET 8 to .NET 10 in
+          two days.
+        </li>
+        <li>
+          Started and co-built an internal tools web app (React 19, TypeScript,
+          Vite, Azure Static Web Apps) hosting 39 tools, including a replacement
+          for a legacy MS Access data-intake process.
+        </li>
+        <li>
+          PostgreSQL across 5 databases managed through 475 EF Core code-first
+          migrations; Azure infrastructure codified in Terraform across four
+          environments.
+        </li>
+        <li>
+          Built a Go WebRTC signaling and presence service with dual-issuer JWT
+          authentication, deployed with Docker.
+        </li>
+        <li>
+          Median cycle time fell 77%, from 22 to 5 days, after introducing an
+          auto-merge, auto-deploy fast lane to dev and adopting AI-assisted
+          development.
+        </li>
+        <li>
+          Authored the architecture documentation and co-authored the
+          engineering standards used across all repositories.
+        </li>
+      </ul>
+    </section>
+    <section class="job">
+      <div class="job-head">
+        <p>
+          <span class="role">Senior Software Engineer</span> ·
+          <span class="company">CoStar Group</span>
+        </p>
+        <p class="when">Aug 2021 – Dec 2023</p>
+      </div>
+      <ul class="points">
+        <li>
+          Led development of a data-driven MS PowerPoint sales deck system to
+          enhance upselling opportunities for brokers.
+        </li>
+        <li>
+          Developed an automated campaign video system with Idomoo and AWS Step
+          Functions, Lambdas and Lambda APIs.
+        </li>
+        <li>
+          Designed and built a React auction game site that drove significant
+          broker engagement, and a React and Redux campaign management system.
+        </li>
+        <li>
+          Collaborated on a HoloLens augmented touring system and explored
+          Unreal Engine 5 photogrammetry for immersive property experiences.
+        </li>
+      </ul>
+    </section>
+    <section class="job">
+      <div class="job-head">
+        <p>
+          <span class="role">Senior Software Engineer</span> ·
+          <span class="company">ABS Home Mortgage</span>
+        </p>
+        <p class="when">Dec 2020 – Aug 2021</p>
+      </div>
+      <ul class="points">
+        <li>
+          Modernized a VB.NET lending website: modularized its JavaScript, fixed
+          its security flaws and integrated a Java REST API.
+        </li>
+        <li>
+          Designed a credit risk assessment system that improved lender
+          decision-making.
+        </li>
+        <li>
+          Resolved stack overflows by re-engineering a complex switch-case
+          structure into a dictionary-based design; mentored the team on coding
+          standards.
+        </li>
+      </ul>
+    </section>
+    <section class="job">
+      <div class="job-head">
+        <p>
+          <span class="role">Software Engineer III</span> ·
+          <span class="company">ARI Network Services</span>
+        </p>
+        <p class="when">May 2015 – Dec 2020</p>
+      </div>
+      <ul class="points">
+        <li>
+          Invented a parts-diagram OCR process, integrated through a WCF service
+          with an AngularJS interface.
+        </li>
+        <li>
+          Designed a customer import process that accepts data in any format.
+        </li>
+        <li>
+          Built a hash-based system to identify altered catalogs, and a XAML
+          MVVM desktop app for browsing and printing catalogs from any database.
+        </li>
+      </ul>
+    </section>
+    <section class="job">
+      <div class="job-head">
+        <p>
+          <span class="role">Senior .NET Developer</span> ·
+          <span class="company">McLaughlin Research Corporation</span>
+        </p>
+        <p class="when">Oct 2014 – Apr 2015</p>
+      </div>
+      <ul class="points">
+        <li>
+          Developed a bill-processing information system with AngularJS, Nancy
+          and Dapper, and connected it to a Kofax image-processing system.
+        </li>
+        <li>
+          Full test coverage with NUnit, FakeItEasy and NCover; reversible
+          database changes with Fluent Migrator.
+        </li>
+      </ul>
+    </section>
+    <section class="job">
+      <div class="job-head">
+        <p>
+          <span class="role">Senior .NET Software Engineer and Architect</span>
+          · <span class="company">Sunkist Growers</span>
+        </p>
+        <p class="when">Feb 2014 – Oct 2014</p>
+      </div>
+      <ul class="points">
+        <li>
+          Reduced fruit-weighing error 86%, from ±14 g to ±2 g, building weight
+          detection from the mechanics to the C sorting code (A/D conversion,
+          Bessel and self-adaptive filters), which led to sales of the systems.
+        </li>
+        <li>
+          Upgraded a packing house's control system to OPTO 22 in a third of the
+          allotted downtime (4 of 12 hours), taking it from 50% back to full
+          capacity.
+        </li>
+        <li>
+          Rebuilt a WPF application on PRISM 5 and MEF, and decoupled the C and
+          C++ device code behind interfaces and WCF.
+        </li>
+      </ul>
+    </section>
+    <section class="job">
+      <div class="job-head">
+        <p>
+          <span class="role">Senior Software / IT Project Manager</span> ·
+          <span class="company">iHerb</span>
+        </p>
+        <p class="when">Mar 2012 – Dec 2013</p>
+      </div>
+      <ul class="points">
+        <li>
+          Managed 54 people through the reporting structure and completed 61
+          projects.
+        </li>
+        <li>
+          Led PCI DSS compliance to a successful Report on Compliance, saving
+          $30K+.
+        </li>
+        <li>
+          Brought a failing $1.2M warehouse expansion IT project back on track,
+          directing a 29-member cross-functional team and beating the new
+          deadline.
+        </li>
+        <li>
+          Led the mobile website project, and the company was recognized with a
+          best international mobile website award in 2013; completed iPhone,
+          iPad, Android and Windows 8 apps.
+        </li>
+      </ul>
+    </section>
+    <section class="job">
+      <div class="job-head">
+        <p>
+          <span class="role"
+            >IT Project Manager, Help Desk, Software Engineer, Mechanic</span
+          >
+          · <span class="company">U.S. Air Force</span>
+        </p>
+        <p class="when">Jan 1999 – Dec 2011</p>
+      </div>
+      <ul class="points">
+        <li>
+          Developed 647,000 lines of Pascal for two live satellite training
+          simulators, eliminating training downtime from system defects.
+        </li>
+        <li>
+          Cut time to deliver products by 43% with early stakeholder prototypes
+          and rapid application development.
+        </li>
+        <li>
+          Halved rework time as the go-to translator between technical and
+          business stakeholders.
+        </li>
+      </ul>
+    </section>
+    <h2>Education and credentials</h2>
+    <dl class="education">
+      <dt>
+        <strong>Master of Science in Computer Science</strong>, concentration in
+        Software Engineering · Colorado Technical University
+      </dt>
+      <dd>2014</dd>
+      <dt>
+        <strong>Master of Project Management</strong> · Keller Graduate School
+        of Management, DeVry University
+      </dt>
+      <dd>2011</dd>
+      <dt>
+        <strong>Bachelor of Science in Game and Simulation Programming</strong>,
+        cum laude · DeVry University
+      </dt>
+      <dd>2010</dd>
+      <dt>
+        <strong
+          >Associate in Applied Science, Computer Science Technology</strong
+        >
+        · Community College of the Air Force
+      </dt>
+      <dd>2006</dd>
+      <dt><strong>CompTIA Project+</strong> · CompTIA</dt>
+      <dd>2013</dd>
+    </dl>
+  </body>
+</html>

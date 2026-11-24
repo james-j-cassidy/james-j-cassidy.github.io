@@ -1,0 +1,10 @@
+// The open channel's colors for the whole tab: the site's own accent (James's brand)
+// carries text and controls; the rest are decorative (rings, beams, glows) and never
+// carry text.
+.contact {
+  display: contents;
+  --signal: var(--color-accent);
+  --signal-soft: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  --signal-faint: color-mix(in srgb, var(--color-accent) 14%, transparent);
+  --signal-deep: light-dark(#e8f1ff, #0b1a3d);
+}
