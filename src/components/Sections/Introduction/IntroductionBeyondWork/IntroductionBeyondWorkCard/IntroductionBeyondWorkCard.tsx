@@ -2,6 +2,7 @@ import type {
   BeyondWorkIcon,
   BeyondWorkItem,
 } from "../../../../../content/introduction";
+import UsafSymbol from "../../../../UsafSymbol/UsafSymbol";
 import styles from "./IntroductionBeyondWorkCard.module.scss";
 
 interface IntroductionBeyondWorkCardProps {
@@ -47,8 +48,11 @@ function IntroductionBeyondWorkCard({
   );
 }
 
+// The item's emblem: the header's Air Force symbol for the veteran item, otherwise a
+// line drawing.
 function Emblem({ icon }: { icon: BeyondWorkIcon }) {
-  const paths: Record<BeyondWorkIcon, string> = {
+  if (icon === "usaf") return <UsafSymbol className={styles.usaf} />;
+  const paths: Record<Exclude<BeyondWorkIcon, "usaf">, string> = {
     // A compass rose.
     compass: "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18ZM15.5 8.5l-2 5-5 2 2-5Z",
     // A wrench.
@@ -59,12 +63,9 @@ function Emblem({ icon }: { icon: BeyondWorkIcon }) {
     // A heart.
     heart:
       "M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z",
-    // Wings around a star.
-    wings:
-      "M12 8l1.2 2.6 2.8.3-2.1 1.9.6 2.8L12 14.2l-2.5 1.4.6-2.8L8 10.9l2.8-.3ZM2 9c3 0 5 1 6 3M22 9c-3 0-5 1-6 3M3 13c2.5 0 4 .6 5 2M21 13c-2.5 0-4 .6-5 2",
   };
   return (
-    <svg viewBox="0 0 24 24">
+    <svg className={styles.glyph} viewBox="0 0 24 24">
       <path d={paths[icon]} />
     </svg>
   );

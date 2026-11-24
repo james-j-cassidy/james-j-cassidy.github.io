@@ -63,15 +63,22 @@
   );
   box-shadow: 0 0 18px color-mix(in srgb, var(--color-accent) 50%, transparent);
   color: var(--color-accent);
+}
 
-  svg {
-    inline-size: 58%;
-    fill: none;
-    stroke: currentcolor;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
+.glyph {
+  inline-size: 58%;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+// The Air Force symbol fills more of the disc (it is wide and short: 74 × 68).
+.usaf {
+  inline-size: 80%;
+  block-size: auto;
+  aspect-ratio: 74 / 68;
 }
 
 .text {
