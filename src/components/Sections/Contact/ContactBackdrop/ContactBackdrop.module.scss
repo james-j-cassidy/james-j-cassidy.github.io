@@ -1,0 +1,45 @@
+// Placed like every part's backdrop; the part's own class says how it opens (the
+// default here has no specificity, so the part's always wins).
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      60% 70% at var(--x) var(--y),
+      var(--signal-faint),
+      transparent 70%
+    ),
+    linear-gradient(180deg, var(--color-bg), var(--signal-deep));
+}
+
+// Rings, each a step farther out, every other one dashed; each spreads to its place as
+// --rings runs 0 → 1 and turns a little as it goes.
+.rings {
+  position: absolute;
+  inset-block-start: var(--y);
+  inset-inline-start: var(--x);
+}
+
+.ring {
+  --size: calc(var(--ring) * 22cqh);
+  position: absolute;
+  inline-size: var(--size);
+  aspect-ratio: 1;
+  margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
+  border: 1.5px solid
+    color-mix(
+      in srgb,
+      var(--signal) calc(40% - var(--ring) * 3.5%),
+      transparent
+    );
+  border-radius: 50%;
+  scale: var(--rings, 1);
+  rotate: calc((1 - var(--rings, 1)) * var(--ring) * 12deg);
+
+  &:nth-child(even) {
+    border-style: dashed;
+  }
+}

@@ -317,6 +317,16 @@
   @include form.hint;
 }
 
+// A short text area (the personal note).
+.short {
+  min-block-size: 5.5rem;
+}
+
+// A field across every column of its grid.
+.wide {
+  grid-column: 1 / -1;
+}
+
 .under {
   display: flex;
   flex-wrap: wrap;

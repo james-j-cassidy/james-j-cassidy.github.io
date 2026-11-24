@@ -7,6 +7,7 @@ import {
 import { SECTIONS, SECTION_LABELS } from "../../../content/sections";
 import { useNavigation } from "../../../state/navigation";
 import ArchitectureExpertise from "../ArchitectureExpertise/ArchitectureExpertise";
+import Contact from "../Contact/Contact";
 import Introduction from "../Introduction/Introduction";
 import LeadershipResults from "../LeadershipResults/LeadershipResults";
 import ProfessionalJourney from "../ProfessionalJourney/ProfessionalJourney";
@@ -26,6 +27,7 @@ const SECTION_CONTENT: Partial<Record<string, ComponentType>> = {
   "architecture-expertise": ArchitectureExpertise,
   "tech-stack": TechStack,
   "leadership-results": LeadershipResults,
+  contact: Contact,
 };
 
 interface SwipeStart {

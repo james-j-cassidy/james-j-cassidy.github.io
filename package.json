@@ -10,7 +10,8 @@
     "typecheck": "tsc -b",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "resume": "node tools/resume/build.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",
