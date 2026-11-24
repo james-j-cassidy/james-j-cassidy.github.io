@@ -1,0 +1,124 @@
+// Dealt in from the far side in turn as the part enters, tilting as it lands; slides out
+// to the reading start as the part leaves (--deal from --in and its order).
+.highlight {
+  --deal: clamp(0, calc((var(--in, 1) - 0.4 - var(--order) * 0.12) / 0.36), 1);
+  border: 1px solid color-mix(in srgb, var(--job-accent) 45%, transparent);
+  border-inline-start: 4px solid var(--job-accent);
+  border-radius: 0.6rem;
+  background: var(--color-surface);
+  transform: translateX(calc((1 - var(--deal)) * 120vw * var(--dir, 1)))
+    rotate(calc((1 - var(--deal)) * 6deg));
+}
+
+// The whole row is the button: metric, title, chevron. At least 44 tall.
+.toggle {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+  inline-size: 100%;
+  min-block-size: var(--target-min);
+  padding: clamp(var(--space-2), 1.8cqh, var(--space-3)) var(--space-4);
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+
+  &:hover .chevron {
+    translate: 0 2px;
+  }
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+
+  @media (width < 48rem) {
+    gap: var(--space-3);
+    padding: var(--space-1) var(--space-3);
+  }
+}
+
+.metric {
+  display: grid;
+  justify-items: center;
+  min-inline-size: 4.5rem;
+}
+
+.metricValue {
+  color: var(--job-accent);
+  font-size: clamp(var(--text-lg), 4.4cqh, 1.75rem);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.05;
+}
+
+.metricLabel {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.title {
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.chevron {
+  inline-size: 1.25rem;
+  fill: none;
+  stroke: var(--job-accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    rotate var(--duration-base) var(--ease-out),
+    translate var(--duration-base) var(--ease-out);
+
+  .toggle[aria-expanded="true"] & {
+    rotate: 180deg;
+  }
+}
+
+// The case study: three short labeled lines, unfolding from the button down.
+.case {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--space-1) var(--space-3);
+  margin: 0;
+  padding: 0 var(--space-4) var(--space-3);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  transform-origin: top center;
+  animation: unfold 400ms var(--ease-out) both;
+
+  &[hidden] {
+    display: none;
+  }
+
+  dt {
+    color: var(--job-accent);
+    font-weight: 800;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+@keyframes unfold {
+  from {
+    transform: perspective(600px) rotateX(-90deg);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+:global([data-flow]) .case {
+  animation: none;
+}

@@ -1,0 +1,120 @@
+@use "../../../../styles/mixins";
+
+// The same movement for every job; nothing fades.
+//   Entering: the backdrop opens from the top, the rail flips down and draws in, the
+//   card docks down from the rail, the highlights are dealt in (their own styles).
+//   Leaving: the whole job carousels away toward the reading start.
+.part {
+  @include mixins.story-piece(0, 0.4, --open);
+  @include mixins.story-piece(0.15, 0.55, --draw);
+  @include mixins.story-piece(0.3, 0.75, --dock);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: translateX(calc(var(--out) * -120vw * var(--dir, 1)))
+    translateZ(calc(var(--out) * -400px))
+    rotateY(calc(var(--out) * 55deg * var(--dir, 1)));
+}
+
+// Carries the job's theme to everything inside it: the accent, in the shade for the
+// theme in use (each shade meets 7:1 on its background). Adds no box of its own.
+.themed {
+  --job-accent: light-dark(var(--job-accent-light), var(--job-accent-dark));
+  display: contents;
+
+  // The backdrop opens from the top (nothing of it shows while away).
+  > :first-child {
+    clip-path: inset(0 0 calc((1 - var(--open)) * 100%) 0);
+  }
+}
+
+// Rail across the top; the card beside the highlights (stacked on phones).
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-areas:
+    "rail rail"
+    "card highlights";
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  align-content: center;
+  align-items: start;
+  gap: clamp(var(--space-3), 3cqh, var(--space-6)) var(--space-8);
+  perspective: 1400px; // depth for the rail's flip and the card's docking
+}
+
+// Flips down from edge-on, hinged at its top.
+.railSlot {
+  grid-area: rail;
+  display: grid;
+  gap: var(--space-2);
+  transform-origin: center top;
+  // While away it is also lifted above the stage, so no edge of it shows.
+  transform: translateY(calc((1 - var(--draw)) * -40cqh))
+    rotateX(calc((1 - var(--draw)) * 90deg));
+}
+
+.tag {
+  margin: 0;
+  color: var(--job-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  // Short stages and phones: still read, not shown (the tab already names it).
+  @container stage (height < 34rem) {
+    @include mixins.visually-hidden;
+  }
+
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+// Docks down from the rail: from edge-on above, swinging down into place.
+.cardSlot {
+  grid-area: card;
+  transform-origin: center top;
+  transform: translateY(calc((1 - var(--dock)) * -70cqh))
+    rotateX(calc((1 - var(--dock)) * -90deg));
+}
+
+.highlights {
+  grid-area: highlights;
+
+  ul {
+    display: grid;
+    gap: clamp(var(--space-2), 1.6cqh, var(--space-3));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+}
+
+// Phones: one column.
+@media (width < 48rem) {
+  .layout {
+    grid-template-areas:
+      "rail"
+      "card"
+      "highlights";
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  // An open case study becomes a detail view: the card and the other highlights step
+  // aside until it is closed again (its button closes it).
+  .layout:has([aria-expanded="true"]) {
+    .cardSlot,
+    .highlights li:not(:has([aria-expanded="true"])) {
+      display: none;
+    }
+  }
+}
+
+:global([data-flow]) {
+  .railSlot,
+  .cardSlot {
+    transform: none;
+  }
+}

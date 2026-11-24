@@ -7,6 +7,7 @@ import {
 import { SECTIONS, SECTION_LABELS } from "../../../content/sections";
 import { useNavigation } from "../../../state/navigation";
 import Introduction from "../Introduction/Introduction";
+import ProfessionalJourney from "../ProfessionalJourney/ProfessionalJourney";
 import SectionPanel from "../SectionPanel/SectionPanel";
 import styles from "./SectionDeck.module.scss";
 
@@ -18,6 +19,7 @@ const SWIPE_SIDEWAYS_RATIO = 1.5; // sideways travel must exceed 1.5 x vertical 
 // Each built section's content, by section id. Sections not listed show a placeholder.
 const SECTION_CONTENT: Partial<Record<string, ComponentType>> = {
   introduction: Introduction,
+  "professional-journey": ProfessionalJourney,
 };
 
 interface SwipeStart {
