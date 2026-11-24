@@ -1,0 +1,16 @@
+// The sunrise colors for the whole tab. --rise and --on-rise are for text and controls
+// and reach 7:1 (AAA) on the page background and the surface in both themes:
+//   --rise    #7c3a00 on #f4f8ff 8.0:1 · #ffc56b on #0a1530 11.6:1
+//   --on-rise #ffffff on #7c3a00 8.5:1 · #0a1530 on #ffc56b 11.6:1
+// The rest are decorative (skies, the sun, glows) and never carry text.
+.leadership {
+  display: contents;
+  --rise: light-dark(#7c3a00, #ffc56b);
+  --on-rise: light-dark(#ffffff, #0a1530);
+  --rise-fill: light-dark(#ea580c, #fb923c);
+  --rise-glow: light-dark(#f97316, #fdba74);
+  --rise-pale: light-dark(#fed7aa, #7c2d12);
+  --dawn-high: var(--color-bg);
+  --dawn-mid: light-dark(#fdf0e6, #1d1840);
+  --dawn-low: light-dark(#fcd9bd, #3b1d3a);
+}

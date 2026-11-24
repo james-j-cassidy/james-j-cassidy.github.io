@@ -1,0 +1,84 @@
+@use "../../../styles/mixins";
+
+// Shared looks for the Leadership & Results tab: the sunrise colors live on the tab's
+// root (LeadershipResults.module.scss); these are the pieces every part repeats.
+
+// The small uppercase line over a part's heading.
+@mixin tag {
+  margin: 0;
+  color: var(--rise);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+@mixin heading {
+  margin: var(--space-1) 0 0;
+  font-size: clamp(1.375rem, 6cqh, 3rem);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+
+  @media (width < 48rem) {
+    font-size: var(--text-xl);
+  }
+}
+
+// A warm glass card: surface, a sunrise border and glow.
+@mixin card {
+  position: relative;
+  padding: clamp(var(--space-3), 3cqh, var(--space-6));
+  border: 1px solid var(--rise);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  box-shadow: 0 0 26px color-mix(in srgb, var(--rise-glow) 30%, transparent);
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+// A new choice prints into a card from the bottom up, like light rising.
+@mixin rise-print {
+  animation: rise-print 600ms var(--ease-out) both;
+
+  :global([data-flow]) & {
+    animation: none;
+  }
+}
+
+// The source of a fact, small and muted.
+@mixin source {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+// A step that is 0 only while $var is within 2% of its start or end: pieces scale to
+// nothing there, past edge-on, where layers inside could still show.
+@mixin shown($in, $out) {
+  --shown: calc(
+    clamp(0, (var(#{$in}, 1) - 0.02) * 1000, 1) *
+      clamp(0, (0.98 - var(#{$out}, 0)) * 1000, 1)
+  );
+}
+
+@keyframes rise-print {
+  from {
+    clip-path: inset(100% 0 0 0);
+    translate: 0 1rem;
+  }
+
+  to {
+    clip-path: inset(0);
+    translate: 0 0;
+  }
+}
+
+// Phones and short stages hide details that are still read.
+@mixin compact-hidden {
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}

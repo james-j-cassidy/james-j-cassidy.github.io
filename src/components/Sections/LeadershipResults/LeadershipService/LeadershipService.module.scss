@@ -1,0 +1,204 @@
+@use "../../../../styles/mixins";
+@use "../leadership";
+
+// Words, compass and card side by side (stacked on phones). Its own movement replaces
+// the default carousel; nothing fades. (The compass reads --ring-in and --ring-out.)
+.part {
+  @include mixins.story-piece(0, 0.4, --sky-in);
+  @include mixins.story-piece(0.1, 0.55, --title-in);
+  @include mixins.story-piece(0.15, 0.95, --ring-in);
+  @include mixins.story-piece(0.5, 1, --card-in);
+  @include mixins.story-piece(0, 0.6, --ring-out, --out);
+  @include mixins.story-piece(0, 0.5, --card-out, --out);
+  @include mixins.story-piece(0.3, 0.8, --title-out, --out);
+  @include mixins.story-piece(0.6, 1, --sky-out, --out);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+}
+
+// Night giving way to dawn: faint stars over a warm glow. Opens as a circle from the
+// compass, and closes back into it.
+.sky {
+  background:
+    radial-gradient(
+      circle at 50% 55%,
+      color-mix(in srgb, var(--rise-glow) 20%, transparent),
+      transparent 45%
+    ),
+    radial-gradient(
+        1.5px 1.5px at 20% 30%,
+        color-mix(in srgb, var(--color-text) 60%, transparent) 50%,
+        transparent 51%
+      )
+      0 0 / 140px 120px,
+    radial-gradient(
+        1px 1px at 70% 60%,
+        color-mix(in srgb, var(--color-text) 50%, transparent) 50%,
+        transparent 51%
+      )
+      0 0 / 90px 110px,
+    linear-gradient(180deg, var(--dawn-high), var(--dawn-mid));
+  clip-path: circle(
+    calc(var(--sky-in) * (1 - var(--sky-out)) * 120%) at 50% 55%
+  );
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-areas: "title compass card";
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-content: center;
+  align-items: center;
+  gap: var(--space-6);
+  perspective: 1200px;
+}
+
+// Slides in from the reading start, and off the far side.
+.titleBar {
+  grid-area: title;
+  transform: translateX(
+    calc(((var(--title-out) - (1 - var(--title-in))) * 120vw) * var(--dir, 1))
+  );
+}
+
+.tag {
+  @include leadership.tag;
+}
+
+.heading {
+  @include leadership.heading;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: start;
+  gap: var(--space-4);
+  margin: clamp(var(--space-2), 2.4cqh, var(--space-4)) 0 0;
+}
+
+// A fact: the figure big, its label under it.
+.fact {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.factValue {
+  margin: 0;
+  color: var(--rise);
+  font-size: clamp(var(--text-xl), 5cqh, 2.25rem);
+  font-weight: 900;
+  line-height: 1;
+}
+
+.factLabel {
+  max-inline-size: 9ch;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.roles {
+  margin: var(--space-3) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.compassSlot {
+  grid-area: compass;
+  min-inline-size: 0;
+}
+
+// Hinges down from its top edge, and back up and away; past edge-on it is scaled to
+// nothing as well.
+.cardSlot {
+  @include leadership.shown(--card-in, --card-out);
+  grid-area: card;
+  min-inline-size: 0;
+  transform-origin: 50% 0;
+  transform: rotateX(
+    calc((1 - var(--card-in)) * 100deg - var(--card-out) * 100deg)
+  );
+  backface-visibility: hidden;
+  scale: var(--shown);
+}
+
+.card {
+  @include leadership.card;
+}
+
+.sheet {
+  display: grid;
+  gap: var(--space-2);
+
+  &[data-printed] {
+    @include leadership.rise-print;
+  }
+}
+
+.cardTag {
+  @include leadership.tag;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: clamp(var(--text-lg), 4.4cqh, 1.75rem);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+}
+
+.cardBody {
+  margin: 0;
+  line-height: var(--leading-body);
+}
+
+@container stage (height < 30rem) {
+  .roles {
+    @include mixins.visually-hidden;
+  }
+}
+
+@media (width < 48rem) {
+  .layout {
+    grid-template-areas:
+      "title"
+      "compass"
+      "card";
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
+  .facts {
+    gap: var(--space-3);
+  }
+
+  .factValue {
+    font-size: var(--text-lg);
+  }
+
+  .roles {
+    @include mixins.visually-hidden;
+  }
+
+  .card {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .cardTag {
+    @include mixins.visually-hidden;
+  }
+
+  .cardTitle {
+    font-size: var(--text-base);
+  }
+
+  .cardBody {
+    font-size: var(--text-sm);
+  }
+}

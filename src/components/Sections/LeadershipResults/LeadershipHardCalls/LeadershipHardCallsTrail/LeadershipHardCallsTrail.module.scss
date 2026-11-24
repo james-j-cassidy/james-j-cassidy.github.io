@@ -1,0 +1,79 @@
+// As wide as its column, never taller than the stage allows.
+.scene {
+  inline-size: min(100%, 92cqh);
+  margin-inline: auto;
+}
+
+.drawing {
+  display: block;
+  inline-size: 100%;
+  direction: ltr; // a drawing: never mirrored
+}
+
+// Scroll (from the part): breaks through above the ridge once the clouds part.
+.sun {
+  fill: var(--rise-fill);
+  filter: drop-shadow(0 0 10px var(--rise-glow));
+  translate: 0 calc((1 - var(--clear-in, 1)) * 70px);
+}
+
+.mountain {
+  fill: color-mix(in srgb, var(--rise-fill) 22%, var(--color-surface));
+  stroke: color-mix(in srgb, var(--rise-glow) 45%, transparent);
+  stroke-width: 1.5;
+}
+
+.snow {
+  fill: var(--rise-glow);
+}
+
+// The trail draws up from the foot of the mountain to the summit.
+.trail {
+  fill: none;
+  stroke: var(--rise);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: calc(1 - var(--trail-in, 1));
+}
+
+.waypoint {
+  fill: var(--color-surface);
+  stroke: var(--rise);
+  stroke-width: 2.5;
+}
+
+.flag {
+  fill: var(--rise);
+  stroke: var(--color-text);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  scale: 1 clamp(0, (var(--trail-in, 1) - 0.9) * 10, 1);
+}
+
+.climber {
+  fill: var(--color-text);
+  stroke: var(--rise-glow);
+  stroke-width: 2;
+}
+
+// The clouds: roll in from both sides to cover the summit (--cloud-in), part away as
+// the sun breaks through (--clear-in) and close in again on leaving (--cloud-out).
+// Beyond the drawing's edges they are cut off.
+.cloudsLeft,
+.cloudsRight {
+  --apart: calc(var(--clear-in, 1) * (1 - var(--cloud-out, 0)));
+  fill: color-mix(in srgb, var(--color-text-muted) 50%, var(--color-surface));
+  stroke: color-mix(in srgb, var(--color-text-muted) 70%, transparent);
+  stroke-width: 1;
+}
+
+.cloudsLeft {
+  translate: calc((1 - var(--cloud-in, 1)) * -260px - var(--apart) * 140px) 0;
+}
+
+.cloudsRight {
+  translate: calc((1 - var(--cloud-in, 1)) * 260px + var(--apart) * 140px) 0;
+}

@@ -6,7 +6,9 @@ import {
 } from "react";
 import { SECTIONS, SECTION_LABELS } from "../../../content/sections";
 import { useNavigation } from "../../../state/navigation";
+import ArchitectureExpertise from "../ArchitectureExpertise/ArchitectureExpertise";
 import Introduction from "../Introduction/Introduction";
+import LeadershipResults from "../LeadershipResults/LeadershipResults";
 import ProfessionalJourney from "../ProfessionalJourney/ProfessionalJourney";
 import SectionPanel from "../SectionPanel/SectionPanel";
 import styles from "./SectionDeck.module.scss";
@@ -20,6 +22,8 @@ const SWIPE_SIDEWAYS_RATIO = 1.5; // sideways travel must exceed 1.5 x vertical 
 const SECTION_CONTENT: Partial<Record<string, ComponentType>> = {
   introduction: Introduction,
   "professional-journey": ProfessionalJourney,
+  "architecture-expertise": ArchitectureExpertise,
+  "leadership-results": LeadershipResults,
 };
 
 interface SwipeStart {

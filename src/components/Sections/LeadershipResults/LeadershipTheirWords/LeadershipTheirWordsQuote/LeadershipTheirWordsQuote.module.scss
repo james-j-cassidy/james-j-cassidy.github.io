@@ -1,0 +1,57 @@
+@use "../../leadership";
+
+.card {
+  @include leadership.card;
+  text-align: center;
+
+  // A big warm opening quote mark over the top edge.
+  &::before {
+    content: "\201C";
+    position: absolute;
+    inset-block-start: -0.55em;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    color: var(--rise);
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  @media (width < 48rem) {
+    padding: var(--space-3);
+  }
+}
+
+.figure {
+  margin: 0;
+
+  &[data-printed] {
+    @include leadership.rise-print;
+  }
+}
+
+.quote {
+  margin: 0;
+
+  p {
+    margin: 0;
+    font-size: clamp(var(--text-base), 3.4cqh, var(--text-xl));
+    font-weight: 600;
+    line-height: var(--leading-body);
+  }
+}
+
+.caption {
+  margin-block-start: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.name {
+  color: var(--rise);
+  font-weight: 800;
+}
+
+.role {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}

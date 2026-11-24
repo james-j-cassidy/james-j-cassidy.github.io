@@ -1,0 +1,50 @@
+@use "../../../../../styles/mixins";
+@use "../../leadership";
+
+.card {
+  @include leadership.card;
+}
+
+.sheet {
+  display: grid;
+  gap: clamp(var(--space-1), 1cqh, var(--space-2));
+
+  &[data-printed] {
+    @include leadership.rise-print;
+  }
+}
+
+.headline {
+  margin: 0;
+  line-height: var(--leading-tight);
+}
+
+.figure {
+  color: var(--rise);
+  font-size: clamp(var(--text-xl), 5cqh, 2.25rem);
+  font-weight: 900;
+}
+
+.label {
+  font-size: clamp(var(--text-base), 3cqh, var(--text-xl));
+  font-weight: 800;
+}
+
+.story {
+  margin: 0;
+  line-height: var(--leading-body);
+}
+
+.source {
+  @include leadership.source;
+}
+
+@media (width < 48rem) {
+  .card {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .story {
+    font-size: var(--text-sm);
+  }
+}

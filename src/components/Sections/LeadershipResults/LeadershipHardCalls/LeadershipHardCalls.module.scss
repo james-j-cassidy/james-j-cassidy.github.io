@@ -1,0 +1,148 @@
+@use "../../../../styles/mixins";
+@use "../leadership";
+
+// The story on one side, the mountain in its storm on the other. Its own movement
+// replaces the default carousel; nothing fades. (The clouds, trail and steps read their
+// own pieces.)
+.part {
+  @include mixins.story-piece(0, 0.35, --sky-in);
+  @include mixins.story-piece(0.05, 0.5, --cloud-in);
+  @include mixins.story-piece(0, 0.45, --scene-in);
+  @include mixins.story-piece(0.25, 0.75, --trail-in);
+  @include mixins.story-piece(0.1, 0.55, --title-in);
+  @include mixins.story-piece(0.3, 0.8, --steps-in);
+  @include mixins.story-piece(0.7, 1, --clear-in);
+  @include mixins.story-piece(0, 0.5, --steps-out, --out);
+  @include mixins.story-piece(0, 0.4, --cloud-out, --out);
+  @include mixins.story-piece(0.3, 0.8, --scene-out, --out);
+  @include mixins.story-piece(0.3, 0.8, --title-out, --out);
+  @include mixins.story-piece(0.65, 1, --sky-out, --out);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+}
+
+// A storm sky with the dawn still glowing under it. Drops like a curtain from the top,
+// and lifts back up on leaving.
+.sky {
+  background:
+    radial-gradient(
+      45% 50% at 78% 85%,
+      color-mix(in srgb, var(--rise-glow) 22%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-text-muted) 18%, var(--dawn-high)),
+      var(--dawn-mid)
+    );
+  clip-path: inset(0 0 calc(max(1 - var(--sky-in), var(--sky-out)) * 100%) 0);
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-areas:
+    "title trail"
+    "markers trail"
+    "steps trail";
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  align-content: center;
+  gap: clamp(var(--space-2), 2cqh, var(--space-4)) var(--space-8);
+}
+
+// Slides in from the reading start, and off the far side.
+.titleBar {
+  grid-area: title;
+  transform: translateX(
+    calc(((var(--title-out) - (1 - var(--title-in))) * 120vw) * var(--dir, 1))
+  );
+}
+
+.tag {
+  @include leadership.tag;
+}
+
+.heading {
+  @include leadership.heading;
+}
+
+// Trail markers: signposts that drop in one by one, and lift away on leaving.
+.markers {
+  grid-area: markers;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.marker {
+  --drop: clamp(0, (var(--title-in) - var(--order) * 0.15) / 0.7, 1);
+  min-block-size: var(--target-min);
+  padding: 0 var(--space-4);
+  border: 2px solid var(--rise);
+  border-radius: var(--radius-sm) var(--radius-sm) var(--radius-sm) 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 800;
+  cursor: pointer;
+  translate: 0 calc((var(--title-out) - (1 - var(--drop))) * 50cqh);
+
+  &:hover {
+    box-shadow: 0 0 18px var(--rise-glow);
+  }
+
+  &[aria-selected="true"] {
+    background: var(--rise);
+    box-shadow: 0 0 22px var(--rise-glow);
+    color: var(--on-rise);
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+}
+
+// Slides in from the reading start with its steps (which follow one by one), and back
+// off that side after them.
+.stepsSlot {
+  --card-arrive: clamp(0, var(--steps-in) * 1.6, 1);
+  --card-leave: clamp(0, (var(--steps-out) - 0.4) / 0.6, 1);
+  grid-area: steps;
+  min-inline-size: 0;
+  translate: calc(
+      ((1 - var(--card-arrive)) + var(--card-leave)) * -120vw * var(--dir, 1)
+    )
+    0;
+}
+
+// Rises from below the stage as the storm gathers, and sinks out of sight on leaving,
+// after the clouds have closed over it.
+.trailSlot {
+  grid-area: trail;
+  align-self: center;
+  min-inline-size: 0;
+  transform: translateY(
+    calc((1 - var(--scene-in) + var(--scene-out)) * 100cqh)
+  );
+}
+
+@media (width < 48rem) {
+  .layout {
+    grid-template-areas:
+      "title trail"
+      "markers markers"
+      "steps steps";
+    grid-template-columns: minmax(0, 1fr) clamp(6rem, 30vw, 8rem);
+    column-gap: var(--space-3);
+    row-gap: var(--space-2);
+  }
+
+  .marker {
+    flex: 1;
+    padding: 0 var(--space-2);
+  }
+}

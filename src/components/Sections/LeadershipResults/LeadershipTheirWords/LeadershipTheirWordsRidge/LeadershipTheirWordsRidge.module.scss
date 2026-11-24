@@ -1,0 +1,118 @@
+@use "../../../../../styles/mixins";
+
+// The ridge's band along the bottom of the stage. Scroll (from the part): rises from
+// below the stage (--ridge-in), and sinks back below it on leaving (--ridge-out).
+.ridge {
+  position: relative;
+  block-size: clamp(5.5rem, 24cqh, 10rem);
+  direction: ltr; // a landscape: never mirrored
+  translate: 0 calc((1 - var(--ridge-in, 1) + var(--ridge-out, 0)) * 100cqh);
+}
+
+.silhouette {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+
+  path {
+    fill: color-mix(in srgb, var(--rise-fill) 30%, var(--color-surface));
+    stroke: var(--rise-glow);
+    stroke-width: 2;
+    vector-effect: non-scaling-stroke;
+  }
+}
+
+.beacons {
+  position: absolute;
+  inset: 0;
+}
+
+// A beacon on a peak: a brazier with its flame, the whole a target at least 44 by 44.
+// It stands on its peak's top: the peaks at 22%, 50% and 78% across are 25%, 14% and
+// 24% down the band (40, 22 and 38 of the drawing's 160).
+.beacon {
+  --ignite: calc(
+    clamp(0, (var(--ridge-in, 1) - 0.4 - var(--order) * 0.15) / 0.3, 1) *
+      (1 - clamp(0, var(--ridge-out, 0) * 3, 1))
+  );
+  position: absolute;
+  inset-inline-start: var(--x);
+  inset-block-start: 14%;
+  display: grid;
+  justify-items: center;
+  align-content: end;
+  inline-size: 3.5rem;
+  min-block-size: 3.5rem;
+  margin-inline-start: -1.75rem;
+  translate: 0 -100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+
+  &:nth-child(1) {
+    inset-block-start: 25%;
+  }
+
+  &:nth-child(3) {
+    inset-block-start: 24%;
+  }
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+}
+
+// The flame: a warm teardrop that grows from the brazier as it ignites, and burns
+// taller (and flickers) when chosen.
+.flame {
+  inline-size: 1.4rem;
+  block-size: 2rem;
+  border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%;
+  background: radial-gradient(
+    ellipse at 50% 75%,
+    var(--rise-glow) 20%,
+    var(--rise-fill) 70%
+  );
+  box-shadow: 0 0 24px var(--rise-glow);
+  transform-origin: 50% 100%;
+  scale: calc(var(--ignite) * 0.7);
+
+  .beacon:hover & {
+    scale: calc(var(--ignite) * 0.85);
+  }
+
+  .beacon[aria-selected="true"] & {
+    scale: calc(var(--ignite) * 1.25);
+    box-shadow: 0 0 40px 8px var(--rise-glow);
+    animation: flicker 1.6s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes flicker {
+  50% {
+    rotate: -4deg;
+    translate: 0 -1px;
+  }
+
+  100% {
+    rotate: 3deg;
+  }
+}
+
+.brazier {
+  inline-size: 2rem;
+  block-size: 0.6rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  background: var(--color-text);
+  scale: clamp(0, var(--ridge-in, 1) * 2, 1);
+}
+
+.name {
+  @include mixins.visually-hidden;
+}
+
+:global([data-flow]) .beacon .flame {
+  animation: none;
+}
