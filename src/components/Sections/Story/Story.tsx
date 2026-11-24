@@ -11,17 +11,20 @@ interface StoryProps {
 // A section's scroll story. Nothing on the page scrolls: the stage is pinned under the
 // header from the top, and scrolling only plays the parts' movement, forward and
 // backward. The first part forms as the header collapses.
+// Only the parts on stage are mounted, as the scroll reaches them (see useStoryProgress).
 // With reduced motion, or on a stage too short for the layouts (large zoom), the parts
-// flow one after another.
+// flow one after another, all mounted.
 function Story({ children }: StoryProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const length = storyLength(Children.count(children));
+  const parts = Children.toArray(children);
+  const length = storyLength(parts.length);
   const reducedMotion = useReducedMotion();
-  const { flow, handleFocus } = useStoryProgress(
+  const { flow, handleFocus, mounted } = useStoryProgress(
     rootRef,
     stageRef,
     length,
+    parts.length,
     reducedMotion,
   );
 
@@ -36,7 +39,7 @@ function Story({ children }: StoryProps) {
       onFocus={handleFocus}
     >
       <div ref={stageRef} className={styles.stage}>
-        {children}
+        {parts.slice(mounted[0], mounted[1] + 1)}
       </div>
     </div>
   );

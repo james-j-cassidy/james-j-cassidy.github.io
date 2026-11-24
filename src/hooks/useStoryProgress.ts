@@ -1,6 +1,8 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
+  useRef,
   useState,
   type FocusEvent,
   type RefObject,
@@ -49,14 +51,23 @@ function partsOf(stage: HTMLElement): HTMLElement[] {
 // zoom, a phone on its side), so nothing is ever cut off.
 //
 // Keyboard focus landing in a part that is not showing brings the story to that part.
+//
+// Only the parts on stage are mounted: the one holding, and while a transition plays,
+// the one leaving and the one arriving. The story reports which (`mounted`, first and
+// last index) and mounts parts as the scroll reaches them; a part that has left, or has
+// not arrived, is not in the page at all, so nothing of it can show. Flow mode mounts
+// every part.
 export function useStoryProgress(
   rootRef: RefObject<HTMLElement | null>,
   stageRef: RefObject<HTMLElement | null>,
   length: number,
+  count: number, // how many parts the story has
   reducedMotion: boolean,
 ) {
   const [tooShort, setTooShort] = useState(false);
   const flow = reducedMotion || tooShort;
+  const [mounted, setMounted] = useState<readonly [number, number]>([0, 0]);
+  const shownRef = useRef(0); // the scroll position last shown
 
   const geometry = useCallback((): Geometry | null => {
     const root = rootRef.current;
@@ -68,14 +79,19 @@ export function useStoryProgress(
     return { range, unit: travel / length };
   }, [rootRef, stageRef, length]);
 
-  // Shows the story at a scroll position.
+  // Shows the story at a scroll position: mounts the parts on stage and gives each its
+  // progress.
   const render = useCallback(
     (y: number) => {
+      shownRef.current = y;
       const stage = stageRef.current;
       if (!stage) return;
       const parts = partsOf(stage);
       const sizes = flow ? null : geometry();
       if (!sizes) {
+        setMounted((now) =>
+          now[0] === 0 && now[1] === count - 1 ? now : [0, count - 1],
+        );
         parts.forEach((part) => {
           part.style.removeProperty("--in");
           part.style.removeProperty("--out");
@@ -88,18 +104,37 @@ export function useStoryProgress(
       // The part that takes pointer input: the one holding, or past the middle of its
       // entrance.
       const current = Math.min(
-        parts.length - 1,
+        count - 1,
         Math.floor(story + STORY_TRANSITION / 2),
       );
-      parts.forEach((part, index) => {
+      // On stage: the current part, and any part part-way in or out.
+      let first = current;
+      let last = current;
+      for (let index = 0; index < count; index += 1) {
+        const { enter, exit } = partProgress(index, story, collapse);
+        if (enter > 0 && exit < 1) {
+          first = Math.min(first, index);
+          last = Math.max(last, index);
+        }
+      }
+      setMounted((now) =>
+        now[0] === first && now[1] === last ? now : [first, last],
+      );
+      parts.forEach((part) => {
+        const index = Number(part.dataset.partIndex);
         const { enter, exit } = partProgress(index, story, collapse);
         part.style.setProperty("--in", enter.toFixed(4));
         part.style.setProperty("--out", exit.toFixed(4));
         part.toggleAttribute("data-current", index === current);
       });
     },
-    [stageRef, flow, geometry, length],
+    [stageRef, flow, geometry, length, count],
   );
+
+  // A part just mounted takes its progress before it is ever painted.
+  useLayoutEffect(() => {
+    render(shownRef.current);
+  }, [mounted, render]);
 
   // Glide toward the scroll position, frame by frame, until caught up.
   useEffect(() => {
@@ -240,5 +275,5 @@ export function useStoryProgress(
     [flow, geometry],
   );
 
-  return { flow, handleFocus };
+  return { flow, handleFocus, mounted };
 }
