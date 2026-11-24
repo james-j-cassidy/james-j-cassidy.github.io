@@ -1,0 +1,41 @@
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      80% 70% at 80% 20%,
+      color-mix(in srgb, var(--job-accent) 14%, transparent),
+      transparent 70%
+    ),
+    var(--color-bg);
+  pointer-events: none;
+}
+
+.pattern {
+  position: absolute;
+  inset: 0;
+}
+
+.tile {
+  fill: none;
+  stroke: var(--job-accent);
+  stroke-opacity: 0.18;
+  stroke-width: 1.5;
+}
+
+// The company's monogram, huge and outlined, low on the far side.
+.watermark {
+  position: absolute;
+  inset-block-end: -0.12em;
+  inset-inline-end: -0.04em;
+  color: transparent;
+  font-size: clamp(8rem, 42cqh, 22rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  -webkit-text-stroke: 2px
+    color-mix(in srgb, var(--job-accent) 35%, transparent);
+  user-select: none;
+}

@@ -1,0 +1,87 @@
+@use "../../../../../styles/mixins";
+
+// A line across with evenly spaced stops; the line draws in with the part (--draw).
+.rail {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--stops), minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 0.55rem;
+    block-size: 2px;
+    background: color-mix(in srgb, var(--job-accent) 55%, transparent);
+    transform-origin: left center;
+    transform: scaleX(var(--draw, 1));
+  }
+
+  &:dir(rtl)::before {
+    transform-origin: right center;
+  }
+}
+
+.stop {
+  position: relative;
+  display: grid;
+  // The lit stop's name may run on past its slot (phones show only that one).
+  white-space: nowrap;
+  justify-items: start;
+  gap: 0.125rem;
+  min-inline-size: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+
+  &[aria-current="step"] {
+    color: var(--color-text);
+  }
+}
+
+// The stop's marker: hollow for other jobs, filled and glowing for this one.
+.dot {
+  inline-size: 1.1rem;
+  aspect-ratio: 1;
+  border: 2px solid var(--job-accent);
+  border-radius: 50%;
+  background: var(--color-bg);
+
+  .stop[aria-current="step"] & {
+    background: var(--job-accent);
+    box-shadow: 0 0 12px var(--job-accent);
+  }
+}
+
+.company {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+
+  .stop[aria-current="step"] & {
+    color: var(--job-accent);
+  }
+
+  // Phones: only this job's name shows; the others are still read.
+  @media (width < 48rem) {
+    .stop:not([aria-current="step"]) & {
+      @include mixins.visually-hidden;
+    }
+  }
+}
+
+// The full company name, read in place of the short one.
+.fullName {
+  @include mixins.visually-hidden;
+}
+
+.years {
+  font-variant-numeric: tabular-nums;
+
+  // Short stages and phones: the company names carry the rail.
+  @container stage (height < 30rem) {
+    @include mixins.visually-hidden;
+  }
+}
