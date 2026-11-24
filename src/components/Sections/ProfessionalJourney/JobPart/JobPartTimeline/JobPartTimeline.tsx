@@ -1,43 +1,42 @@
 import type { CSSProperties } from "react";
-import type { Job } from "../../../../../content/professionalJourney";
 import styles from "./JobPartTimeline.module.scss";
 
-interface JobPartTimelineProps {
-  jobs: readonly Job[]; // most recent first
-  currentId: string;
-  label: string;
-  presentLabel: string;
+// One stop on a rail: its short name, its full name (what is read) and when.
+export interface TimelineStop {
+  id: string;
+  short: string;
+  full: string;
+  when: string | null;
 }
 
-// The career rail across the top of every job: one stop per job, most recent first,
-// with this job's stop lit and marked. A list, so screen readers hear the whole career
-// and which stop this is.
-function JobPartTimeline({
-  jobs,
-  currentId,
-  label,
-  presentLabel,
-}: JobPartTimelineProps) {
+interface JobPartTimelineProps {
+  stops: readonly TimelineStop[]; // in story order
+  currentId: string;
+  label: string;
+}
+
+// The rail across the top of every part of a journey story (the career, or the
+// credentials): one stop per part, in story order, with this part's stop lit and marked.
+// A list, so screen readers hear the whole chain and which stop this is.
+function JobPartTimeline({ stops, currentId, label }: JobPartTimelineProps) {
   return (
     <ol
       className={styles.rail}
       aria-label={label}
-      style={{ "--stops": jobs.length } as CSSProperties}
+      style={{ "--stops": stops.length } as CSSProperties}
     >
-      {jobs.map((job) => (
+      {stops.map((stop) => (
         <li
-          key={job.id}
+          key={stop.id}
           className={styles.stop}
-          aria-current={job.id === currentId ? "step" : undefined}
+          aria-current={stop.id === currentId ? "step" : undefined}
         >
           <span className={styles.dot} aria-hidden="true" />
           <span className={styles.company}>
-            <span aria-hidden="true">{job.shortName}</span>
-            <span className={styles.fullName}>{job.company}</span>
+            <span aria-hidden="true">{stop.short}</span>
+            <span className={styles.fullName}>{stop.full}</span>
           </span>
-          <span className={styles.years}>
-            {job.start} – {job.end ?? presentLabel}
-          </span>
+          {stop.when && <span className={styles.years}>{stop.when}</span>}
         </li>
       ))}
     </ol>

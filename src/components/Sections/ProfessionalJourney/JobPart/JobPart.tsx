@@ -43,10 +43,14 @@ function JobPart({ index, job, jobs }: JobPartProps) {
           <div className={styles.railSlot}>
             <p className={styles.tag}>{tag}</p>
             <JobPartTimeline
-              jobs={jobs}
+              stops={jobs.map((stop) => ({
+                id: stop.id,
+                short: stop.shortName,
+                full: stop.company,
+                when: `${stop.start} – ${stop.end ?? current}`,
+              }))}
               currentId={job.id}
               label={railLabel}
-              presentLabel={current}
             />
           </div>
           <div className={styles.cardSlot}>

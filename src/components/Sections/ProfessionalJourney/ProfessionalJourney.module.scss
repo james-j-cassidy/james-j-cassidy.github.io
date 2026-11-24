@@ -1,0 +1,60 @@
+// Room above the stories for the sub-tab bar: a 44px target plus a little air.
+.journey {
+  --story-offset: 3.5rem;
+}
+
+// The sub-tab bar: pinned just under the compact header (the full header covers it until
+// it collapses, as it does the stage), the same width as the parts' content. It never
+// moves: the stories play and slide below it. The sub-tabs at the start; the credentials'
+// sort at the end while that story shows.
+.bar {
+  position: sticky;
+  inset-block-start: var(--header-compact-height, 0px);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  block-size: var(--story-offset);
+  padding-inline: max(var(--space-4), calc((100% - 72rem) / 2));
+  border-block-end: 1px solid
+    color-mix(in srgb, var(--color-decor) 35%, transparent);
+  background: var(--color-bg);
+}
+
+// The sub-section shown; switching slides the new one in from the side it comes from,
+// as the main tabs do (mirrored in right-to-left languages). Reduced motion zeroes the
+// duration.
+.stories {
+  overflow-x: clip; // the sliding story never adds a sideways scrollbar
+}
+
+.stories[data-direction="1"] > * {
+  animation: enter-forward var(--duration-slow) var(--ease-out);
+}
+
+.stories[data-direction="-1"] > * {
+  animation: enter-back var(--duration-slow) var(--ease-out);
+}
+
+@keyframes enter-forward {
+  from {
+    opacity: 0;
+    translate: 3rem 0;
+  }
+}
+
+@keyframes enter-back {
+  from {
+    opacity: 0;
+    translate: -3rem 0;
+  }
+}
+
+.stories:dir(rtl)[data-direction="1"] > * {
+  animation-name: enter-back;
+}
+
+.stories:dir(rtl)[data-direction="-1"] > * {
+  animation-name: enter-forward;
+}
