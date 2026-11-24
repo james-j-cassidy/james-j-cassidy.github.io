@@ -1,0 +1,67 @@
+.space {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+.sky {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+}
+
+.nebulaCore {
+  stop-color: var(--color-decor);
+  stop-opacity: 0.26;
+}
+
+.nebulaEdge {
+  stop-color: var(--color-decor);
+  stop-opacity: 0;
+}
+
+.stars {
+  fill: var(--color-text);
+  fill-opacity: 0.75;
+}
+
+// Warp streaks from the scroll: --streak (0–1, set by the part).
+.streaks path {
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: var(--streak, 0) 2;
+}
+
+// One short jump: the streaks stretch out and pull back in.
+.jump path {
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-linecap: butt; // nothing shows at rest
+  stroke-dasharray: 0 2;
+}
+
+.jump[data-jump] path {
+  animation: jump 700ms var(--ease-out) both;
+}
+
+@keyframes jump {
+  from {
+    stroke-dasharray: 0 2;
+  }
+
+  45% {
+    stroke-dasharray: 0.8 2;
+  }
+
+  to {
+    stroke-dasharray: 0 2;
+  }
+}
+
+:global([data-flow]) .jump[data-jump] path {
+  animation: none;
+}

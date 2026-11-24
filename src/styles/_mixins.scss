@@ -1,3 +1,5 @@
+@use "sass:math";
+
 // Hidden visually but still read by screen readers.
 @mixin visually-hidden {
   position: absolute;
@@ -86,4 +88,27 @@
 @mixin glow-rule {
   border-block-end: 1px solid var(--color-accent);
   box-shadow: 0 1px 10px -2px var(--color-accent);
+}
+
+@mixin story-part-heading {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+@mixin story-part-placeholder {
+  margin: 0;
+  max-inline-size: var(--measure);
+  color: var(--color-text-muted);
+}
+
+// A piece of a story part: its own progress, 0 → 1, while the part's --in (or another
+// 0 → 1 variable) runs from $from to $to, so a part's pieces move in sequence.
+@mixin story-piece($from, $to, $name: --t, $source: --in) {
+  #{$name}: clamp(
+    0,
+    calc((var(#{$source}) - #{$from}) * #{math.div(1, $to - $from)}),
+    1
+  );
 }

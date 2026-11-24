@@ -1,0 +1,83 @@
+.grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+.cells {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+}
+
+.cell {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-opacity: 0.16;
+  stroke-width: 1.5;
+}
+
+.glowCore {
+  stop-color: var(--color-accent);
+  stop-opacity: 0.3;
+}
+
+.glowEdge {
+  stop-color: var(--color-accent);
+  stop-opacity: 0;
+}
+
+.conduits {
+  stroke: var(--color-decor);
+  stroke-opacity: 0.55;
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+// One ring of energy rolling out from the reactor across the grid.
+.wave {
+  position: absolute;
+  inset-block-start: 52%;
+  inset-inline-start: 35%;
+  inline-size: 10rem;
+  aspect-ratio: 1;
+  margin: -5rem;
+  border: 3px solid var(--color-accent);
+  border-radius: 50%;
+  box-shadow:
+    0 0 24px var(--color-accent),
+    inset 0 0 24px var(--color-accent);
+  scale: 0;
+
+  &[data-surge] {
+    animation: surge 1100ms var(--ease-out) both;
+  }
+
+  // Phones: the reactor sits above the panel, centered.
+  @media (width < 48rem) {
+    inset-block-start: 36%;
+    inset-inline-start: 50%;
+  }
+}
+
+@keyframes surge {
+  from {
+    scale: 0;
+  }
+
+  95% {
+    scale: 14;
+  }
+
+  to {
+    scale: 0;
+  }
+}
+
+:global([data-flow]) .wave[data-surge] {
+  animation: none;
+}

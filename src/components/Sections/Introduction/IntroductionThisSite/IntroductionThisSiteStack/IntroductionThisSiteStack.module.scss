@@ -1,0 +1,61 @@
+// The stack's footprint scales with the stage's height. --size is a layer's side; --gap
+// the height between layers.
+.stack {
+  --size: clamp(6.5rem, 30cqh, 13rem);
+  --gap: calc(var(--size) * 0.44);
+  position: relative;
+  inline-size: calc(var(--size) * 1.75);
+  block-size: calc(var(--size) * 2.15);
+  margin-inline: auto;
+
+  // Phones: small, beside the sheet.
+  @media (width < 48rem) {
+    --size: clamp(4rem, 15cqh, 6rem);
+  }
+}
+
+// The isometric plane, low in the stack's box so the five layers rise to fill it.
+.platform {
+  position: absolute;
+  inset-block-start: 80%;
+  inset-inline-start: 50%;
+  inline-size: var(--size);
+  block-size: var(--size);
+  margin: calc(var(--size) / -2);
+  transform-style: preserve-3d;
+  transform: rotateX(58deg) rotateZ(-40deg);
+  direction: ltr; // a drawing: never mirrored
+}
+
+// The scan beam: a ring of light rising up through every layer once.
+.beam {
+  position: absolute;
+  inset: -12%;
+  border: 3px solid var(--color-accent);
+  box-shadow:
+    0 0 24px var(--color-accent),
+    inset 0 0 24px var(--color-accent);
+  transform: translateZ(-2rem);
+  visibility: hidden;
+  pointer-events: none;
+
+  &[data-scan] {
+    animation: scan 1200ms var(--ease-out) both;
+  }
+}
+
+@keyframes scan {
+  from {
+    transform: translateZ(-2rem);
+    visibility: visible;
+  }
+
+  to {
+    transform: translateZ(calc(var(--gap) * 6));
+    visibility: hidden;
+  }
+}
+
+:global([data-flow]) .beam[data-scan] {
+  animation: none;
+}

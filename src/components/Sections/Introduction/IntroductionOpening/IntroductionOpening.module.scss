@@ -1,0 +1,125 @@
+@use "../../../../styles/mixins";
+
+// The opening fills the whole stage: the background scene behind, the modules over it.
+// It enters with the header's collapse, with no fades:
+//   - the scene powers on, opening out from a line across the middle;
+//   - the two modules swing in at the same time, the first from the reading start, the
+//     second from the other side, turning to face the visitor as they land;
+//   - the prompt flips down between them.
+// It leaves as one, swinging away into depth toward the reading start.
+.part {
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: translateX(calc(var(--out) * -120vw * var(--dir, 1)))
+    translateZ(calc(var(--out) * -400px))
+    rotateY(calc(var(--out) * 55deg * var(--dir, 1)));
+
+  > :first-child {
+    @include mixins.story-piece(0, 0.45);
+    clip-path: inset(calc((1 - var(--t)) * 50%) 0);
+  }
+}
+
+.heading {
+  @include mixins.visually-hidden; // the modules are the visual headline
+}
+
+// Module A at the top on the reading-start side, the prompt in the middle, module B at
+// the bottom on the other side. The detail card floats over the middle.
+.content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: clamp(var(--space-2), 2.5cqh, var(--space-6));
+  align-self: center;
+  block-size: 100%;
+  max-block-size: 44rem;
+  perspective: 1400px;
+}
+
+// Holds a module: its entrance movement and its lean with the mouse.
+.slot {
+  @include mixins.story-piece(0.25, 1);
+  inline-size: min(40rem, 100%);
+  perspective: 1200px;
+  translate: calc(var(--lean-x, 0) * 10px) calc(var(--lean-y, 0) * 6px);
+  transition: translate 400ms var(--ease-out);
+
+  &[data-side="start"] {
+    justify-self: start;
+    transform-origin: left center;
+    transform: translateX(calc((1 - var(--t)) * -70vw * var(--dir, 1)))
+      rotateY(calc((1 - var(--t)) * 75deg * var(--dir, 1)));
+  }
+
+  &[data-side="end"] {
+    grid-row: 3;
+    justify-self: end;
+    transform-origin: right center;
+    transform: translateX(calc((1 - var(--t)) * 70vw * var(--dir, 1)))
+      rotateY(calc((1 - var(--t)) * -75deg * var(--dir, 1)));
+  }
+
+  &[data-side="start"]:dir(rtl) {
+    transform-origin: right center;
+  }
+
+  &[data-side="end"]:dir(rtl) {
+    transform-origin: left center;
+  }
+}
+
+// The prompt between the modules; tips away (edge-on) while a card is open.
+.hint {
+  @include mixins.story-piece(0.7, 1);
+  grid-row: 2;
+  align-self: center;
+  justify-self: center;
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  border-block: 1px solid
+    color-mix(in srgb, var(--color-accent) 60%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
+  text-wrap: balance;
+  transform: rotateX(calc((1 - var(--t)) * -90deg));
+
+  &[data-hidden] {
+    transform: rotateX(90deg);
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+}
+
+.hintMark {
+  color: var(--color-accent);
+}
+
+// Phones: the modules take the full width; the card floats over them.
+@media (width < 40rem) {
+  .content {
+    gap: var(--space-4);
+  }
+
+  .slot {
+    inline-size: 100%;
+  }
+}
+
+// Flow mode (reduced motion, or too tall for the stage): an ordinary block, everything
+// in place, no leaning.
+:global([data-flow]) {
+  .part {
+    min-block-size: 36rem;
+  }
+
+  .slot {
+    translate: none;
+  }
+}

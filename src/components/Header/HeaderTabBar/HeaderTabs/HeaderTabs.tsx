@@ -23,6 +23,7 @@ function HeaderTabs({ sections, currentIndex, label }: HeaderTabsProps) {
             <a
               className={styles.tab}
               href={`#${section.id}`}
+              data-section={section.id}
               aria-current={index === currentIndex ? "location" : undefined}
               onClick={(event) => followSectionLink(event, index)}
             >

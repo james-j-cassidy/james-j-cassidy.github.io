@@ -1,0 +1,144 @@
+// Card size follows the stage's height and the screen's width; the ring's radius
+// follows the card width so neighbors just clear each other.
+//
+// Scroll drives two values from the part (see IntroductionPrinciples): --burst (0 → 1,
+// the cards come out of the reactor to the ring) and --spin (extra turn while they do).
+.reactor {
+  --card-w: clamp(9.5rem, min(34vw, 44cqh), 15rem);
+  --card-h: clamp(9.5rem, 36cqh, 12.5rem);
+  --radius: calc(var(--card-w) * var(--radius-factor) + 4rem);
+  --tilt: -12deg;
+  position: relative;
+  display: grid;
+  justify-items: center;
+  perspective: 1100px;
+
+  // Phones: the panel sits below, so the cards give up some height.
+  @media (width < 48rem) {
+    --card-h: clamp(7.5rem, 25cqh, 12.5rem);
+    --tilt: -6deg;
+  }
+}
+
+// The ring's space: as tall as a card, with room for the front card's glow.
+.spin {
+  position: relative;
+  inline-size: 100%;
+  block-size: calc(var(--card-h) + 1.5rem);
+  transform-style: preserve-3d;
+  // Pushed back by the radius, so the front card stands where the ring's front is, and
+  // tipped toward the visitor so the ring is seen from a little above.
+  transform: translateZ(calc(var(--radius) * var(--burst, 1) * -1))
+    rotateX(var(--tilt)) rotateY(var(--spin, 0deg));
+  // The cards grow out of the core with the burst; pulled in, they shrink to nothing
+  // (so nothing of this part shows while another part is on stage).
+  scale: var(--burst, 1);
+}
+
+// Turned so the selected card faces the visitor; clicks spin it smoothly.
+.ring {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateY(calc(var(--turn) * var(--step) * -1));
+  transition: transform 900ms var(--ease-out);
+}
+
+// The reactor core: a glowing heart with two rings around it, behind the cards.
+.core {
+  position: absolute;
+  inset-block-start: calc((var(--card-h) + 1.5rem) / 2);
+  inset-inline-start: 50%;
+  display: grid;
+  place-items: center;
+  inline-size: calc(var(--card-h) * 1.6);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  scale: var(--ignite, 1);
+
+  &:dir(rtl) {
+    translate: 50% -50%;
+  }
+}
+
+.coreRing,
+.coreHeart {
+  grid-area: 1 / 1;
+  border-radius: 50%;
+}
+
+.coreRing {
+  inline-size: 100%;
+  aspect-ratio: 1;
+  border: 2px dashed color-mix(in srgb, var(--color-accent) 70%, transparent);
+
+  & + & {
+    inline-size: 70%;
+    border-style: solid;
+    border-color: var(--color-decor);
+    box-shadow: 0 0 18px var(--color-decor);
+  }
+}
+
+.coreHeart {
+  inline-size: 38%;
+  aspect-ratio: 1;
+  background: radial-gradient(
+    circle,
+    var(--color-on-accent) 0 12%,
+    var(--color-accent) 40%,
+    color-mix(in srgb, var(--color-accent) 0%, transparent) 72%
+  );
+  box-shadow: 0 0 40px 10px
+    color-mix(in srgb, var(--color-accent) 55%, transparent);
+}
+
+// The arrows sit at the sides of the ring, over it, level with its middle.
+.nav {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc((var(--card-h) + 1.5rem) / 2);
+  display: flex;
+  justify-content: space-between;
+  translate: 0 -50%;
+  scale: var(--burst, 1); // arrive and leave with the cards
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.navButton {
+  display: grid;
+  place-items: center;
+  inline-size: var(--target-min);
+  block-size: var(--target-min);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  color: var(--color-accent);
+  cursor: pointer;
+
+  svg {
+    inline-size: 1.25rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:dir(rtl) svg {
+    scale: -1 1;
+  }
+
+  &:hover {
+    box-shadow: 0 0 10px var(--color-accent);
+  }
+}
+
+// Reduced motion and flow mode: the ring turns in one step.
+:global([data-flow]) .ring {
+  transition: none;
+}

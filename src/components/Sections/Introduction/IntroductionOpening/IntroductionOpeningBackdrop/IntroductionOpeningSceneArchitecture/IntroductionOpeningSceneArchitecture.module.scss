@@ -1,0 +1,91 @@
+.scene {
+  fill: none;
+}
+
+.blueprint {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.12;
+  stroke-width: 1;
+}
+
+// Platforms build from the bottom up: --i is 0 (top) to 2 (bottom).
+.level {
+  --delay: calc((2 - var(--i)) * 220ms);
+}
+
+.plate {
+  fill: var(--color-accent);
+  fill-opacity: 0.08;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: grow 700ms var(--ease-out) var(--delay) both;
+}
+
+.edge {
+  stroke: var(--color-accent);
+  stroke-width: 3;
+  stroke-dasharray: 1;
+  filter: drop-shadow(0 0 6px var(--color-accent));
+  animation: draw 800ms var(--ease-out) var(--delay) both;
+}
+
+.connector {
+  stroke: var(--color-decor);
+  stroke-width: 2.5;
+  stroke-dasharray: 1;
+  animation: draw 700ms var(--ease-out) 650ms both;
+}
+
+.flow {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.55;
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  animation: draw 900ms var(--ease-out) 900ms both;
+}
+
+.nodes circle {
+  fill: var(--color-decor);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: grow 400ms var(--ease-out) 1100ms both;
+}
+
+.service {
+  stroke: var(--color-decor);
+  stroke-width: 2.5;
+  stroke-dasharray: 1;
+  animation: draw 600ms var(--ease-out) calc(1200ms + var(--i) * 150ms) both;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes grow {
+  from {
+    scale: 0;
+  }
+
+  to {
+    scale: 1;
+  }
+}
+
+// Reduced motion and flow mode: already built.
+:global([data-flow]) {
+  .plate,
+  .edge,
+  .connector,
+  .flow,
+  .nodes circle,
+  .service {
+    animation: none;
+  }
+}

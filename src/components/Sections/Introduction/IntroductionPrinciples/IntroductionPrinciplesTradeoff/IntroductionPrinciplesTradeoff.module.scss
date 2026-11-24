@@ -1,0 +1,185 @@
+// A HUD panel: accent frame with cut corners, the switch at the top, the flipping
+// outcome card and the meter below.
+.tradeoff {
+  --cut: 1.25rem;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: clamp(var(--space-2), 2.2cqh, var(--space-4));
+  padding: clamp(var(--space-4), 3.5cqh, var(--space-6));
+  filter: drop-shadow(
+    0 0 1rem color-mix(in srgb, var(--color-accent) 40%, transparent)
+  );
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      var(--cut) 100%,
+      0 calc(100% - var(--cut))
+    );
+  }
+
+  &::before {
+    inset: 0;
+    z-index: -2;
+    background: linear-gradient(
+      200deg,
+      var(--color-accent),
+      var(--color-decor)
+    );
+  }
+
+  &::after {
+    inset: 2px;
+    z-index: -1;
+    background: var(--color-surface);
+  }
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.tag {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.switchRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+// The current side's word is bold and underlined (not color alone).
+.state {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  &[data-on] {
+    color: var(--color-text);
+    font-weight: 800;
+    text-decoration: underline 2px var(--color-accent);
+    text-underline-offset: 0.3em;
+  }
+}
+
+// The power switch: a track with a glowing knob that slides across.
+.switch {
+  position: relative;
+  inline-size: 4.25rem;
+  block-size: var(--target-min);
+  padding: 0;
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  cursor: pointer;
+  transition: background var(--duration-base) var(--ease-out);
+
+  &[aria-checked="true"] {
+    background: color-mix(in srgb, var(--color-accent) 35%, var(--color-bg));
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.knob {
+  position: absolute;
+  inset-block: 5px;
+  inset-inline-start: 5px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 12px var(--color-accent);
+  transition: translate var(--duration-slow) var(--ease-out);
+
+  .switch[aria-checked="true"] & {
+    translate: calc(4.25rem - var(--target-min)) 0;
+  }
+
+  .switch[aria-checked="true"]:dir(rtl) & {
+    translate: calc((4.25rem - var(--target-min)) * -1) 0;
+  }
+}
+
+// The outcome card: two faces back to back; switching flips it over.
+.flipper {
+  display: grid;
+  perspective: 900px;
+}
+
+.face {
+  grid-area: 1 / 1;
+  padding: clamp(var(--space-3), 2.5cqh, var(--space-4));
+  border: 1px solid color-mix(in srgb, var(--color-text-muted) 60%, transparent);
+  background: var(--color-bg);
+  backface-visibility: hidden;
+  transition: transform 700ms var(--ease-out);
+
+  // "With": accent border.
+  &[data-back] {
+    border-color: var(--color-accent);
+    transform: rotateY(-180deg);
+  }
+
+  .flipper[data-applied] & {
+    transform: rotateY(180deg);
+  }
+
+  .flipper[data-applied] &[data-back] {
+    transform: none;
+  }
+}
+
+.faceTag {
+  margin: 0 0 var(--space-1);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.faceText {
+  margin: 0;
+  line-height: var(--leading-body);
+}
+
+// Phones: tighter, so the reactor and the panel share a short screen.
+@media (width < 48rem) {
+  .tradeoff {
+    gap: var(--space-2);
+    padding: var(--space-3);
+  }
+
+  .face {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .faceText {
+    font-size: var(--text-sm);
+  }
+}
+
+:global([data-flow]) .face {
+  transition: none;
+}

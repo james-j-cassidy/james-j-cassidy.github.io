@@ -1,0 +1,112 @@
+@use "../../../../../styles/mixins";
+
+// A drafting sheet: thin accent frame with corner ticks, faint ruled lines.
+.spec {
+  position: relative;
+  padding: clamp(var(--space-3), 3cqh, var(--space-6));
+  border: 1px solid var(--color-accent);
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 calc(1.5em - 1px),
+      color-mix(in srgb, var(--color-accent) 8%, transparent) calc(1.5em - 1px)
+        1.5em
+    ),
+    var(--color-surface);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-accent) 25%, transparent);
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+// A new layer prints in from the top down.
+.sheet[data-printed] {
+  animation: print 650ms steps(14, end) both;
+}
+
+@keyframes print {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  to {
+    clip-path: inset(0);
+  }
+}
+
+.number {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: var(--space-1) 0 clamp(var(--space-1), 1cqh, var(--space-2));
+  font-size: clamp(var(--text-lg), 4.4cqh, 1.75rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.summary {
+  margin: 0 0 clamp(var(--space-1), 1.2cqh, var(--space-3));
+  line-height: 1.45;
+}
+
+.points {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0 0 clamp(var(--space-2), 1.5cqh, var(--space-3));
+  padding-inline-start: 1.1rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+
+  li::marker {
+    color: var(--color-accent);
+    content: "▸ ";
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: 0.125rem var(--space-2);
+    border: 1px solid var(--color-decor);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+}
+
+// Phones and short stages: the sheet keeps the title, summary and tags; the details are
+// still read.
+@media (width < 48rem) {
+  .points,
+  .tags {
+    @include mixins.visually-hidden;
+  }
+
+  .summary {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+}
+
+@container stage (height < 34rem) {
+  .points {
+    @include mixins.visually-hidden;
+  }
+}
+
+:global([data-flow]) .sheet[data-printed] {
+  animation: none;
+}

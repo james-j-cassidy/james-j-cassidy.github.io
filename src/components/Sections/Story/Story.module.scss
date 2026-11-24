@@ -1,0 +1,44 @@
+// The track: the stage, plus the header's collapse, plus one screen of scrolling per unit
+// of story time. Lengths use svh so a phone's browser bars never change them.
+.story {
+  --stage-height: calc(100dvh - var(--header-compact-height, 0px));
+  block-size: calc(
+    var(--stage-height) + var(--header-collapse-range, 0px) +
+      var(--story-length) * 100svh
+  );
+}
+
+// The stage: pinned just under the compact header from the top of the page (the full
+// header covers it until it collapses), full width (each part sets its own margins),
+// with depth for the parts' 3D movement. Parts that have swung off to the sides are cut
+// off at its edges. A size container: parts scale their layout to the stage's height
+// (cqh) so they always fit it.
+.stage {
+  --dir: 1; // movement direction, mirrored in right-to-left languages
+  container: stage / size;
+  position: sticky;
+  inset-block-start: var(--header-compact-height, 0px);
+  display: grid;
+  grid-template-areas: "stage";
+  align-items: center;
+  block-size: var(--stage-height);
+  overflow: clip;
+  perspective: 1600px;
+
+  &:dir(rtl) {
+    --dir: -1;
+  }
+}
+
+// Flow mode: no track and no pinning; the parts follow one another as ordinary content.
+.story[data-flow] {
+  block-size: auto;
+
+  .stage {
+    container-type: normal;
+    position: static;
+    display: block;
+    block-size: auto;
+    overflow: visible;
+  }
+}

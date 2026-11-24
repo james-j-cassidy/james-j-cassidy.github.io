@@ -1,0 +1,193 @@
+// A HUD panel with cut corners in the decor color (the modules' plate, recolored), and
+// corner brackets.
+.briefing {
+  --cut: 1.25rem;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: clamp(var(--space-2), 2cqh, var(--space-4));
+  padding: clamp(var(--space-4), 4cqh, var(--space-6));
+  perspective: 1000px;
+  filter: drop-shadow(
+    0 0 1rem color-mix(in srgb, var(--color-decor) 45%, transparent)
+  );
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    clip-path: polygon(
+      var(--cut) 0,
+      100% 0,
+      100% calc(100% - var(--cut)),
+      calc(100% - var(--cut)) 100%,
+      0 100%,
+      0 var(--cut)
+    );
+  }
+
+  &::before {
+    inset: 0;
+    z-index: -2;
+    background: linear-gradient(
+      160deg,
+      var(--color-decor),
+      var(--color-accent)
+    );
+  }
+
+  &::after {
+    inset: 2px;
+    z-index: -1;
+    background:
+      radial-gradient(
+        120% 80% at 100% 0,
+        color-mix(in srgb, var(--color-decor) 18%, transparent),
+        transparent 60%
+      ),
+      var(--color-surface);
+  }
+
+  &:focus-visible {
+    outline-offset: 6px;
+  }
+}
+
+// Each new waypoint turns the page in from the side (hinged on the reading start).
+.page {
+  transform-origin: left center;
+
+  &[data-arrived] {
+    animation: turn-in 600ms var(--ease-out) both;
+  }
+
+  &:dir(rtl) {
+    transform-origin: right center;
+  }
+}
+
+@keyframes turn-in {
+  from {
+    transform: rotateY(80deg);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.number {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+// "Waypoint reached": flips in after the page.
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-decor);
+  border-radius: var(--radius-full);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 700;
+
+  svg {
+    inline-size: 1rem;
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .page[data-arrived] & {
+    animation: flip-in 500ms var(--ease-out) 350ms both;
+  }
+}
+
+@keyframes flip-in {
+  from {
+    transform: rotateX(-90deg);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+.title {
+  margin: clamp(var(--space-1), 1.5cqh, var(--space-3)) 0 var(--space-2);
+  font-size: clamp(var(--text-xl), 5cqh, 2rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.body {
+  margin: 0;
+  max-inline-size: var(--measure);
+  line-height: var(--leading-body);
+}
+
+.controls {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.step {
+  display: grid;
+  place-items: center;
+  inline-size: var(--target-min);
+  block-size: var(--target-min);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  color: var(--color-accent);
+  cursor: pointer;
+
+  svg {
+    inline-size: 1.25rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:dir(rtl) svg {
+    scale: -1 1;
+  }
+
+  &:hover:not(:disabled) {
+    box-shadow: 0 0 10px var(--color-accent);
+  }
+
+  // Not available at the ends of the route: dashed border, not color alone.
+  &:disabled {
+    border-style: dashed;
+    color: var(--color-text-muted);
+    cursor: default;
+  }
+}
+
+:global([data-flow]) {
+  .page[data-arrived],
+  .page[data-arrived] .badge {
+    animation: none;
+  }
+}

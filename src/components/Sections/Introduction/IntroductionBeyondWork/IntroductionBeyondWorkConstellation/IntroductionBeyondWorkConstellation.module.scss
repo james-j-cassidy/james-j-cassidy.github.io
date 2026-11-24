@@ -1,0 +1,38 @@
+// The map keeps its 600:340 shape; the stars sit over the drawing at the same spots.
+// --t (0 → 1, from the part) draws the lines in and lights the stars in turn.
+.constellation {
+  position: relative;
+  aspect-ratio: 600 / 340;
+  inline-size: 100%;
+  direction: ltr; // a picture: never mirrored
+}
+
+.lines {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  fill: none;
+}
+
+.orbit {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.3;
+  stroke-width: 1.5;
+  stroke-dasharray: 4 10;
+}
+
+// The lines join the stars as they light up.
+.links {
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--t, 1));
+  filter: drop-shadow(0 0 4px var(--color-accent));
+}
+
+.stars {
+  position: absolute;
+  inset: 0;
+}

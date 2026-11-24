@@ -1,0 +1,32 @@
+.jet {
+  pointer-events: none;
+}
+
+// Slightly larger than drawn, with a glow. Flies in from behind along its heading as
+// the route draws in (--t), and peels off ahead and up, out of the screen, as the part
+// leaves (--out). Units are the map's.
+.body {
+  scale: 1.4;
+  translate: calc((1 - var(--t, 1)) * -500px + var(--out, 0) * 900px)
+    calc(var(--out, 0) * -700px);
+  rotate: calc(var(--out, 0) * -35deg);
+  filter: drop-shadow(0 0 6px var(--color-accent));
+}
+
+.hull {
+  fill: var(--color-accent);
+  stroke: var(--color-bg);
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.canopy {
+  fill: var(--color-bg);
+}
+
+.trail {
+  stroke: var(--color-decor);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 4 6;
+}

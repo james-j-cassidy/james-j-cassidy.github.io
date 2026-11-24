@@ -1,3 +1,5 @@
+@use "../../../styles/mixins";
+
 // At least a screen tall, so there is always room to scroll the full header away.
 .panel {
   min-block-size: 100dvh;
@@ -17,4 +19,22 @@
   margin: 0;
   max-inline-size: var(--measure);
   color: var(--color-text-muted);
+}
+
+// Built sections: the content owns the layout; the heading stays for screen readers and
+// focus. They start under the full header (pulled up by the collapse range), so a story's
+// stage is pinned from the very top and nothing scrolls into place.
+.panel[data-built] {
+  max-inline-size: none;
+  margin-block-start: calc(-1 * var(--header-collapse-range, 0px));
+  padding: 0;
+
+  .title {
+    @include mixins.visually-hidden;
+  }
+}
+
+// A story in flow mode reads as an ordinary page, starting below the header.
+.panel[data-built]:has([data-flow]) {
+  margin-block-start: 0;
 }

@@ -1,0 +1,206 @@
+// The card sits centered over the opening's content. Closed, it waits far back in the
+// depth, tipped away, and hidden; opening floats it forward and upright. Nothing fades:
+// visibility switches only at the far end of the trip back.
+.detail {
+  --cut: 1.25rem;
+  --float: 700ms;
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 50%;
+  z-index: 2;
+  inline-size: min(38rem, 100%);
+  margin-inline: auto;
+  padding: clamp(var(--space-4), 4cqh, var(--space-6));
+  translate: 0 -50%;
+  transform: translateZ(-1200px) translateY(6rem) rotateX(55deg);
+  visibility: hidden;
+  filter: drop-shadow(
+    0 0 1.25rem color-mix(in srgb, var(--color-accent) 55%, transparent)
+  );
+  transition:
+    transform var(--float) var(--ease-out),
+    visibility 0s var(--float);
+
+  // Border and fill, cut corners on the top-end and bottom-start.
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    clip-path: polygon(
+      0 0,
+      calc(100% - var(--cut)) 0,
+      100% var(--cut),
+      100% 100%,
+      var(--cut) 100%,
+      0 calc(100% - var(--cut))
+    );
+  }
+
+  &::before {
+    inset: 0;
+    z-index: -2;
+    background: var(--color-accent);
+  }
+
+  &::after {
+    inset: 2px;
+    z-index: -1;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-accent) 7%, transparent) 0 1px,
+        transparent 1px 4px
+      ),
+      var(--color-surface);
+  }
+
+  &[data-open] {
+    transform: none;
+    visibility: visible;
+    transition:
+      transform var(--float) var(--ease-out),
+      visibility 0s;
+  }
+}
+
+// The scan line: sweeps down the card once, just after it arrives.
+.header::after {
+  content: "";
+  position: absolute;
+  inset-inline: 2px;
+  inset-block-start: 0;
+  block-size: 2px;
+  background: var(--color-accent);
+  box-shadow: 0 0 12px 2px var(--color-accent);
+  translate: 0 -10px;
+  pointer-events: none;
+}
+
+.detail[data-open] .header::after {
+  animation: scan 900ms var(--ease-out) calc(var(--float) * 0.6) both;
+}
+
+// Down the card, then the line collapses to nothing at the bottom.
+@keyframes scan {
+  from {
+    top: 0;
+    translate: 0 0;
+  }
+
+  90% {
+    top: 100%;
+    translate: 0 -2px;
+    scale: 1;
+  }
+
+  to {
+    top: 100%;
+    translate: 0 -2px;
+    scale: 0;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.tag {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--target-min);
+  block-size: var(--target-min);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+  color: var(--color-accent);
+  cursor: pointer;
+
+  svg {
+    inline-size: 1.25rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+
+  &:hover {
+    background: var(--color-surface);
+    box-shadow: 0 0 10px var(--color-accent);
+  }
+}
+
+.heading {
+  margin: var(--space-2) 0 clamp(var(--space-2), 2cqh, var(--space-4));
+  font-size: clamp(var(--text-xl), 5cqh, 2rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+// Points marked with small glowing diamonds.
+.points {
+  display: grid;
+  gap: clamp(var(--space-1), 1.5cqh, var(--space-3));
+  margin: 0 0 clamp(var(--space-3), 3cqh, var(--space-6));
+  padding: 0;
+  list-style: none;
+  line-height: var(--leading-body);
+
+  li {
+    position: relative;
+    padding-inline-start: var(--space-6);
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: 0.2rem;
+      inset-block-start: 0.55em;
+      inline-size: 0.55rem;
+      aspect-ratio: 1;
+      rotate: 45deg;
+      background: var(--color-accent);
+      box-shadow: 0 0 8px var(--color-accent);
+    }
+  }
+}
+
+// Technology chips.
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--color-decor);
+    border-radius: var(--radius-full);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+}
+
+// Reduced motion and flow mode: the card simply appears and disappears.
+:global([data-flow]) .detail,
+:global([data-flow]) .detail[data-open] {
+  transition: none;
+
+  .header::after {
+    animation: none;
+  }
+}

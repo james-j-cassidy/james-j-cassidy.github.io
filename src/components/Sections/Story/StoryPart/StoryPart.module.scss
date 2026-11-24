@@ -1,0 +1,36 @@
+// --in and --out (0 → 1, eased) are set on each part by the story as it plays.
+.part {
+  --in: 0;
+  --out: 0;
+  grid-area: stage;
+  min-inline-size: 0;
+  // Full stage width, content within 72rem (a percentage here is of the stage's width);
+  // less room above and below on short stages.
+  padding-block: clamp(var(--space-2), 4cqh, var(--space-8));
+  padding-inline: max(var(--space-4), calc((100% - 72rem) / 2));
+  perspective: 1400px; // depth for the part's own pieces
+}
+
+// Default movement, at zero specificity so a part's own styles replace it: a carousel.
+// The part swings in from the far side, turning to face the visitor as it comes forward,
+// and swings out the near side turning away, back into depth. Off the stage it is cut
+// off at the stage's edges; nothing fades.
+:where(.part) {
+  transform: translateX(
+      calc((1 - var(--in) - var(--out)) * 120vw * var(--dir, 1))
+    )
+    translateZ(calc((1 - var(--in) + var(--out)) * -400px))
+    rotateY(calc((var(--out) - (1 - var(--in))) * 55deg * var(--dir, 1)));
+}
+
+.part:not([data-current]) {
+  pointer-events: none;
+}
+
+// Flow mode (reduced motion, or a part too tall for the stage): every part in place.
+[data-flow] .part {
+  --in: 1;
+  --out: 0;
+  padding-block: var(--space-12);
+  pointer-events: auto;
+}

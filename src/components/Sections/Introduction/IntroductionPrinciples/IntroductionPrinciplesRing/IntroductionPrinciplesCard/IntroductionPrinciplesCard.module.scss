@@ -1,0 +1,110 @@
+@use "../../../../../../styles/mixins";
+
+// Placed around the ring: turned to its angle, then pushed out to the ring's radius
+// (scaled by --burst, so the cards come out of and go back into the reactor).
+.card {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  display: grid;
+  align-content: start;
+  gap: clamp(var(--space-1), 1.2cqh, var(--space-2));
+  inline-size: var(--card-w);
+  block-size: var(--card-h);
+  margin-block-start: calc(var(--card-h) / -2);
+  margin-inline-start: calc(var(--card-w) / -2);
+  padding: clamp(var(--space-3), 2.5cqh, var(--space-4));
+  border: 2px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  border-radius: 0.75rem;
+  background:
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--color-accent) 16%, transparent),
+      transparent 55%
+    ),
+    var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  backface-visibility: hidden;
+  transform: rotateY(calc(var(--position) * var(--step)))
+    translateZ(calc(var(--radius) * var(--burst, 1)));
+  transition:
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+
+  &:hover {
+    border-color: var(--color-accent);
+  }
+
+  // The card at the front: lit border and glow.
+  &[aria-selected="true"] {
+    border-color: var(--color-accent);
+    box-shadow:
+      0 0 0 1px var(--color-accent),
+      0 0 28px color-mix(in srgb, var(--color-accent) 55%, transparent);
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.number {
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+// Icon in a small hex; powered (switch on) it fills with the accent.
+.icon {
+  display: grid;
+  place-items: center;
+  inline-size: clamp(2rem, 7cqh, 2.75rem);
+  aspect-ratio: 1;
+  clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
+  background: var(--color-bg);
+  color: var(--color-accent);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out);
+
+  svg {
+    inline-size: 60%;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .card[data-applied] & {
+    background: var(--color-accent);
+    color: var(--color-on-accent);
+  }
+}
+
+.title {
+  font-size: clamp(1rem, 3.6cqh, 1.25rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.line {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+
+  // Phones: the cards are short; the tagline is still read with the card.
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}
