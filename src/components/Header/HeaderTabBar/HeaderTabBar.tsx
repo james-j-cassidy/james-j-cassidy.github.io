@@ -6,7 +6,7 @@ import { SECTIONS, SECTION_LABELS } from "../../../content/sections";
 import { useCurrentSection } from "../../../hooks/useCurrentSection";
 
 // Bottom bar of the header.
-// Wider screens: the six section tabs. Phones: the current section's name (the tabs
+// Wider screens: the seven section tabs. Phones: the current section's name (the tabs
 // themselves are in the phone menu). Touch devices also get the location marks, which
 // show where the visitor is in the left-to-right story when swiping.
 // Each part shows or hides itself in its own styles.

@@ -1,12 +1,12 @@
 // Room above the stories for the sub-tab bar: a 44px target plus a little air.
-.journey {
+.frame {
   --story-offset: 3.5rem;
 }
 
 // The sub-tab bar: pinned just under the compact header (the full header covers it until
 // it collapses, as it does the stage), the same width as the parts' content. It never
-// moves: the stories play and slide below it. The sub-tabs at the start; the credentials'
-// sort at the end while that story shows.
+// moves: the stories play and slide below it. The sub-tabs at the start; a sort at the
+// end where the sub-section has one.
 .bar {
   position: sticky;
   inset-block-start: var(--header-compact-height, 0px);

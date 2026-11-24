@@ -8,7 +8,7 @@ import SectionIcon from "../../../../../SectionIcon/SectionIcon";
 import { useNavMenu } from "../../../navMenuContext";
 import styles from "./HeaderNavMenuSections.module.scss";
 
-// Phones: the six section links (the tabs' place on wider screens; only one of the two is
+// Phones: the seven section links (the tabs' place on wider screens; only one of the two is
 // ever shown, so the page keeps a single navigation landmark). Picking one closes the menu
 // and goes to that section. The current section is marked with aria-current and a lit row.
 function HeaderNavMenuSections() {

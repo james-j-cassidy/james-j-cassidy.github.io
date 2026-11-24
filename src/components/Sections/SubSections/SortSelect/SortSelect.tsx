@@ -1,25 +1,27 @@
 import { useId } from "react";
-import {
-  CREDENTIALS_LABELS,
-  type CredentialSort as Sort,
-} from "../../../../content/professionalJourney";
-import styles from "./CredentialSort.module.scss";
+import styles from "./SortSelect.module.scss";
 
-interface CredentialSortProps {
+interface SortSelectProps<Sort extends string> {
+  label: string;
+  sorts: Record<Sort, string>;
   sort: Sort;
   onSort: (sort: Sort) => void;
 }
 
-// The order of the Education & credentials story, in the sub-tab bar while that story
-// shows: a native select, the same size whatever is chosen, so the bar never shifts.
-function CredentialSort({ sort, onSort }: CredentialSortProps) {
-  const { sortLabel, sorts } = CREDENTIALS_LABELS;
+// The order of a sub-section's story, in its bar: a native select, the same size
+// whatever is chosen, so the bar never shifts.
+function SortSelect<Sort extends string>({
+  label,
+  sorts,
+  sort,
+  onSort,
+}: SortSelectProps<Sort>) {
   const id = useId();
 
   return (
     <div className={styles.sort}>
       <label className={styles.label} htmlFor={id}>
-        {sortLabel}
+        {label}
       </label>
       <span className={styles.field}>
         <select
@@ -42,4 +44,4 @@ function CredentialSort({ sort, onSort }: CredentialSortProps) {
   );
 }
 
-export default CredentialSort;
+export default SortSelect;

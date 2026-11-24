@@ -67,3 +67,14 @@ export function followSectionLink(
   event.preventDefault();
   useNavigation.getState().showSection(index);
 }
+
+// Back to the showing section's start, keeping the header as it is: collapsed lands on
+// the first part of its story; expanded goes back to the top. For sub-sections that
+// swap their story (sub-tabs, a new order).
+export function toSectionStart() {
+  const { headerCollapsed, collapsedSectionTop } = useNavigation.getState();
+  window.scrollTo({
+    top: headerCollapsed ? collapsedSectionTop : 0,
+    behavior: "instant",
+  });
+}

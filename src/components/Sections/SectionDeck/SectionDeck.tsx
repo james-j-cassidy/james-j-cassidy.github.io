@@ -11,6 +11,7 @@ import Introduction from "../Introduction/Introduction";
 import LeadershipResults from "../LeadershipResults/LeadershipResults";
 import ProfessionalJourney from "../ProfessionalJourney/ProfessionalJourney";
 import SectionPanel from "../SectionPanel/SectionPanel";
+import TechStack from "../TechStack/TechStack";
 import styles from "./SectionDeck.module.scss";
 
 // A swipe needs this much sideways travel, mostly sideways, within this time.
@@ -23,6 +24,7 @@ const SECTION_CONTENT: Partial<Record<string, ComponentType>> = {
   introduction: Introduction,
   "professional-journey": ProfessionalJourney,
   "architecture-expertise": ArchitectureExpertise,
+  "tech-stack": TechStack,
   "leadership-results": LeadershipResults,
 };
 
@@ -32,7 +34,7 @@ interface SwipeStart {
   time: number;
 }
 
-// The six sections, one shown at a time, in story order (left to right).
+// The seven sections, one shown at a time, in story order (left to right).
 // On touch devices a sideways swipe moves to the next or previous section (mirrored in
 // right-to-left languages); vertical scrolling is untouched. The tabs move between
 // sections everywhere. The incoming section slides in from the side it comes from.

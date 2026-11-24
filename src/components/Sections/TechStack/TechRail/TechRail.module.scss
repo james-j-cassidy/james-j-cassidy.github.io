@@ -1,0 +1,72 @@
+@use "../../../../styles/mixins";
+
+// A line across with a tick per item; the line draws in with the part (--draw).
+.railBlock {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.rail {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--stops), minmax(0, 1fr));
+  align-items: center;
+  block-size: 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 50%;
+    block-size: 2px;
+    background: color-mix(in srgb, var(--job-accent) 55%, transparent);
+    transform-origin: left center;
+    transform: scaleX(var(--draw, 1));
+  }
+
+  &:dir(rtl)::before {
+    transform-origin: right center;
+  }
+}
+
+.stop {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-inline-size: 0;
+}
+
+// Hollow for the others, filled and glowing for this one.
+.tick {
+  inline-size: clamp(0.375rem, 0.8vw, 0.625rem);
+  aspect-ratio: 1;
+  border: 2px solid var(--job-accent);
+  border-radius: 50%;
+  background: var(--color-bg);
+  scale: var(--draw, 1);
+
+  .stop[aria-current="step"] & {
+    inline-size: 1.1rem;
+    background: var(--job-accent);
+    box-shadow: 0 0 12px var(--job-accent);
+  }
+}
+
+// The names: read, not shown (the card names the current one).
+.name {
+  @include mixins.visually-hidden;
+}
+
+.position {
+  margin: 0;
+  color: var(--job-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
