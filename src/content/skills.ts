@@ -97,7 +97,7 @@ export const SKILL_LABELS = {
   counter: (position: number, total: number) => `${position} / ${total}`,
 };
 
-// Where each skill's full page will live (pages not built yet).
+// Each skill's full page: its section on the Tech Stack tab.
 export function skillPageHref(skill: Skill): string {
-  return `/skills/${skill.slug}/`;
+  return `#tech-stack/${skill.slug}`;
 }

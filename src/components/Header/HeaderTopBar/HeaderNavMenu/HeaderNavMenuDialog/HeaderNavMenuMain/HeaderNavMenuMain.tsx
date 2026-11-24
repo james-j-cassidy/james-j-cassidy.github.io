@@ -14,7 +14,7 @@ import HeaderNavMenuSearchEntry from "./HeaderNavMenuSearchEntry/HeaderNavMenuSe
 import HeaderNavMenuSections from "./HeaderNavMenuSections/HeaderNavMenuSections";
 import styles from "./HeaderNavMenuMain.module.scss";
 
-// Top level of the phone menu: the search entry, the six section links, then one row per
+// Top level of the phone menu: the search entry, the seven section links, then one row per
 // settings submenu showing its current setting.
 function HeaderNavMenuMain() {
   const theme = usePreferences((state) => state.theme);

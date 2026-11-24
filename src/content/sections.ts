@@ -1,7 +1,7 @@
-// The site's six sections, in story order (left to right). English labels; kept out of
+// The site's seven sections, in story order (left to right). English labels; kept out of
 // components so translations can replace them per language.
 export type SectionIconName =
-  "home" | "journey" | "layers" | "cube" | "people" | "mail";
+  "home" | "journey" | "layers" | "chip" | "cube" | "people" | "mail";
 
 export interface Section {
   id: string; // also the element id the tab links to (#id)
@@ -21,6 +21,7 @@ export const SECTIONS: readonly Section[] = [
     label: "Architecture Expertise",
     icon: "layers",
   },
+  { id: "tech-stack", label: "Tech Stack", icon: "chip" },
   { id: "featured-projects", label: "Featured Projects", icon: "cube" },
   { id: "leadership-results", label: "Leadership & Results", icon: "people" },
   { id: "contact", label: "Contact", icon: "mail" },

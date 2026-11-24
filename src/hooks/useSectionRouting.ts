@@ -2,10 +2,11 @@ import { useEffect } from "react";
 import { SECTIONS } from "../content/sections";
 import { useNavigation } from "../state/navigation";
 
+// The section a #hash names: #section-id, or #section-id/item for a deep link into it
+// (the section reads the item itself).
 function sectionFromHash(): number {
-  const index = SECTIONS.findIndex(
-    (section) => `#${section.id}` === window.location.hash,
-  );
+  const [id] = window.location.hash.slice(1).split("/");
+  const index = SECTIONS.findIndex((section) => section.id === id);
   return index < 0 ? 0 : index;
 }
 
