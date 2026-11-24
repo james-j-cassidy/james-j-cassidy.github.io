@@ -1,4 +1,5 @@
 import Header from "./components/Header/Header";
+import HireMe from "./components/HireMe/HireMe";
 import SkipLink from "./components/SkipLink/SkipLink";
 import SectionDeck from "./components/Sections/SectionDeck/SectionDeck";
 import { useSectionRouting } from "./hooks/useSectionRouting";
@@ -15,6 +16,7 @@ function App() {
       <main id={MAIN_CONTENT_ID} tabIndex={-1}>
         <SectionDeck />
       </main>
+      <HireMe />
     </>
   );
 }

@@ -1,0 +1,12 @@
+// Behind everything in the dialog, filling it; the marks in the accent, faded right back.
+.monogram {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  color: var(--color-accent);
+  fill: currentColor;
+  opacity: 0.055;
+  pointer-events: none;
+}

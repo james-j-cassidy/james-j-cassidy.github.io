@@ -13,7 +13,7 @@ $plate: polygon(
 
 // Angled plate with a glowing accent border.
 // The border and fill are two clipped layers (::before, ::after) so the glow
-// (filter on the link itself) is not clipped away, and the focus ring stays visible.
+// (filter on the button itself) is not clipped away, and the focus ring stays visible.
 .hireMe {
   position: relative;
   isolation: isolate;
@@ -22,9 +22,14 @@ $plate: polygon(
   justify-content: center;
   gap: var(--space-3);
   min-block-size: 3.5rem;
+  padding-block: 0;
   padding-inline: calc(#{$cut} + var(--space-8));
+  border: 0;
+  background: none;
   color: var(--color-text);
+  font-family: inherit;
   font-size: var(--text-2xl);
+  cursor: pointer;
   font-weight: 700;
   line-height: var(--leading-tight);
   text-decoration: none;

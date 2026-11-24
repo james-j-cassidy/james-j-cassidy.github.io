@@ -15,16 +15,3 @@
   block-size: 3rem;
   inline-size: calc(3rem * 922 / 512);
 }
-
-// Letters: brushed metal, from the theme (silver on dark, dark steel on light).
-.letterLight {
-  stop-color: var(--logo-letter-light);
-}
-
-.letterMid {
-  stop-color: var(--logo-letter-mid);
-}
-
-.letterShade {
-  stop-color: var(--logo-letter-shade);
-}
