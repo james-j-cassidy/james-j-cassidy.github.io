@@ -70,9 +70,11 @@ const EMPTY: Draft = {
   name: "",
   email: "",
   phone: "",
+  note: "",
 };
 
 const DESCRIPTION_MAX = 4000;
+const NOTE_MAX = 500;
 
 // The pay period each kind of work usually quotes, until the visitor picks one.
 const USUAL_PERIOD: Record<Engagement, PayPeriod> = {
@@ -740,6 +742,29 @@ function HireMe() {
                 <p id={field("phone-hint")} className={styles.hint}>
                   {L.phoneHint}
                 </p>
+              </div>
+              <div className={`${styles.field} ${styles.wide}`}>
+                <label className={styles.label} htmlFor={field("note")}>
+                  {L.note}{" "}
+                  <span className={styles.optional}>({L.optional})</span>
+                </label>
+                <textarea
+                  id={field("note")}
+                  className={`${styles.input} ${styles.textarea} ${styles.short}`}
+                  rows={3}
+                  maxLength={NOTE_MAX}
+                  aria-describedby={`${field("note-hint")} ${field("note-count")}`}
+                  value={draft.note}
+                  onChange={(event) => set("note", event.target.value)}
+                />
+                <div className={styles.under}>
+                  <p id={field("note-hint")} className={styles.hint}>
+                    {L.noteHint}
+                  </p>
+                  <p id={field("note-count")} className={styles.count}>
+                    {L.characters(draft.note.length, NOTE_MAX)}
+                  </p>
+                </div>
               </div>
             </div>,
           )}

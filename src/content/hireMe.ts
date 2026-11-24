@@ -158,6 +158,9 @@ export const HIRE_ME_LABELS = {
   name: "Your name",
   email: "Your email",
   phone: "Phone",
+  note: "A note for James",
+  noteHint:
+    "Anything personal: how you found me, or why this made you think of me.",
   phoneHint:
     "North American numbers fill the mask as you type, like (555) 123-4567. For another country, start with + and its code.",
   optional: "optional",
@@ -194,6 +197,7 @@ export interface Offer {
   name: string;
   email: string;
   phone: string;
+  note: string;
 }
 
 // The offer as an email: a subject and a plain-text body, laid out to read at a glance.
@@ -234,6 +238,11 @@ export function offerEmail(offer: Offer): { subject: string; body: string } {
       ? `Chance you'll look (as shown to them): ${offer.chance}%`
       : "",
     "",
+    offer.note
+      ? `${L.note.toUpperCase()}
+${offer.note}
+`
+      : "",
     "FROM",
     offer.name,
     offer.email,

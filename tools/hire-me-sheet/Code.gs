@@ -35,11 +35,13 @@ const COLUMNS = [
   "Name",
   "Email",
   "Phone",
+  "Note",
 ];
 
 // Longest text kept per field; anything longer is cut.
 const SHORT = 200;
 const LONG = 4000;
+const NOTE = 500;
 
 // A form filled faster than this is a bot; it is told "ok" and nothing is kept.
 const MIN_FILL_MS = 3000;
@@ -98,6 +100,7 @@ function doPost(e) {
       name,
       email,
       text(offer.phone, SHORT),
+      text(offer.note, NOTE),
     ];
 
     // One writer at a time, so two offers never land on the same row.
