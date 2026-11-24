@@ -10,15 +10,20 @@
   border: 0;
 }
 
+// A legend is not a grid item, so the fieldset's gap skips it; the margin matches the
+// gap under the other fields' labels.
 .label {
   @include form.field-label;
   padding: 0;
+  margin-block-end: var(--space-2);
 }
 
-// One pill holding every option, inset like a field.
+// One pill holding every option, inset like a field and as tall as one, so it lines up
+// with the fields beside it.
 .track {
   @include form.field-surface;
   display: flex;
+  min-block-size: 3rem;
   gap: 0.25rem;
   padding: 0.25rem;
   border-radius: var(--radius-full);

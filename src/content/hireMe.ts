@@ -128,6 +128,11 @@ export const HIRE_ME_LABELS = {
   currency: "Currency",
   period: "Per",
   periods: { year: "year", hour: "hour" } satisfies Record<PayPeriod, string>,
+  // The visible masks for pay: whole dollars a year, dollars and cents an hour.
+  payTemplates: { year: "000,000", hour: "000.00" } satisfies Record<
+    PayPeriod,
+    string
+  >,
   skillsLabel: "Skills the role needs",
   skillsHint:
     "Move each skill the role needs from James's skills into the needed list. Add any he doesn't list there too.",
@@ -153,7 +158,8 @@ export const HIRE_ME_LABELS = {
   name: "Your name",
   email: "Your email",
   phone: "Phone",
-  phoneHint: "Any format; North American numbers shape as you type.",
+  phoneHint:
+    "North American numbers fill the mask as you type, like (555) 123-4567. For another country, start with + and its code.",
   optional: "optional",
   required: "required",
   send: "Send",

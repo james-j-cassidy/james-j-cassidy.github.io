@@ -468,22 +468,9 @@
   gap: var(--space-4);
 }
 
-// A money field: the currency's sign, the amount, and the period after it.
-.money {
-  @include form.field-surface;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-inline-size: 0;
-  min-block-size: 3rem;
-  padding: 0 var(--space-3);
-
-  &[data-invalid] {
-    border: 2px solid light-dark(#9b1c1c, #ffabab);
-  }
-}
-
+// The currency sign at the start of a pay field.
 .moneyMark {
+  flex: none;
   display: inline-grid;
   place-items: center;
   min-inline-size: 1.75rem;
@@ -494,32 +481,6 @@
   color: var(--color-accent);
   font-size: var(--text-sm);
   font-weight: 900;
-}
-
-.moneyInput {
-  flex: 1 1 0;
-  inline-size: 0;
-  min-inline-size: 0;
-  min-block-size: 2.75rem;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--color-text);
-  font: inherit;
-  font-size: var(--text-lg);
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-
-  &:focus-visible {
-    outline: none; // the field around it shows focus
-  }
-}
-
-.moneyUnit {
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  white-space: nowrap;
 }
 
 // Benefits: toggles that open a detail field when they are on.

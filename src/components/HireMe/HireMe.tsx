@@ -34,7 +34,14 @@ import HireMeMonogram from "./HireMeMonogram/HireMeMonogram";
 import HireMeSegmented from "./HireMeSegmented/HireMeSegmented";
 import HireMeSelect from "./HireMeSelect/HireMeSelect";
 import HireMeSkills from "./HireMeSkills/HireMeSkills";
-import { formatMoney, formatPhone, masked } from "./masks";
+import HireMeMaskedInput from "./HireMeMaskedInput/HireMeMaskedInput";
+import {
+  formatMoney,
+  formatPhone,
+  masked,
+  moneyGhost,
+  phoneGhost,
+} from "./masks";
 import styles from "./HireMe.module.scss";
 
 // What the visitor is filling in. Skills are stack ids here; benefits hold each ticked
@@ -512,33 +519,35 @@ function HireMe() {
                       <label className={styles.label} htmlFor={field(end)}>
                         {end === "from" ? L.payFrom : L.payTo}
                       </label>
-                      <div
-                        className={styles.money}
-                        data-invalid={invalid ? "" : undefined}
-                      >
-                        <span className={styles.moneyMark} aria-hidden="true">
-                          {currency?.mark}
-                        </span>
-                        <input
-                          id={field(end)}
-                          className={styles.moneyInput}
-                          type="text"
-                          inputMode="decimal"
-                          autoComplete="off"
-                          aria-invalid={invalid}
-                          aria-describedby={describedBy(
-                            field("pay-unit"),
-                            invalid && field("payRange-error"),
-                          )}
-                          value={draft[key]}
-                          onChange={(event) =>
-                            set(key, masked(event, formatMoney))
-                          }
-                        />
-                        <span className={styles.moneyUnit} aria-hidden="true">
-                          / {L.periods[draft.period]}
-                        </span>
-                      </div>
+                      <HireMeMaskedInput
+                        id={field(end)}
+                        size="large"
+                        inputMode="decimal"
+                        autoComplete="off"
+                        invalid={invalid}
+                        aria-describedby={describedBy(
+                          field("pay-unit"),
+                          invalid && field("payRange-error"),
+                        )}
+                        value={draft[key]}
+                        ghost={moneyGhost(
+                          draft[key],
+                          L.payTemplates[draft.period],
+                        )}
+                        onChange={(event) =>
+                          set(key, masked(event, formatMoney))
+                        }
+                        lead={
+                          <span className={styles.moneyMark} aria-hidden="true">
+                            {currency?.mark}
+                          </span>
+                        }
+                        trail={
+                          <span aria-hidden="true">
+                            / {L.periods[draft.period]}
+                          </span>
+                        }
+                      />
                       {end === "to" && errorFor("payRange")}
                     </div>
                   );
@@ -718,14 +727,14 @@ function HireMe() {
                   {L.phone}{" "}
                   <span className={styles.optional}>({L.optional})</span>
                 </label>
-                <input
+                <HireMeMaskedInput
                   id={field("phone")}
-                  className={styles.input}
                   type="tel"
                   inputMode="tel"
                   autoComplete="tel"
                   aria-describedby={field("phone-hint")}
                   value={draft.phone}
+                  ghost={phoneGhost(draft.phone)}
                   onChange={(event) => set("phone", masked(event, formatPhone))}
                 />
                 <p id={field("phone-hint")} className={styles.hint}>
