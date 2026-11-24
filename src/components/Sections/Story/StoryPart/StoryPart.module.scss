@@ -27,6 +27,13 @@
   pointer-events: none;
 }
 
+// A part that has not begun to arrive, or has wholly left (the first part before the
+// header collapses, for one): hidden outright by the story, so no piece its own movement
+// leaves behind can show.
+.part[data-away] {
+  visibility: hidden;
+}
+
 // Flow mode (reduced motion, or a part too tall for the stage): every part in place.
 [data-flow] .part {
   --in: 1;

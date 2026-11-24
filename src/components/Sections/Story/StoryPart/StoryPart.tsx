@@ -18,8 +18,8 @@ interface Props extends StoryPartProps {
 // Both are eased and follow the scroll, so every movement plays backward too. By default
 // the part swings in and out like a carousel in 3D; a part choreographs its own movement
 // by using --in and --out in its styles. Nothing fades.
-// Only the current part takes pointer input; every part stays in the page for keyboard
-// and screen readers.
+// Only the current part takes pointer input. The story mounts only the parts on stage,
+// and hides a mounted part that has not begun to arrive or has wholly left.
 function StoryPart({ index, name, className, children }: Props) {
   return (
     <div
