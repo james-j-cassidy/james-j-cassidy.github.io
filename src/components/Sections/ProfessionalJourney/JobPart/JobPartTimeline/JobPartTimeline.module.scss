@@ -79,6 +79,7 @@
 
 .years {
   font-variant-numeric: tabular-nums;
+  white-space: normal; // breaks only after the dash (see the component)
 
   // Short stages and phones: the company names carry the rail (the card shows the
   // dates).

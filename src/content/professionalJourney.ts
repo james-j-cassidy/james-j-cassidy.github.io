@@ -30,8 +30,8 @@ export interface Job {
   company: string;
   shortName: string; // on the career rail
   monogram: string; // initials for the emblem and watermark
-  // Optional company logo (a file under public/), used in place of the monogram. Only
-  // where James is comfortable the company allows it; the monogram is the default.
+  // The company's logo as shown on James's LinkedIn (a square file under public/logos),
+  // used in place of the monogram; the monogram is the fallback.
   logo?: string;
   emblem?: "usaf"; // a drawn emblem instead of the monogram (the Air Force symbol)
   role: string;
@@ -69,12 +69,12 @@ export const PROFESSIONAL_JOURNEY_LABELS = {
 export const JOBS: readonly Job[] = [
   {
     // From James's LinkedIn description of this role. Public-safe: no internal system
-    // names, customer data or unreleased work. The theme colors are placeholders until
-    // James picks them.
+    // names, customer data or unreleased work.
     id: "cpt-group",
     company: "CPT Group",
     shortName: "CPT",
     monogram: "CPT",
+    logo: `${import.meta.env.BASE_URL}logos/cpt-group.jpg`,
     role: "Data and Applications Supervisor",
     start: "May 2024",
     end: null,
@@ -125,10 +125,12 @@ export const JOBS: readonly Job[] = [
       "PostgreSQL",
       "Terraform",
       "Go",
+      "WebRTC",
     ],
     theme: {
-      accentDark: "#5eead4", // teal-300: 12.2:1 on #0a1530
-      accentLight: "#115e59", // teal-800: 7.1:1 on #f4f8ff
+      // From the logo's red, #a83030, adjusted in lightness to reach AAA on each theme.
+      accentDark: "#ff837b", // 7.6:1 on #0a1530
+      accentLight: "#992023", // 7.6:1 on #f4f8ff
       motif: "hex",
     },
   },
@@ -137,6 +139,7 @@ export const JOBS: readonly Job[] = [
     company: "CoStar Group",
     shortName: "CoStar",
     monogram: "CS",
+    logo: `${import.meta.env.BASE_URL}logos/costar.jpg`,
     role: "Senior Software Engineer",
     start: "Aug 2021",
     end: "Dec 2023",
@@ -178,8 +181,9 @@ export const JOBS: readonly Job[] = [
     ],
     tech: ["React", "Redux", "JavaScript", "C#", "AWS", "GCP", "Datadog"],
     theme: {
-      accentDark: "#93c5fd", // blue-300: 10.0:1
-      accentLight: "#1e3a8a", // blue-900: 9.7:1
+      // From the site's purple, #7a3ff1, adjusted in lightness to reach AAA on each theme.
+      accentDark: "#ad9afe", // 7.6:1 on #0a1530
+      accentLight: "#6417d3", // 7.6:1 on #f4f8ff
       motif: "lines",
     },
   },
@@ -188,6 +192,7 @@ export const JOBS: readonly Job[] = [
     company: "ABS Home Mortgage",
     shortName: "ABS",
     monogram: "ABS",
+    logo: `${import.meta.env.BASE_URL}logos/abs-home-mortgage.jpg`,
     role: "Senior Software Engineer",
     start: "Dec 2020",
     end: "Aug 2021",
@@ -227,8 +232,9 @@ export const JOBS: readonly Job[] = [
     ],
     tech: ["VB.NET", "JavaScript", "jQuery", "Aspose", "REST APIs"],
     theme: {
-      accentDark: "#86efac", // green-300: 12.9:1
-      accentLight: "#14532d", // green-900: 8.6:1
+      // From the gold of the company's logo (#c6a15d), adjusted in lightness to reach AAA on each theme.
+      accentDark: "#c8a35f", // 7.6:1 on #0a1530
+      accentLight: "#694b02", // 7.6:1 on #f4f8ff
       motif: "dots",
     },
   },
@@ -237,6 +243,7 @@ export const JOBS: readonly Job[] = [
     company: "ARI Network Services",
     shortName: "ARI",
     monogram: "ARI",
+    logo: `${import.meta.env.BASE_URL}logos/ari.jpg`,
     role: "Software Engineer III",
     start: "May 2015",
     end: "Dec 2020",
@@ -277,8 +284,9 @@ export const JOBS: readonly Job[] = [
     ],
     tech: ["C#", "AngularJS", "PostgreSQL", "MS SQL", "WCF", "XAML"],
     theme: {
-      accentDark: "#fdba74", // orange-300: 10.7:1
-      accentLight: "#7c2d12", // orange-900: 8.8:1
+      // From the site's green, #85c241, adjusted in lightness to reach AAA on each theme.
+      accentDark: "#85c241", // 8.4:1 on #0a1530
+      accentLight: "#365901", // 7.6:1 on #f4f8ff
       motif: "hex",
     },
   },
@@ -287,6 +295,7 @@ export const JOBS: readonly Job[] = [
     company: "McLaughlin Research Corporation",
     shortName: "McLaughlin",
     monogram: "MRC",
+    logo: `${import.meta.env.BASE_URL}logos/mclaughlin.jpg`,
     role: "Senior .NET Developer",
     start: "Oct 2014",
     end: "Apr 2015",
@@ -324,8 +333,9 @@ export const JOBS: readonly Job[] = [
     ],
     tech: ["C#", "AngularJS", "Nancy", "Dapper", "MS SQL", "NUnit"],
     theme: {
-      accentDark: "#cbd5e1", // slate-300: 12.2:1
-      accentLight: "#334155", // slate-700: 9.7:1
+      // From the site's indigo, #30388f, adjusted in lightness to reach AAA on each theme.
+      accentDark: "#8fa2fd", // 7.5:1 on #0a1530
+      accentLight: "#30388f", // 9.4:1 on #f4f8ff
       motif: "lines",
     },
   },
@@ -334,6 +344,7 @@ export const JOBS: readonly Job[] = [
     company: "Sunkist Growers",
     shortName: "Sunkist",
     monogram: "SG",
+    logo: `${import.meta.env.BASE_URL}logos/sunkist.jpg`,
     role: "Senior .NET Software Engineer and Architect",
     start: "Feb 2014",
     end: "Oct 2014",
@@ -375,8 +386,9 @@ export const JOBS: readonly Job[] = [
     ],
     tech: ["C#", "WPF", "PRISM", "C", "C++", "WCF", "InstallAware"],
     theme: {
-      accentDark: "#fcd34d", // amber-300: 12.5:1
-      accentLight: "#78350f", // amber-900: 8.5:1
+      // From the site's orange, #ff9b04, adjusted in lightness to reach AAA on each theme.
+      accentDark: "#ff9b04", // 8.5:1 on #0a1530
+      accentLight: "#754401", // 7.6:1 on #f4f8ff
       motif: "dots",
     },
   },
@@ -385,6 +397,7 @@ export const JOBS: readonly Job[] = [
     company: "iHerb",
     shortName: "iHerb",
     monogram: "iH",
+    logo: `${import.meta.env.BASE_URL}logos/iherb.jpg`,
     role: "Senior Software / IT Project Manager",
     start: "Mar 2012",
     end: "Dec 2013",
@@ -426,8 +439,9 @@ export const JOBS: readonly Job[] = [
     ],
     tech: ["Program management", "Agile", "PCI DSS", "iOS", "Android"],
     theme: {
-      accentDark: "#bef264", // lime-300: 13.8:1
-      accentLight: "#365314", // lime-900: 8.2:1
+      // From the logo's green, #458500, adjusted in lightness to reach AAA on each theme.
+      accentDark: "#76b949", // 7.6:1 on #0a1530
+      accentLight: "#2e5b01", // 7.5:1 on #f4f8ff
       motif: "hex",
     },
   },
@@ -436,7 +450,7 @@ export const JOBS: readonly Job[] = [
     company: "U.S. Air Force",
     shortName: "USAF",
     monogram: "USAF",
-    emblem: "usaf",
+    logo: `${import.meta.env.BASE_URL}logos/usaf.jpg`,
     role: "IT Project Manager, Help Desk, Software Engineer, Mechanic",
     start: "Jan 1999",
     end: "Dec 2011",
@@ -477,8 +491,9 @@ export const JOBS: readonly Job[] = [
     ],
     tech: ["C", "C++", "C#", "Pascal", "VB", "SQL", "Java"],
     theme: {
-      accentDark: "#a5b4fc", // indigo-300: 9.1:1
-      accentLight: "#312e81", // indigo-900: 10.7:1
+      // From Air Force blue, #00308f, adjusted in lightness to reach AAA on each theme.
+      accentDark: "#79a8ff", // 7.6:1 on #0a1530
+      accentLight: "#00308f", // 10.8:1 on #f4f8ff
       motif: "dots",
     },
   },
