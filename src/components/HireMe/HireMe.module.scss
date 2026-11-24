@@ -1,0 +1,785 @@
+@use "../../styles/mixins";
+@use "./form";
+
+// The form over a dimmed, blurred page: a glass panel framed in a cyan-to-violet edge
+// with a soft glow, James's monogram repeated faintly behind everything. The brand
+// header on top, the steps scrolling in the middle, the fit and Send always in view at
+// the bottom. It grows into place when opened (not faded); reduced motion shows it at
+// once.
+.dialog {
+  // Fixed, as the browser places modal dialogs: it never moves with the page.
+  position: fixed;
+  inline-size: min(94vw, 60rem);
+  max-inline-size: none;
+  block-size: min(94dvh, 60rem);
+  max-block-size: none;
+  padding: 0;
+  border: 0;
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(
+      120% 60% at 0% 0%,
+      color-mix(in srgb, var(--color-accent) 12%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      100% 60% at 100% 100%,
+      color-mix(in srgb, var(--color-decor) 12%, transparent),
+      transparent 60%
+    ),
+    var(--color-surface);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-accent) 70%, transparent),
+    0 30px 80px -20px rgb(0 0 0 / 70%),
+    0 0 60px color-mix(in srgb, var(--color-accent) 28%, transparent);
+  color: var(--color-text);
+  overflow: clip; // never scrolled itself, even by focus; the steps scroll inside
+
+  // The edge: cyan to violet.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 2px;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      var(--color-accent),
+      var(--color-decor) 55%,
+      var(--color-accent)
+    );
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  &::backdrop {
+    background: rgb(4 9 22 / 78%);
+    backdrop-filter: blur(6px);
+  }
+
+  &[open] {
+    animation: grow var(--duration-slow) var(--ease-out);
+  }
+
+  @media (width < 48rem) {
+    inline-size: 100vw;
+    block-size: 100dvh;
+    border-radius: 0;
+  }
+}
+
+@keyframes grow {
+  from {
+    scale: 0.94;
+    translate: 0 1rem;
+  }
+}
+
+.form {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  block-size: 100%;
+}
+
+// ── The brand header ─────────────────────────────────────────────────────────────
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-block-end: 1px solid
+    color-mix(in srgb, var(--color-accent) 35%, transparent);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-accent) 16%, transparent),
+      transparent 60%
+    ),
+    color-mix(in srgb, var(--color-bg) 55%, transparent);
+
+  @media (width < 48rem) {
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+// The portrait in a glowing ring, as in the site's header.
+.portrait {
+  flex: none;
+  inline-size: clamp(3.5rem, 9vw, 5rem);
+  aspect-ratio: 1;
+  padding: 3px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 200deg,
+    var(--color-accent),
+    var(--color-decor),
+    var(--color-accent)
+  );
+  box-shadow: 0 0 22px color-mix(in srgb, var(--color-accent) 50%, transparent);
+
+  img {
+    display: block;
+    inline-size: 100%;
+    block-size: 100%;
+    border: 2px solid var(--color-surface);
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.brand {
+  display: grid;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+// The logo, full color, beside the name (on wider screens).
+.logo {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: calc(var(--target-min) + var(--space-8));
+  block-size: 3.25rem;
+  inline-size: calc(3.25rem * 922 / 512);
+  translate: 0 -50%;
+  filter: drop-shadow(
+    0 0 10px color-mix(in srgb, var(--color-accent) 45%, transparent)
+  );
+
+  @media (width < 48rem) {
+    display: none;
+  }
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.name {
+  margin: 0;
+  font-size: clamp(var(--text-xl), 3.4vw, 2rem);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+}
+
+.tagline {
+  margin: 0.125rem 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: var(--target-min);
+  block-size: var(--target-min);
+  margin-inline-start: auto;
+  border: 1px solid var(--color-accent);
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: box-shadow var(--duration-base) var(--ease-out);
+
+  svg {
+    @include mixins.stroke-icon(1.25rem);
+  }
+
+  &:hover {
+    box-shadow: 0 0 16px
+      color-mix(in srgb, var(--color-accent) 50%, transparent);
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+}
+
+// ── The steps ────────────────────────────────────────────────────────────────────
+
+.body {
+  display: grid;
+  align-content: start;
+  gap: var(--space-8);
+  padding: var(--space-6);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: color-mix(in srgb, var(--color-accent) 60%, transparent)
+    transparent;
+
+  &[hidden] {
+    display: none;
+  }
+
+  @media (width < 48rem) {
+    gap: var(--space-6);
+    padding: var(--space-4);
+  }
+}
+
+.intro {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: var(--leading-body);
+}
+
+// A step: its numbered title over a glass panel holding its fields.
+.step {
+  display: grid;
+  gap: var(--space-4);
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--space-6) var(--space-6) var(--space-6);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  box-shadow: inset 0 1px 0
+    color-mix(in srgb, var(--color-accent) 18%, transparent);
+
+  @media (width < 48rem) {
+    padding: var(--space-4);
+  }
+}
+
+.legend {
+  @include form.legend;
+  // A fieldset's legend sits on its border; pulled into the panel instead.
+  float: left;
+  inline-size: 100%;
+  margin-block-end: var(--space-1);
+
+  + * {
+    clear: both;
+  }
+}
+
+.stepNumber {
+  @include form.step-number;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr); // never wider than its column
+  align-content: start;
+  gap: var(--space-2);
+  min-inline-size: 0;
+}
+
+.label {
+  @include form.field-label;
+  padding: 0;
+}
+
+.requiredMark,
+.optional {
+  @include form.optional;
+}
+
+.input {
+  @include form.input;
+}
+
+.textarea {
+  min-block-size: 8rem;
+  padding-block: var(--space-3);
+  resize: vertical;
+  line-height: var(--leading-body);
+}
+
+.hint {
+  @include form.hint;
+}
+
+.under {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1) var(--space-4);
+}
+
+.count {
+  @include form.hint;
+  font-variant-numeric: tabular-nums;
+}
+
+.error {
+  @include form.error;
+
+  svg {
+    @include mixins.stroke-icon(1rem);
+    margin-block-start: 0.1rem;
+  }
+}
+
+// The errors, listed on Send; it takes focus, and each item goes to its field.
+.summary {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 2px solid light-dark(#9b1c1c, #ffabab);
+  border-radius: var(--radius-md);
+  background: color-mix(
+    in srgb,
+    light-dark(#9b1c1c, #ffabab) 10%,
+    var(--color-surface)
+  );
+
+  ul {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding-inline-start: var(--space-6);
+  }
+
+  a {
+    color: light-dark(#9b1c1c, #ffabab);
+    font-weight: 800;
+    text-underline-offset: 0.2em;
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+}
+
+.summaryTitle {
+  margin: 0;
+  font-weight: 800;
+}
+
+// Kind of work: three cards, each a radio with an icon, its name and a short note.
+.engagements {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: var(--space-3);
+}
+
+.engagement {
+  @include form.field-surface;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  cursor: pointer;
+
+  input {
+    @include mixins.visually-hidden;
+  }
+
+  &:has(input:checked) {
+    border: 2px solid var(--color-accent);
+    background:
+      linear-gradient(
+        160deg,
+        color-mix(in srgb, var(--color-accent) 22%, transparent),
+        transparent 70%
+      ),
+      var(--color-surface);
+    box-shadow: 0 0 26px
+      color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+
+  &:has(input:focus-visible) {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+}
+
+.engagementIcon {
+  display: grid;
+  place-items: center;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--color-accent) 16%, var(--color-bg));
+  color: var(--color-accent);
+
+  svg {
+    @include mixins.stroke-icon(1.25rem);
+  }
+}
+
+.engagementText {
+  display: grid;
+  gap: 0.125rem;
+}
+
+.engagementName {
+  font-weight: 800;
+}
+
+.engagementNote {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+// The radio's mark: a ring, filled when chosen.
+.radio {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border: 2px solid var(--color-accent);
+  border-radius: 50%;
+
+  .engagement:has(input:checked) & {
+    background: radial-gradient(
+      circle,
+      var(--color-accent) 0 42%,
+      transparent 47%
+    );
+    box-shadow: 0 0 10px var(--color-accent);
+  }
+}
+
+// Pay: the two amounts, then currency and period.
+.payGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  align-items: start;
+  gap: var(--space-4);
+}
+
+// A money field: the currency's sign, the amount, and the period after it.
+.money {
+  @include form.field-surface;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  min-block-size: 3rem;
+  padding: 0 var(--space-3);
+
+  &[data-invalid] {
+    border: 2px solid light-dark(#9b1c1c, #ffabab);
+  }
+}
+
+.moneyMark {
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: 1.75rem;
+  block-size: 1.75rem;
+  padding: 0 0.25rem;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-accent) 16%, transparent);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 900;
+}
+
+.moneyInput {
+  flex: 1 1 0;
+  inline-size: 0;
+  min-inline-size: 0;
+  min-block-size: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-lg);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+
+  &:focus-visible {
+    outline: none; // the field around it shows focus
+  }
+}
+
+.moneyUnit {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+// Benefits: toggles that open a detail field when they are on.
+.benefits {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.benefitList {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-2);
+  margin: var(--space-2) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.benefit {
+  @include form.field-surface;
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+
+  &[data-on] {
+    border-color: var(--color-accent);
+    background: color-mix(
+      in srgb,
+      var(--color-accent) 12%,
+      var(--color-surface)
+    );
+  }
+}
+
+.benefitToggle {
+  position: relative; // holds its hidden checkbox, so focusing it scrolls nowhere
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-block-size: var(--target-min);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+
+  input {
+    @include mixins.visually-hidden;
+  }
+
+  &:has(input:focus-visible) {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+.check {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  border: 2px solid var(--color-accent);
+  border-radius: 0.375rem;
+
+  .benefit[data-on] &::after {
+    content: "";
+    inline-size: 0.55rem;
+    block-size: 0.3rem;
+    border-block-end: 2.5px solid var(--color-accent);
+    border-inline-start: 2.5px solid var(--color-accent);
+    rotate: -45deg;
+    translate: 0 -0.1rem;
+  }
+}
+
+.benefitDetails {
+  display: grid;
+  gap: 0.25rem;
+  padding-block-end: var(--space-2);
+}
+
+.detailLabel {
+  @include form.field-label;
+  font-size: 0.8125rem;
+}
+
+.benefitDetail {
+  @include form.input;
+  min-block-size: var(--target-min);
+  font-size: var(--text-sm);
+}
+
+// ── After sending ────────────────────────────────────────────────────────────────
+
+.sent {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+
+  svg {
+    @include mixins.stroke-icon(3.5rem);
+    box-sizing: content-box;
+    padding: var(--space-4);
+    border: 3px solid var(--color-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 34px
+      color-mix(in srgb, var(--color-accent) 50%, transparent);
+    color: var(--color-accent);
+    stroke-width: 2.5;
+  }
+}
+
+.sentTitle {
+  margin: 0;
+  font-size: var(--text-3xl);
+  font-weight: 800;
+}
+
+.sentText {
+  margin: 0;
+  max-inline-size: 36ch;
+  font-size: var(--text-lg);
+  line-height: var(--leading-body);
+}
+
+// ── Always in view ───────────────────────────────────────────────────────────────
+
+.footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-6);
+  padding: var(--space-4) var(--space-6);
+  border-block-start: 1px solid
+    color-mix(in srgb, var(--color-accent) 35%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 70%, var(--color-surface));
+
+  @media (width < 48rem) {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
+// The chance James looks, and the skill fit, side by side (stacked on phones).
+.meters {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-2) var(--space-6);
+  min-inline-size: 0;
+
+  @media (width < 64rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  // Phones: the chance alone (it names the fit too); the fit bar is still read.
+  @media (width < 48rem) {
+    > :last-child {
+      @include mixins.visually-hidden;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+
+  @media (width < 48rem) {
+    > * {
+      flex: 1 1 auto;
+    }
+  }
+}
+
+// Send: the site's call to action, a bright pill that glows.
+.send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-block-size: 3.25rem;
+  padding: 0 var(--space-8);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-bg),
+    color-mix(in srgb, var(--color-accent-bg) 70%, var(--color-decor))
+  );
+  box-shadow: 0 0 26px color-mix(in srgb, var(--color-accent) 55%, transparent);
+  color: var(--color-on-accent);
+  font: inherit;
+  font-size: var(--text-lg);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition:
+    box-shadow var(--duration-base) var(--ease-out),
+    translate var(--duration-base) var(--ease-out);
+
+  svg {
+    @include mixins.stroke-icon(1.25rem);
+    stroke-width: 2.5;
+  }
+
+  &:hover {
+    box-shadow: 0 0 38px
+      color-mix(in srgb, var(--color-accent) 75%, transparent);
+    translate: 0 -1px;
+  }
+
+  &[aria-disabled="true"] {
+    cursor: progress;
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.status {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.4;
+
+  &:empty {
+    display: none;
+  }
+
+  a {
+    color: var(--color-accent);
+    text-underline-offset: 0.2em;
+  }
+}
+
+// The bots' trap: in the form, but never seen or reached by people.
+.trap {
+  position: absolute;
+  inset-inline-start: -10000px;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+}
+
+:global([data-motion="reduce"]) .dialog[open] {
+  animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(:root:not([data-motion])) .dialog[open] {
+    animation: none;
+  }
+}

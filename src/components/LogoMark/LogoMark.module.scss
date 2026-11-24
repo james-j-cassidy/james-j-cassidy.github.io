@@ -1,0 +1,12 @@
+// Letters: brushed metal, from the theme (silver on dark, dark steel on light).
+.letterLight {
+  stop-color: var(--logo-letter-light);
+}
+
+.letterMid {
+  stop-color: var(--logo-letter-mid);
+}
+
+.letterShade {
+  stop-color: var(--logo-letter-shade);
+}

@@ -1,0 +1,193 @@
+@use "../../../styles/mixins";
+@use "../form";
+
+// A step panel, like the form's others.
+.skills {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--space-6);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-surface) 82%, transparent);
+  box-shadow: inset 0 1px 0
+    color-mix(in srgb, var(--color-accent) 18%, transparent);
+
+  @media (width < 48rem) {
+    padding: var(--space-4);
+  }
+}
+
+.legend {
+  @include form.legend;
+  float: left;
+  inline-size: 100%;
+  margin-block-end: var(--space-1);
+
+  + * {
+    clear: both;
+  }
+}
+
+.stepNumber {
+  @include form.step-number;
+}
+
+.hint {
+  @include form.hint;
+}
+
+// The two lists side by side (stacked on phones), each a panel whose items scroll.
+.lists {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  margin-block-start: var(--space-2);
+
+  @media (width < 48rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.list {
+  display: grid;
+  grid-template-rows: auto auto auto auto minmax(0, 1fr);
+  align-content: start;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  padding: var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.listTitle {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: 800;
+}
+
+.count {
+  color: var(--color-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.fieldLabel {
+  @include form.field-label;
+}
+
+.input {
+  @include form.input;
+}
+
+.addRow {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.add {
+  @include form.pill-button;
+  flex: none;
+}
+
+.scroller {
+  block-size: 16rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-inline-end: var(--space-1);
+
+  @media (width < 48rem) {
+    block-size: 12rem;
+  }
+}
+
+.items {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+}
+
+.groupItem + .groupItem {
+  margin-block-start: var(--space-2);
+}
+
+.groupLabel {
+  margin: 0 0 var(--space-1);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+// A skill: one press moves it to the other list; its arrow points the way it goes.
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  inline-size: 100%;
+  min-block-size: var(--target-min);
+  padding: 0 var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 45%, transparent);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+
+  svg {
+    @include mixins.stroke-icon(1rem);
+    color: var(--color-accent);
+  }
+
+  &:hover {
+    border-color: var(--color-accent);
+    background: color-mix(
+      in srgb,
+      var(--color-accent) 12%,
+      var(--color-surface)
+    );
+  }
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+
+  // In the needed list, the arrow leads (back toward the pool).
+  .list:last-child & {
+    justify-content: flex-start;
+  }
+
+  // Outside James's stack: dashed in the caution color, and said so in words.
+  &[data-outside] {
+    --hire-caution: light-dark(#6b4500, #ffd27a);
+    border-style: dashed;
+    border-color: var(--hire-caution);
+
+    svg {
+      color: var(--hire-caution);
+    }
+  }
+}
+
+.itemText {
+  display: grid;
+}
+
+.outsideTag {
+  color: light-dark(#6b4500, #ffd27a);
+  font-size: 0.75rem;
+  font-weight: 800;
+}

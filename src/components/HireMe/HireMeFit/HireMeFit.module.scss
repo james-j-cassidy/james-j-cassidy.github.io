@@ -1,0 +1,61 @@
+// The fit meter. The outside share is striped as well as colored, so the two parts
+// differ in pattern, not only in color.
+.fit {
+  display: grid;
+  gap: 0.25rem;
+  min-inline-size: 0;
+}
+
+.label {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.summary {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.percent {
+  color: var(--color-accent);
+  font-size: var(--text-lg);
+  font-weight: 900;
+}
+
+.bar {
+  display: flex;
+  block-size: 0.625rem;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.inStack,
+.outside {
+  display: block;
+  transition: inline-size var(--duration-base) var(--ease-out);
+}
+
+.inStack {
+  background: var(--color-accent);
+}
+
+.outside {
+  --hire-caution: light-dark(#6b4500, #ffd27a);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--hire-caution) 0 4px,
+    transparent 4px 7px
+  );
+}

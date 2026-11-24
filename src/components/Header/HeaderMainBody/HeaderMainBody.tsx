@@ -74,7 +74,7 @@ function HeaderMainBody() {
         <HeaderProfileInfo profile={PROFILE} />
         {/* "#contact" until the offer form exists. */}
         <div ref={hireRef} className={styles.hireSlot}>
-          <HeaderHireMeButton label="Hire me" href="#contact" />
+          <HeaderHireMeButton label="Hire me" />
         </div>
       </div>
 

@@ -11,7 +11,7 @@ function sectionFromHash(): number {
 }
 
 // Keeps the showing section in step with the URL: the #section-id on load, Back and
-// Forward, and plain #links elsewhere on the page (for example Hire me → #contact).
+// Forward, and plain #links elsewhere on the page.
 // Scrolling is handled by the navigation store, so the browser's own restore is off.
 export function useSectionRouting(): void {
   useEffect(() => {

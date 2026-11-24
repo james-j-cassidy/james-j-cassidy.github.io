@@ -1,15 +1,21 @@
+import { useHireMe } from "../../../../state/hireMe";
 import styles from "./HeaderHireMeButton.module.scss";
 
 interface HeaderHireMeButtonProps {
   label: string;
-  href: string;
 }
 
-// Call to action. A link for now (it goes to a place on the page); when the offer form
-// is built, this becomes a <button> if the form opens in a dialog instead.
-function HeaderHireMeButton({ label, href }: HeaderHireMeButtonProps) {
+// Call to action: opens the Hire Me form (a dialog).
+function HeaderHireMeButton({ label }: HeaderHireMeButtonProps) {
+  const show = useHireMe((state) => state.show);
+
   return (
-    <a className={styles.hireMe} href={href}>
+    <button
+      type="button"
+      className={styles.hireMe}
+      aria-haspopup="dialog"
+      onClick={show}
+    >
       <HandshakeIcon />
       <span className={styles.label}>{label}</span>
       <svg
@@ -20,7 +26,7 @@ function HeaderHireMeButton({ label, href }: HeaderHireMeButtonProps) {
       >
         <path d="M5 12 H19 M13 6 L19 12 L13 18" />
       </svg>
-    </a>
+    </button>
   );
 }
 
