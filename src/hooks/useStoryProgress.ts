@@ -68,6 +68,7 @@ export function useStoryProgress(
   const flow = reducedMotion || tooShort;
   const [mounted, setMounted] = useState<readonly [number, number]>([0, 0]);
   const shownRef = useRef(0); // the scroll position last shown
+  const snapRef = useRef(false); // the next scroll is a jump: show it at once
 
   const geometry = useCallback((): Geometry | null => {
     const root = rootRef.current;
@@ -89,9 +90,13 @@ export function useStoryProgress(
       const parts = partsOf(stage);
       const sizes = flow ? null : geometry();
       if (!sizes) {
-        setMounted((now) =>
-          now[0] === 0 && now[1] === count - 1 ? now : [0, count - 1],
-        );
+        // Flow mode shows every part; a story that cannot be measured (its section is
+        // hidden) keeps what it has, so nothing extra mounts while it is away.
+        if (flow) {
+          setMounted((now) =>
+            now[0] === 0 && now[1] === count - 1 ? now : [0, count - 1],
+          );
+        }
         parts.forEach((part) => {
           part.style.removeProperty("--in");
           part.style.removeProperty("--out");
@@ -144,6 +149,10 @@ export function useStoryProgress(
 
     function step(now: number) {
       const target = window.scrollY;
+      if (snapRef.current) {
+        snapRef.current = false;
+        shown = target;
+      }
       const elapsed = last ? now - last : 16;
       last = now;
       shown += (target - shown) * (1 - Math.exp(-elapsed / STORY_SMOOTHING));
@@ -275,5 +284,24 @@ export function useStoryProgress(
     [flow, geometry],
   );
 
-  return { flow, handleFocus, mounted };
+  // Straight to a part (a deep link): the page jumps there and the story shows it at
+  // once, without playing the parts in between. In flow mode the page scrolls to it.
+  const goTo = useCallback(
+    (index: number) => {
+      const sizes = flow ? null : geometry();
+      if (!sizes) {
+        stageRef.current
+          ?.querySelector<HTMLElement>(`[data-part-index="${index}"]`)
+          ?.scrollIntoView({ behavior: "instant", block: "start" });
+        return;
+      }
+      const top = sizes.range + index * sizes.unit;
+      snapRef.current = true;
+      window.scrollTo({ top, behavior: "instant" });
+      render(top);
+    },
+    [flow, geometry, render, stageRef],
+  );
+
+  return { flow, handleFocus, mounted, goTo };
 }
