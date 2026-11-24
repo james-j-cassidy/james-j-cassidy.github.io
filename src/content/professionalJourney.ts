@@ -113,8 +113,7 @@ export const JOBS: readonly Job[] = [
         challenge: "Work took weeks to get from ticket to running in dev.",
         approach:
           "Introduced an auto-merge, auto-deploy fast lane to dev and AI-assisted development under written engineering standards and architecture documentation.",
-        impact:
-          "Personal throughput rose from about 10 to about 42 resolved tickets a month.",
+        impact: "Median cycle time fell 77%, from 22 to 5 days.",
       },
     ],
     tech: [
@@ -421,7 +420,8 @@ export const JOBS: readonly Job[] = [
         challenge: "The company needed to reach shoppers on mobile.",
         approach:
           "Planned the mobile website and assembled the team, alongside iPhone, iPad, Android and Windows 8 apps.",
-        impact: "Recognized with a best international mobile website award.",
+        impact:
+          "The company was recognized with a best international mobile website award.",
       },
     ],
     tech: ["Program management", "Agile", "PCI DSS", "iOS", "Android"],
@@ -441,7 +441,7 @@ export const JOBS: readonly Job[] = [
     start: "Jan 1999",
     end: "Dec 2011",
     summary:
-      "Thirteen years of service, from mechanic to software engineer and IT project manager.",
+      "Thirteen years of service as a mechanic, on the help desk, as a software engineer and as an IT project manager.",
     highlights: [
       {
         id: "simulators",
