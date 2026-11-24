@@ -27,8 +27,10 @@ const CONTACT = SECTIONS.findIndex((section) => section.id === "contact");
 // Choosing a beacon flares it and the quote changes to that person's words.
 function LeadershipTheirWords({ index }: StoryPartProps) {
   const { heading } = LEADERSHIP_PARTS.theirWords;
-  const { tag, quotes, beaconsLabel, ctaTitle, ctaLine, cta } =
+  const { tag, quotes, beaconsLabel, headingAlone, ctaTitle, ctaLine, cta } =
     LEADERSHIP_THEIR_WORDS;
+  // Until there are recommendations, the summit shows only the title and invitation.
+  const hasQuotes = quotes.length > 0;
   const baseId = useId();
   const panelId = `${baseId}-quote`;
   const tabIdFor = (position: number) => `${baseId}-beacon-${position}`;
@@ -50,7 +52,9 @@ function LeadershipTheirWords({ index }: StoryPartProps) {
       <div className={styles.layout}>
         <header className={styles.titleBar}>
           <p className={styles.tag}>{tag}</p>
-          <h3 className={styles.heading}>{heading}</h3>
+          <h3 className={styles.heading}>
+            {hasQuotes ? heading : headingAlone}
+          </h3>
         </header>
         <div className={styles.invite}>
           <p className={styles.inviteTitle}>{ctaTitle}</p>
@@ -66,14 +70,16 @@ function LeadershipTheirWords({ index }: StoryPartProps) {
             </svg>
           </a>
         </div>
-        <div className={styles.quoteSlot}>
-          <LeadershipTheirWordsQuote
-            id={panelId}
-            labelledBy={tabIdFor(selected)}
-            quote={quotes[selected]}
-            change={changes}
-          />
-        </div>
+        {hasQuotes && (
+          <div className={styles.quoteSlot}>
+            <LeadershipTheirWordsQuote
+              id={panelId}
+              labelledBy={tabIdFor(selected)}
+              quote={quotes[selected]}
+              change={changes}
+            />
+          </div>
+        )}
         <div className={styles.ridgeSlot}>
           <LeadershipTheirWordsRidge
             quotes={quotes}

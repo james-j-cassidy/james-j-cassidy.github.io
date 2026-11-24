@@ -390,7 +390,7 @@ export const STACK: readonly StackItem[] = [
     monogram: "RTC",
     kind: "technologies",
     category: "realtime",
-    jobs: [],
+    jobs: ["cpt-group"],
   },
   {
     id: "ai-assisted-development",

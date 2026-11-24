@@ -11,8 +11,8 @@ export const INTRODUCTION_PARTS = {
   nextStep: { heading: "Where to next" },
 } as const;
 
-// Opening: two modules, each opening a detail card. DRAFT wording for James to rewrite:
-// the claims must be James's own.
+// Opening: two modules, each opening a detail card. Every point is a fact from James's job
+// history (LinkedIn).
 export type OpeningModuleId = "architecture" | "leadership";
 
 export interface OpeningModule {
@@ -35,15 +35,15 @@ export const INTRODUCTION_OPENING = {
     {
       id: "architecture",
       tag: "Module 01 · Architecture",
-      title: "Designing platforms that stay easy to change for years!",
+      title: "Architecting platforms, hands-on!",
       action: "Explore",
       detail: {
         tag: "Scan complete · Architecture",
         heading: "Platform architecture",
         points: [
-          "Clear boundaries, so a change stays where it belongs.",
-          "Data and integrations designed for the next ten years, not the next sprint.",
-          "Decisions written down, so the why outlives the meeting.",
+          "Founded a .NET Azure Functions platform: 27 apps and 340+ HTTP endpoints.",
+          "Built on 6 shared private NuGet libraries, each app with its own automated tests.",
+          "Wrote the architecture documentation and co-wrote the engineering standards.",
         ],
         tags: [".NET", "Azure", "PostgreSQL", "Legacy modernization"],
       },
@@ -51,24 +51,29 @@ export const INTRODUCTION_OPENING = {
     {
       id: "leadership",
       tag: "Module 02 · Leadership",
-      title: "Leading the teams that build them!",
+      title: "Leading the people who build them!",
       action: "Explore",
       detail: {
         tag: "Scan complete · Leadership",
         heading: "Technical leadership",
         points: [
-          "A direction the whole team can see, question and improve.",
-          "Unblocking, reviewing and pairing, so work keeps moving.",
-          "Growing engineers until the team ships without me.",
+          "Supervising a team of up to 4 engineers and analysts at CPT Group.",
+          "Managed 54 people and completed 61 projects at iHerb.",
+          "Mentored a team on coding standards and best practices.",
         ],
-        tags: ["Mentoring", "Code review", "Delivery", "AI-assisted teams"],
+        tags: [
+          "Mentoring",
+          "Project management",
+          "Engineering standards",
+          "AI-assisted development",
+        ],
       },
     },
   ] satisfies readonly OpeningModule[],
 };
 
-// Origin: a flight log of milestones. PLACEHOLDERS: James supplies the real milestones,
-// their order and their text; nothing here is a fact about James yet.
+// Origin: a flight log of milestones, in order. Every fact is from James's LinkedIn
+// (experience, education and honors).
 export interface OriginMilestone {
   title: string;
   body: string;
@@ -84,30 +89,30 @@ export const INTRODUCTION_ORIGIN = {
   next: "Next waypoint",
   milestones: [
     {
-      title: "First spark",
-      body: "[Placeholder] The first thing James built, and why it stuck.",
+      title: "First command",
+      body: "1996, Wichita: completed the Air Capital Leadership Development Course as a JROTC cadet, and the drill team took first place at the Air Capital Drill Meet.",
     },
     {
       title: "U.S. Air Force",
-      body: "[Placeholder] What service taught James about discipline, precision and the mission.",
+      body: "Thirteen years as a mechanic, on the help desk, as a software engineer and as an IT project manager, including service in Korea. 647,000 lines of Pascal for two live satellite simulators that trained new space operators.",
     },
     {
-      title: "First real system",
-      body: "[Placeholder] The first system James shipped that people depended on every day.",
+      title: "Learning while serving",
+      body: "An associate degree in 2006, a bachelor's cum laude in 2010 and a master's in project management in 2011, all while serving; then a master's in computer science in 2014.",
     },
     {
-      title: "Stepping up to lead",
-      body: "[Placeholder] When James started leading the build, not only doing it.",
+      title: "Leading at scale",
+      body: "At iHerb: managed 54 people, completed 61 projects and brought a failing $1.2M warehouse project back on track.",
     },
     {
       title: "Today",
-      body: "[Placeholder] Where those years brought James: architecture and leadership, 25+ years in.",
+      body: "Founding architect of a cloud-native Azure platform at CPT Group, supervising a team of up to 4 engineers and analysts.",
     },
   ] satisfies readonly OriginMilestone[],
 };
 
-// How James works: principles, each with a trade-off shown without and with it. DRAFT
-// wording for James to rewrite; the meter values are illustrative (shown as words).
+// How James works: principles, each with a trade-off shown without and with it. James
+// keeps all five (2026-11-24); the meter values are illustrative (shown as words).
 export type PrincipleIcon =
   "change" | "record" | "access" | "automate" | "measure";
 
@@ -249,7 +254,7 @@ export const INTRODUCTION_THIS_SITE = {
       summary:
         "Vite and strict TypeScript build a static site that GitHub Pages serves.",
       points: [
-        "Lint, type and format checks run on every change.",
+        "Lint, type and format checks run before every merge.",
         "No server to patch and nothing that runs up a bill.",
       ],
       tags: ["Vite", "TypeScript", "Oxlint", "GitHub Pages"],
@@ -298,9 +303,8 @@ export const INTRODUCTION_THIS_SITE = {
   ] satisfies readonly SiteLayer[],
 };
 
-// What James is looking for: a compatibility scan. Work setup is James's; the role and
-// team options and fits are still PLACEHOLDERS for James to set (0–1). Pay is
-// deliberately not part of it.
+// What James is looking for: a compatibility scan. The setup, role and team fits are
+// James's own (2026-11-23 and 2026-11-24). Pay is deliberately not part of it.
 export interface LookingForOption {
   label: string;
   fit: number; // 0–1, how well this option fits what James is looking for
@@ -360,8 +364,8 @@ export const INTRODUCTION_LOOKING_FOR = {
   ] satisfies readonly LookingForReel[],
 };
 
-// Beyond work: a star map of personal items. PLACEHOLDERS: James supplies the items and
-// their text; only the veteran item is a known fact.
+// Beyond work: a star map of personal items, in James's own words (2026-11-24) and from
+// his LinkedIn. What he gives back is private, so it has no item.
 export type BeyondWorkIcon = "compass" | "wrench" | "book" | "heart" | "usaf";
 
 export interface BeyondWorkItem {
@@ -381,31 +385,25 @@ export const INTRODUCTION_BEYOND_WORK = {
       id: "off-the-clock",
       icon: "compass",
       title: "Off the clock",
-      body: "[Placeholder] Where James goes and what James does to recharge.",
+      body: "Good restaurants, video games, and time with my family and my dog.",
     },
     {
       id: "builds",
       icon: "wrench",
       title: "Built for fun",
-      body: "[Placeholder] Something James builds or tinkers with outside work.",
+      body: "Video games in Unreal Engine and Unity. My bachelor's is in game and simulation programming.",
     },
     {
       id: "learning",
       icon: "book",
       title: "Always learning",
-      body: "[Placeholder] What James is learning right now, and why.",
-    },
-    {
-      id: "giving-back",
-      icon: "heart",
-      title: "Giving back",
-      body: "[Placeholder] A cause or community James supports.",
+      body: "Continuing education through Pluralsight and Udemy, after four degrees and a certification; at work, AI-assisted development.",
     },
     {
       id: "veteran",
       icon: "usaf", // the Air Force symbol from the header
       title: "U.S. Air Force veteran",
-      body: "[Placeholder] What service still means to James today.",
+      body: "Thirteen years of service, three Air Force Good Conduct Medals and five Outstanding Unit Awards.",
     },
   ] satisfies readonly BeyondWorkItem[],
 };

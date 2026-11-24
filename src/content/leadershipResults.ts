@@ -1,8 +1,8 @@
 // The Leadership & Results tab: a sunrise-to-summit story in seven parts. It sells
 // leadership, trust and care, not management: no headcounts, reporting lines or project
 // administration. Every fact and number is from James's own job history (LinkedIn);
-// explanatory wording is a draft for James to adjust. Recommendations are placeholders
-// until James has permission to quote them. English; kept out of components so
+// explanatory wording is a draft for James to adjust. Recommendations appear only once
+// James has permission to quote them; until then the summit shows its invitation alone. English; kept out of components so
 // translations can replace it per language.
 
 export const LEADERSHIP_PARTS = {
@@ -371,29 +371,10 @@ export interface Recommendation {
 export const LEADERSHIP_THEIR_WORDS = {
   tag: "Summit",
   beaconsLabel: "Recommendations",
-  quotes: [
-    {
-      id: "one",
-      quote:
-        "[Placeholder] A recommendation from someone James has led, quoted with their permission.",
-      name: "[Name]",
-      role: "[Role, company]",
-    },
-    {
-      id: "two",
-      quote:
-        "[Placeholder] A recommendation from a peer or partner, quoted with their permission.",
-      name: "[Name]",
-      role: "[Role, company]",
-    },
-    {
-      id: "three",
-      quote:
-        "[Placeholder] A recommendation from a manager or executive, quoted with their permission.",
-      name: "[Name]",
-      role: "[Role, company]",
-    },
-  ] satisfies readonly Recommendation[],
+  // None yet: add each as { id, quote, name, role }, with the person's permission.
+  quotes: [] as readonly Recommendation[],
+  // The heading while there are no recommendations to show.
+  headingAlone: "The next climb",
   ctaTitle: "The next summit is better climbed together.",
   ctaLine: "Leading a team that needs to rise? Let's talk.",
   cta: "Start a conversation",
