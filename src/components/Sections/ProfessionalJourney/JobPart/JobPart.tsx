@@ -17,7 +17,7 @@ interface JobPartProps {
 }
 
 // One job on the Professional Journey: the same template for every job, themed by the
-// job's company (accent, pattern, monogram watermark) through --job-accent.
+// job's company (accent, pattern, a scene of its world) through --job-accent.
 //
 // Layout: the career rail across the top, the company card beside the highlights.
 // Enters: the backdrop opens from the top, the rail draws in, the card docks down from
@@ -38,7 +38,11 @@ function JobPart({ index, job, jobs }: JobPartProps) {
   return (
     <StoryPart index={index} name={`job-${job.id}`} className={styles.part}>
       <div className={styles.themed} style={theme}>
-        <JobPartBackdrop motif={job.theme.motif} monogram={job.monogram} />
+        <JobPartBackdrop
+          motif={job.theme.motif}
+          monogram={job.monogram}
+          scene={job.theme.scene}
+        />
         <div className={styles.layout}>
           <div className={styles.railSlot}>
             <p className={styles.tag}>{tag}</p>
