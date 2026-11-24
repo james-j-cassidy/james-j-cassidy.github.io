@@ -37,10 +37,18 @@
   font-weight: 900;
   letter-spacing: 0.02em;
 
+  // A company logo (its own square tile, as on LinkedIn) fills the emblem inside the
+  // accent border.
   img {
-    inline-size: 80%;
-    block-size: 80%;
-    object-fit: contain;
+    inline-size: 100%;
+    block-size: 100%;
+    border-radius: calc(0.75rem - 2px);
+    object-fit: cover;
+  }
+
+  &:has(img) {
+    overflow: hidden;
+    background: #ffffff;
   }
 }
 

@@ -1,6 +1,6 @@
 // Header skills (English). Order is clockwise around the wheel, starting at the selected spot.
-// DRAFT: the skill list comes from the mock's "Core Technologies"; every summary except .NET
-// (taken from the mock) is placeholder wording for James to review and replace.
+// The list comes from the mock's "Core Technologies"; each summary is a fact from James's
+// job history (LinkedIn), not a general claim.
 export type SkillIconName =
   | "dotnet"
   | "csharp"
@@ -25,61 +25,63 @@ export const SKILLS: readonly Skill[] = [
     slug: "dotnet",
     name: ".NET",
     icon: "dotnet",
-    summary: "Builds robust, scalable, and maintainable enterprise solutions.",
+    summary: "Founded a .NET platform of 27 apps and 340+ HTTP endpoints.",
   },
   {
     slug: "csharp",
     name: "C#",
     icon: "csharp",
-    summary: "Writes clean, well-tested C# for services, libraries, and tools.",
+    summary: "Used in six roles, from the Air Force to today.",
   },
   {
     slug: "azure",
     name: "Azure",
     icon: "cloud",
-    summary: "Designs and runs secure, cost-aware cloud platforms.",
+    summary: "Architected a cloud-native Azure platform from the ground up.",
   },
   {
     slug: "postgresql",
     name: "PostgreSQL",
     icon: "database",
-    summary: "Models data and tunes queries for reliable, fast systems.",
+    summary: "5 databases and 126 tables, through 475 EF Core migrations.",
   },
   {
     slug: "terraform",
     name: "Terraform",
     icon: "layers",
-    summary: "Defines infrastructure as code for repeatable environments.",
+    summary:
+      "Azure infrastructure as code across dev, test, staging and production.",
   },
   {
     slug: "ai-assisted-development",
     name: "AI-Assisted Development",
     icon: "ai",
-    summary: "Uses AI to speed up delivery while keeping quality high.",
+    summary:
+      "Adopted with a fast lane to dev; median cycle time fell from 22 to 5 days.",
   },
   {
     slug: "ci-cd",
     name: "CI/CD",
     icon: "infinity",
-    summary: "Automates builds, tests, and deployments end to end.",
+    summary: "Introduced an auto-merge, auto-deploy fast lane to dev.",
   },
   {
     slug: "typescript",
     name: "TypeScript",
     icon: "code",
-    summary: "Builds type-safe front ends and tooling.",
+    summary: "Co-built an internal tools web app that hosts 39 tools.",
   },
   {
     slug: "webrtc",
     name: "WebRTC",
     icon: "video",
-    summary: "Builds real-time audio, video, and data connections.",
+    summary: "Built a Go signaling and presence service with dual-issuer JWT.",
   },
   {
     slug: "react",
     name: "React",
     icon: "atom",
-    summary: "Creates accessible, responsive user interfaces.",
+    summary: "From a broker auction game to a 39-tool internal web app.",
   },
 ];
 
