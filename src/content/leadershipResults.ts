@@ -158,13 +158,54 @@ export interface TrustReason {
   source: Source;
 }
 
-// 3. Built on trust: why people follow James. The team around him as a constellation;
-// each reason sends trust rippling out through it.
+export interface TrustTrait {
+  id: string;
+  name: string; // the branch's name, read on its button
+  line: string; // how it grows trust, shown in the branch's tip
+}
+
+// 3. Built on trust: why people follow James. A tree that grows from trust at its root;
+// its branches hold the traits that grow trust, and each reason sends trust flowing up
+// from the root. The traits are general, not claims about James.
 export const LEADERSHIP_TRUST = {
   tag: "Why people follow",
   reasonsLabel: "Why people trust me",
   proofLabel: "In practice",
-  you: "James",
+  treeLabel: "What grows trust",
+  treeHint: "Choose a branch to see what grows trust.",
+  root: "Trust",
+  traits: [
+    {
+      id: "honesty",
+      name: "Honesty",
+      line: "Saying what's true, even when it's hard, so no one has to guess.",
+    },
+    {
+      id: "reliability",
+      name: "Reliability",
+      line: "Doing what was promised, when it was promised. Trust grows with every kept word.",
+    },
+    {
+      id: "empathy",
+      name: "Empathy",
+      line: "Understanding what people carry, so they feel seen, not managed.",
+    },
+    {
+      id: "transparency",
+      name: "Transparency",
+      line: "Sharing the why behind decisions, so no one is left in the dark.",
+    },
+    {
+      id: "accountability",
+      name: "Accountability",
+      line: "Owning mistakes openly, which makes it safe for everyone to own theirs.",
+    },
+    {
+      id: "respect",
+      name: "Respect",
+      line: "Valuing every person's time, skill and voice, whatever their title.",
+    },
+  ] satisfies readonly TrustTrait[],
   reasons: [
     {
       id: "care",

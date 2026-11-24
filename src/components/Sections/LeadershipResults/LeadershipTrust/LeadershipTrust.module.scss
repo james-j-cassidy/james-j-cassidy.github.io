@@ -1,8 +1,8 @@
 @use "../../../../styles/mixins";
 @use "../leadership";
 
-// The constellation on one side, the words on the other. Its own movement replaces the
-// default carousel; nothing fades. (The rings and reasons read their own pieces.)
+// The tree on one side, the words on the other. Its own movement replaces the
+// default carousel; nothing fades. (The tree and reasons read their own pieces.)
 .part {
   @include mixins.story-piece(0, 0.4, --sky-in);
   @include mixins.story-piece(0.1, 0.55, --title-in);
@@ -20,7 +20,7 @@
   transform: none;
 }
 
-// A warm glow around the people. Opens as a circle from the constellation's center.
+// A warm glow around the tree. Opens as a circle from the tree's center.
 .sky {
   background:
     radial-gradient(
@@ -81,11 +81,24 @@
   transform: translateY(calc((1 - var(--card-in) + var(--card-out)) * 90cqh));
 }
 
+// Phones only: the tree's traits as chips, rising with the card.
+.traitsSlot {
+  display: none;
+  min-inline-size: 0;
+  transform: translateY(calc((1 - var(--card-in) + var(--card-out)) * 90cqh));
+}
+
 @media (width < 48rem) {
+  .traitsSlot {
+    display: block;
+    grid-area: traits;
+  }
+
   .layout {
     grid-template-areas:
       "title title"
       "net reasons"
+      "traits traits"
       "card card";
     grid-template-columns: auto minmax(0, 1fr);
     column-gap: var(--space-3);

@@ -1,0 +1,252 @@
+@use "../../../../../styles/mixins";
+
+// The tree, as large as the column and the stage allow; its branch tips sit over the
+// drawing at their places (--x, --y, as percentages of it).
+.tree {
+  position: relative;
+  inline-size: min(100%, 64cqh);
+  aspect-ratio: 200 / 224;
+  margin-inline: auto;
+
+  // Phones: too small for six 44-pixel branch tips side by side, so the tree is the
+  // drawing alone there (its tips, tip and hint are left out).
+  @media (width < 48rem) {
+    inline-size: clamp(8rem, 34cqh, 11rem);
+
+    .tips,
+    .bubble,
+    .hint {
+      display: none;
+    }
+  }
+}
+
+.drawing {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+.ground {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-text-muted) 45%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+// Scroll: each level grows in turn, roots first (--grow), and withdraws from the tips
+// down (--wither).
+.limb,
+.flow {
+  --grow: clamp(0, (var(--net-in, 1) - var(--level) * 0.15) / 0.4, 1);
+  --wither: clamp(0, (var(--net-out, 0) - (3 - var(--level)) * 0.12) / 0.4, 1);
+}
+
+.limb {
+  fill: none;
+  stroke: var(--rise);
+  stroke-width: calc(4.5px - var(--level) * 0.9px);
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--grow) * (1 - var(--wither)));
+}
+
+// Trust rising: a short glow that runs up each limb in turn, roots first.
+.flow {
+  fill: none;
+  stroke: var(--rise-glow);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.16 1.2;
+  stroke-dashoffset: 0.16;
+  filter: drop-shadow(0 0 3px var(--rise-glow));
+  visibility: hidden;
+
+  [data-flowing] > & {
+    animation: rise 620ms var(--ease-out) calc(var(--level) * 210ms) both;
+  }
+}
+
+@keyframes rise {
+  from {
+    stroke-dashoffset: 0.16;
+    visibility: visible;
+  }
+
+  to {
+    stroke-dashoffset: -1;
+    visibility: hidden;
+  }
+}
+
+// The seed of trust at the root, under the ground, and its word below the roots.
+.root {
+  --grow: clamp(0, var(--net-in, 1) * 4, 1);
+  transform-box: fill-box;
+  transform-origin: center;
+  scale: calc(var(--grow) * (1 - clamp(0, (var(--net-out, 0) - 0.6) / 0.4, 1)));
+}
+
+.seed {
+  fill: var(--rise-fill);
+  stroke: var(--rise-glow);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 6px var(--rise-glow));
+}
+
+.rootWord {
+  fill: var(--rise);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-anchor: middle;
+  text-transform: uppercase;
+}
+
+// A branch tip: a bud and its trait's name, at least 44 × 44. It buds last.
+.tips {
+  position: absolute;
+  inset: 0;
+}
+
+.tip {
+  --bud: clamp(0, (var(--net-in, 1) - 0.7) / 0.3, 1);
+  position: absolute;
+  inset-block-start: var(--y);
+  inset-inline-start: var(--x);
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 0.125rem;
+  min-inline-size: var(--target-min);
+  min-block-size: var(--target-min);
+  padding: 0.25rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+  translate: -50% -0.9rem;
+  scale: calc(var(--bud) * (1 - clamp(0, var(--net-out, 0) / 0.3, 1)));
+
+  &:dir(rtl) {
+    translate: 50% -0.9rem;
+  }
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+}
+
+.bud {
+  inline-size: 1.15rem;
+  aspect-ratio: 1;
+  border: 2px solid var(--rise-glow);
+  border-radius: 50%;
+  background: var(--rise-fill);
+  box-shadow: 0 0 10px var(--rise-glow);
+  transition:
+    scale var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+
+  .tip:hover &,
+  .tip[aria-expanded="true"] & {
+    scale: 1.3;
+    box-shadow: 0 0 18px var(--rise-glow);
+  }
+}
+
+.name {
+  padding: 0 0.3rem;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+
+  .tip[aria-expanded="true"] & {
+    color: var(--rise);
+  }
+}
+
+// The tip that opens over a branch: a warm card above its bud, kept inside the tree at
+// the edges. Empty (and not drawn) while closed.
+.bubble {
+  position: absolute;
+  z-index: 2;
+  inset-block-end: calc(100% - var(--y) + 1.4rem);
+  inset-inline-start: var(--x);
+  display: grid;
+  gap: 0.25rem;
+  inline-size: max-content;
+  max-inline-size: min(16rem, 90vw);
+  padding: var(--space-3);
+  border: 1px solid var(--rise);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--rise-glow) 40%, transparent);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+  translate: -50% 0;
+  animation: bubble 220ms var(--ease-out) both;
+
+  &[data-side="start"] {
+    translate: -1.2rem 0;
+  }
+
+  &[data-side="end"] {
+    translate: calc(-100% + 1.2rem) 0;
+  }
+
+  &:dir(rtl) {
+    translate: 50% 0;
+  }
+
+  &:empty {
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    animation: none;
+  }
+
+  :global([data-flow]) & {
+    animation: none;
+  }
+}
+
+@keyframes bubble {
+  from {
+    scale: 0.9;
+    translate: -50% 0.4rem;
+  }
+}
+
+.bubbleName {
+  color: var(--rise);
+  font-weight: 900;
+}
+
+.hint {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline: 0;
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-align: center;
+
+  @container stage (height < 32rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+:global([data-flow]) {
+  .flow {
+    animation: none;
+  }
+}
