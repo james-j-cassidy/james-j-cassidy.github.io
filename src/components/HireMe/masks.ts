@@ -13,7 +13,8 @@ export function formatMoney(raw: string): string {
   return rest.length ? `${grouped}.${rest.join("").slice(0, 2)}` : grouped;
 }
 
-// Phone: North American numbers as (555) 123-4567, with +1 when it leads; anything
+// Phone: North American numbers as (555) 123-4567, with +1 when there are 11 digits
+// and the first is 1; anything
 // starting with + (another country) keeps the visitor's own spacing.
 export function formatPhone(raw: string): string {
   if (raw.trim().startsWith("+") && !raw.trim().startsWith("+1")) {
@@ -26,7 +27,9 @@ export function formatPhone(raw: string): string {
   const area = digits.slice(0, 3);
   const middle = digits.slice(3, 6);
   const end = digits.slice(6);
-  let shaped = area;
+  // The parenthesis opens with the first digit, so the typed text always matches the
+  // start of the visible template.
+  let shaped = digits ? `(${area}` : "";
   if (digits.length > 3) shaped = `(${area}) ${middle}`;
   if (digits.length > 6) shaped = `(${area}) ${middle}-${end}`;
   return country ? `+1 ${shaped}` : shaped;
@@ -53,4 +56,45 @@ export function masked(
     input.setSelectionRange(position, position);
   });
   return value;
+}
+
+// The visible part of a mask: the template still to fill, shown faint around what has
+// been typed. `before` sits ahead of the typed text, `after` follows it.
+export interface MaskGhost {
+  before: string;
+  after: string;
+}
+
+const PHONE_TEMPLATE = "(___) ___-____";
+
+// Phone fills left to right, so the rest of the template follows what is typed. A
+// number from another country (starting with + but not +1) has no template.
+export function phoneGhost(value: string): MaskGhost {
+  if (value.startsWith("+") && !value.startsWith("+1")) {
+    return { before: "", after: "" };
+  }
+  const template = value.startsWith("+1")
+    ? `+1 ${PHONE_TEMPLATE}`
+    : PHONE_TEMPLATE;
+  return { before: "", after: template.slice(value.length) };
+}
+
+// Money fills from the right like a till: the whole part is grouped from the right, so
+// the faint zeros ahead of it line up with the template's separators; cents (hourly
+// only) follow the typed text.
+export function moneyGhost(value: string, template: string): MaskGhost {
+  const [templateWhole, templateCents] = template.split(".");
+  const [whole, cents] = value.split(".");
+  const before = templateWhole.slice(
+    0,
+    Math.max(0, templateWhole.length - whole.length),
+  );
+  let after = "";
+  if (templateCents !== undefined) {
+    after =
+      cents === undefined
+        ? `.${templateCents}`
+        : templateCents.slice(cents.length);
+  }
+  return { before, after };
 }

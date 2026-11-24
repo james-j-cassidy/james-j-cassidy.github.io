@@ -1,0 +1,88 @@
+@use "../form";
+
+// The field's surface holds the lead, the masked text and the trail in one row.
+.field {
+  @include form.field-surface;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  min-block-size: 3rem;
+  padding: 0 var(--space-4);
+  cursor: text;
+  font-weight: 600;
+
+  &[data-size="large"] {
+    padding-inline: var(--space-3);
+    font-size: var(--text-lg);
+    font-weight: 800;
+  }
+
+  &[data-invalid] {
+    border: 2px solid form.$fault;
+  }
+}
+
+// The typed text and the faint template around it, with no gap between them, in
+// even-width digits so the template's separators line up.
+.text {
+  display: flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  white-space: pre;
+  font-variant-numeric: tabular-nums;
+}
+
+// The template still to fill: the muted text color, which meets 7:1, set lighter than
+// the typed text so the two read apart.
+.ghost {
+  flex: none;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+// The input and a hidden copy of its value share one grid cell, so the cell (and the
+// input) is exactly as wide as the text, plus room for the caret.
+.grow {
+  display: inline-grid;
+  flex: 0 1 auto;
+  min-inline-size: 0;
+}
+
+.mirror,
+.input {
+  grid-area: 1 / 1;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+.mirror {
+  visibility: hidden;
+  padding-inline-end: 2px;
+}
+
+.input {
+  // No width of its own, so only the copy sizes the cell; then it fills the cell.
+  inline-size: 0;
+  min-inline-size: 100%;
+  min-block-size: 2.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+
+  &:focus-visible {
+    outline: none; // the field around it shows focus
+  }
+}
+
+.trail {
+  margin-inline-start: auto;
+  padding-inline-start: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  white-space: nowrap;
+}
