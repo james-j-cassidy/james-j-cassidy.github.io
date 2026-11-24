@@ -1,0 +1,172 @@
+@use "../../../../../styles/mixins";
+
+// Sizes follow the stage's height. --face-h is one option's height on the drum; the
+// drum's radius follows from it and the number of options.
+//
+// Scroll (from the part): each reel drops in spinning and lands in turn, left to right
+// (--land), and on leaving spins on and falls away (--leave).
+.reel {
+  --face-h: clamp(2.75rem, 9cqh, 3.75rem);
+  --radius: calc(var(--face-h) * var(--radius-factor));
+  --land: clamp(0, calc((var(--in, 1) - 0.2 - var(--order) * 0.14) / 0.42), 1);
+  --leave: clamp(0, calc((var(--out, 0) - var(--order) * 0.12) / 0.55), 1);
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  // Drops in from above the stage while spinning, and falls out below it on leaving,
+  // so it is never in view while another part is on stage.
+  transform: translateY(calc((var(--leave) - 1 + var(--land)) * 85cqh));
+}
+
+.label {
+  padding: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+// The real radios: not shown, but they hold the choice and the keyboard focus.
+.choices {
+  @include mixins.visually-hidden;
+}
+
+// The reel's window: a framed slot showing the front option and the edges of its
+// neighbors, with the turn buttons at its top and bottom.
+.window {
+  position: relative;
+  block-size: calc(var(--face-h) * 2.6);
+  border: 2px solid color-mix(in srgb, var(--color-accent) 70%, transparent);
+  border-radius: 0.5rem;
+  background: var(--color-surface);
+  box-shadow:
+    inset 0 0 18px color-mix(in srgb, var(--color-accent) 25%, transparent),
+    0 0 16px color-mix(in srgb, var(--color-accent) 25%, transparent);
+  overflow: clip;
+  perspective: 700px;
+
+  // Shade over the top and bottom, so the neighbors read as the drum curving away and
+  // the ▲ ▼ stay clear.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      180deg,
+      var(--color-bg) 12%,
+      transparent 38%,
+      transparent 62%,
+      var(--color-bg) 88%
+    );
+    pointer-events: none;
+  }
+
+  // A pay line across the middle marks the chosen option.
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-start: 50%;
+    block-size: var(--face-h);
+    translate: 0 -50%;
+    border-block: 2px solid var(--color-accent);
+    pointer-events: none;
+  }
+
+  // Keyboard focus on the hidden radios shows on the window.
+  .reel:has(input:focus-visible) & {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+}
+
+// Spins with the scroll (landing, leaving); no transition, it follows the scroll.
+.spinner {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 50%;
+  block-size: var(--face-h);
+  margin-block-start: calc(var(--face-h) / -2);
+  transform-style: preserve-3d;
+  transform: translateZ(calc(var(--radius) * -1))
+    rotateX(calc((1 - var(--land) + var(--leave)) * 720deg));
+}
+
+// Turned so the chosen option faces the visitor; choosing turns it smoothly.
+.drum {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--turn) * var(--step)));
+  transition: transform 700ms var(--ease-out);
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding-inline: var(--space-2);
+  border-block: 1px solid
+    color-mix(in srgb, var(--color-accent) 30%, transparent);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-size: clamp(var(--text-sm), 2.6cqh, var(--text-lg));
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
+  backface-visibility: hidden;
+  transform: rotateX(calc(var(--position) * var(--step) * -1))
+    translateZ(var(--radius));
+
+  &[data-current] {
+    color: var(--color-text);
+  }
+}
+
+// ▲ and ▼ over the top and bottom of the window.
+.turn {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  block-size: var(--target-min);
+  margin-inline: auto;
+  inline-size: var(--target-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-accent);
+  cursor: pointer;
+
+  &[data-end="start"] {
+    inset-block-start: 0;
+  }
+
+  &[data-end="end"] {
+    inset-block-end: 0;
+  }
+
+  svg {
+    inline-size: 1.25rem;
+    fill: none;
+    stroke: currentcolor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  &:hover svg {
+    filter: drop-shadow(0 0 6px var(--color-accent));
+  }
+}
+
+:global([data-flow]) .drum {
+  transition: none;
+}

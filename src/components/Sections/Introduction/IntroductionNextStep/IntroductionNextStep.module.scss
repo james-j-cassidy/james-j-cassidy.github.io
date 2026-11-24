@@ -1,0 +1,171 @@
+@use "../../../../styles/mixins";
+
+// The finale fills the stage: the tunnel behind, the layout over it. Its own movement
+// replaces the default carousel; nothing fades. As the last part it never leaves.
+.part {
+  @include mixins.story-piece(0, 0.4, --open);
+  @include mixins.story-piece(0.05, 0.6, --rings-in);
+  @include mixins.story-piece(0.2, 0.55, --slam);
+  @include mixins.story-piece(0.25, 0.5, --unfold);
+  @include mixins.story-piece(0.6, 1, --rise);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+
+  // The tunnel opens out from the center (so nothing of it shows while another part is
+  // on stage).
+  > :first-child {
+    clip-path: inset(calc((1 - var(--open)) * 50%));
+  }
+}
+
+// Banner across the top; the achievements board and the portal side by side below
+// (stacked on phones).
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-areas:
+    "banner banner"
+    "board portal";
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  align-content: center;
+  align-items: center;
+  gap: clamp(var(--space-3), 3cqh, var(--space-6)) var(--space-8);
+  perspective: 1400px; // depth for the banner's slam (it must be a direct child)
+}
+
+// Slams in from behind the visitor: from past the eye (not drawn) down onto the stage.
+.banner {
+  grid-area: banner;
+  text-align: center;
+  transform: translateZ(calc((1 - var(--slam)) * 1600px));
+}
+
+.tag {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.bannerText {
+  margin: var(--space-1) 0 0;
+  font-size: clamp(1.75rem, 8cqh, 3.5rem);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 24px color-mix(in srgb, var(--color-accent) 60%, transparent);
+}
+
+.heading {
+  @include mixins.visually-hidden; // the banner is the visual headline
+}
+
+// The board of achievements: a score with a segment per achievement, then the
+// medallions in two rows of three.
+.board {
+  grid-area: board;
+  display: grid;
+  gap: clamp(var(--space-2), 2cqh, var(--space-4));
+  padding: clamp(var(--space-3), 3cqh, var(--space-6));
+  border: 1px solid color-mix(in srgb, var(--color-accent) 60%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  // Unfolds from a line before the medallions stamp onto it.
+  transform: scaleY(var(--unfold));
+}
+
+.score {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.scoreText {
+  font-weight: 800;
+}
+
+.scoreBar {
+  display: flex;
+  gap: 4px;
+
+  span {
+    inline-size: 1.5rem;
+    block-size: 0.6rem;
+    border: 1px solid var(--color-accent);
+    transform: skewX(-20deg);
+  }
+
+  span[data-earned] {
+    background: var(--color-accent);
+    box-shadow: 0 0 8px var(--color-accent);
+  }
+}
+
+.medallions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(var(--space-2), 2cqh, var(--space-4)) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// Rises out of the tunnel, growing from its far end.
+.portalSlot {
+  grid-area: portal;
+  transform: translateY(calc((1 - var(--rise)) * 40cqh)) scale(var(--rise));
+}
+
+// While this part is on stage, the header's Professional Journey tab lights up and
+// pulses a few times (then holds), pointing the way. On touch screens, the location
+// mark for that section does the same.
+:global(:root:has([data-story-part="next-step"][data-current])) {
+  :global(header [data-section="professional-journey"]),
+  :global(header [data-position="1"]) {
+    animation: point 900ms var(--ease-out) 3;
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+}
+
+@keyframes point {
+  50% {
+    scale: 1.08;
+  }
+}
+
+// Phones: one column; the medallions smaller, in two rows of three.
+@media (width < 48rem) {
+  .layout {
+    grid-template-areas:
+      "banner"
+      "board"
+      "portal";
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bannerText {
+    font-size: var(--text-2xl);
+  }
+
+  // One row of six: the lock or the emblem shows the state (shape, not color).
+  .medallions {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--space-1);
+  }
+}
+
+:global([data-flow]) {
+  .banner,
+  .board,
+  .portalSlot {
+    transform: none;
+  }
+}

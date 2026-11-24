@@ -1,0 +1,102 @@
+@use "../../../../../../styles/mixins";
+
+// A diamond marker centered on its spot on the path, at least 44 × 44. It switches on
+// (grows from nothing) once the path drawing in reaches it.
+.waypoint {
+  --on: clamp(0, calc((var(--t, 1) - var(--at) * 0.85) * 7), 1);
+  position: absolute;
+  // Physical left/top: the map is a picture and is not mirrored in right-to-left.
+  left: var(--x);
+  top: var(--y);
+  display: grid;
+  place-items: center;
+  inline-size: var(--target-min);
+  block-size: var(--target-min);
+  margin: calc(var(--target-min) / -2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+  scale: var(--on);
+
+  // The diamond.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 15%;
+    rotate: 45deg;
+    border: 2px solid var(--color-accent);
+    background: var(--color-bg);
+    box-shadow: 0 0 10px
+      color-mix(in srgb, var(--color-accent) 60%, transparent);
+    transition:
+      background var(--duration-base) var(--ease-out),
+      scale var(--duration-base) var(--ease-out);
+  }
+
+  &:hover::before {
+    scale: 1.15;
+  }
+
+  &[data-visited]::before {
+    background: color-mix(in srgb, var(--color-accent) 30%, var(--color-bg));
+  }
+
+  &[aria-selected="true"]::before {
+    background: var(--color-accent);
+    scale: 1.2;
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.number {
+  position: relative;
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+
+  .waypoint[aria-selected="true"] & {
+    color: var(--color-on-accent);
+  }
+}
+
+.title {
+  @include mixins.visually-hidden;
+}
+
+// Two rings that ripple out from the current waypoint once when it is chosen.
+.rings {
+  position: absolute;
+  inset: 0;
+  rotate: 45deg;
+  border: 2px solid var(--color-accent);
+  scale: 0;
+  pointer-events: none;
+
+  .waypoint[aria-selected="true"] & {
+    animation: ripple 900ms var(--ease-out) both;
+  }
+}
+
+@keyframes ripple {
+  from {
+    scale: 0.6;
+  }
+
+  70% {
+    scale: 1.9;
+  }
+
+  to {
+    scale: 0;
+  }
+}
+
+:global([data-flow]) .rings {
+  animation: none;
+}

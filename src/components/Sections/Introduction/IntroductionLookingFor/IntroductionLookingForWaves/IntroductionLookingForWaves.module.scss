@@ -1,0 +1,55 @@
+.waves {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+.scope {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+}
+
+.grid {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-opacity: 0.12;
+  stroke-width: 1;
+}
+
+.axis {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.3;
+  stroke-width: 1.5;
+  stroke-dasharray: 8 8;
+}
+
+// The signals grow out from the middle as the part enters (--draw) and flatten to the
+// axis as it leaves (--flatten); both set by the part.
+.signals {
+  transform-origin: 800px 560px;
+  transform: scale(var(--draw, 1), calc(1 - var(--flatten, 0)));
+}
+
+.mine {
+  stroke: var(--color-accent);
+  stroke-width: 4;
+  filter: drop-shadow(0 0 8px var(--color-accent));
+}
+
+// Slides into step with James's as the match rises.
+.theirs {
+  stroke: var(--color-decor);
+  stroke-width: 4;
+  stroke-dasharray: 14 10;
+  filter: drop-shadow(0 0 8px var(--color-decor));
+  translate: var(--offset) 0;
+  transition: translate 900ms var(--ease-out);
+}
+
+:global([data-flow]) .theirs {
+  transition: none;
+}

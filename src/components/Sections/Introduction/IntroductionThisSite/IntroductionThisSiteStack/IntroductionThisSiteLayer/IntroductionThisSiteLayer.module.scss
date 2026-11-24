@@ -1,0 +1,102 @@
+@use "../../../../../../styles/mixins";
+
+// A square plate lying in the stack's isometric plane, raised to its level.
+//
+// Scroll (from the part): each layer drops in from high above in turn, bottom first
+// (--drop), and on leaving flies off upward spinning, top first (--fly).
+// Selection: the selected layer slides out toward the reader; the ones above it lift.
+.layer {
+  --drop: clamp(0, calc((var(--in, 1) - 0.15 - var(--level) * 0.1) / 0.4), 1);
+  --fly: clamp(0, calc((var(--out, 0) - (4 - var(--level)) * 0.1) / 0.5), 1);
+  --slide: 0;
+  --lift: 0;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: var(--space-1);
+  padding: calc(var(--size) * 0.08);
+  border: 2px solid color-mix(in srgb, var(--color-accent) 70%, transparent);
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--color-accent) 26%, transparent),
+      color-mix(in srgb, var(--color-decor) 18%, transparent)
+    ),
+    color-mix(in srgb, var(--color-surface) 82%, transparent);
+  box-shadow:
+    0 0 18px color-mix(in srgb, var(--color-accent) 40%, transparent),
+    inset 0 0 24px color-mix(in srgb, var(--color-accent) 20%, transparent);
+  color: var(--color-text);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transform: translateZ(
+      calc(
+        var(--level) * var(--gap) + var(--lift) * var(--gap) * 0.5 +
+          (1 - var(--drop) + var(--fly)) * 36rem
+      )
+    )
+    translateY(calc(var(--slide) * var(--size) * 0.55))
+    rotateZ(calc(var(--fly) * (var(--level) - 2) * 40deg));
+  transition:
+    --slide 600ms var(--ease-out),
+    --lift 600ms var(--ease-out);
+
+  &:hover {
+    border-color: var(--color-accent);
+  }
+
+  &[aria-selected="true"] {
+    --slide: 1;
+    border-color: var(--color-accent);
+    box-shadow:
+      0 0 0 2px var(--color-accent),
+      0 0 32px var(--color-accent),
+      inset 0 0 28px color-mix(in srgb, var(--color-accent) 35%, transparent);
+  }
+
+  &[data-lifted] {
+    --lift: 1;
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.number {
+  color: var(--color-accent);
+  font-size: max(var(--text-sm), calc(var(--size) * 0.085));
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.title {
+  font-size: calc(var(--size) * 0.11);
+  font-weight: 800;
+  line-height: 1.1;
+
+  // Phones: the plates are small; the number shows and the sheet names the layer.
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+// Registered so the slide and lift can be transitioned smoothly.
+@property --slide {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --lift {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+:global([data-flow]) .layer {
+  transition: none;
+}

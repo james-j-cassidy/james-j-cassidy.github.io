@@ -13,6 +13,9 @@ import { useReducedMotion } from "./useReducedMotion";
 // the swap itself is never seen.
 const SWAP_AT = 0.85;
 
+// Where scrollend is missing: how long scrolling must pause before the collapse settles.
+const SETTLE_DELAY = 150; // ms
+
 interface Metrics {
   expanded: number; // whole header, full
   mainFull: number; // main body, full
@@ -30,6 +33,9 @@ function clamp01(value: number): number {
 // exactly as much height as the page has scrolled, so the section's top stays pinned just
 // under the tab bar the whole way. Once the main body reaches its compact height, the
 // section scrolls on under the header as usual.
+//
+// Scrolling never leaves the header part-way: when it stops inside the shrink, the page
+// finishes the move in the direction of travel.
 //
 // With reduced motion, nothing shrinks or fades: the header swaps to compact in one step
 // at the point where the section's top meets the compact header, so nothing jumps.
@@ -94,6 +100,17 @@ export function useHeaderCollapse(headerRef: RefObject<HTMLElement | null>) {
       header.style.setProperty("--main-body-height", savedHeight);
 
     metrics.current = { expanded, mainFull, mainCompact };
+    // For section stages: they pin just under the compact header, from the very top of
+    // the page, and the full header covers them until it collapses.
+    const rootStyle = document.documentElement.style;
+    rootStyle.setProperty(
+      "--header-compact-height",
+      `${expanded - (mainFull - mainCompact)}px`,
+    );
+    rootStyle.setProperty(
+      "--header-collapse-range",
+      `${Math.max(0, mainFull - mainCompact)}px`,
+    );
     setExpandedHeight(expanded);
     useNavigation
       .getState()
@@ -126,6 +143,64 @@ export function useHeaderCollapse(headerRef: RefObject<HTMLElement | null>) {
       cancelAnimationFrame(frame);
     };
   }, [apply]);
+
+  // Never rest part-way through the collapse: when scrolling stops inside it, finish the
+  // move in the direction the visitor was scrolling (down collapses, up expands). The
+  // finish is ordinary smooth scrolling, so the scroll-linked animation completes itself.
+  // Waits for the gesture to end (scrollend; a short pause where that event is missing,
+  // never while a finger is down). Reduced motion has no part-way state to settle.
+  useEffect(() => {
+    if (reducedMotion) return;
+    const hasScrollEnd = "onscrollend" in window;
+    let lastY = window.scrollY;
+    let direction = 0;
+    let touching = false;
+    let timer = 0;
+
+    function settle() {
+      const sizes = metrics.current;
+      if (!sizes || touching) return;
+      const range = sizes.mainFull - sizes.mainCompact;
+      const y = window.scrollY;
+      if (range <= 0 || y <= 0 || y >= range) return;
+      window.scrollTo({ top: direction < 0 ? 0 : range, behavior: "smooth" });
+    }
+
+    function scheduleSettle() {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(settle, SETTLE_DELAY);
+    }
+
+    function handleScroll() {
+      const y = window.scrollY;
+      if (y !== lastY) direction = Math.sign(y - lastY);
+      lastY = y;
+      if (!hasScrollEnd) scheduleSettle();
+    }
+
+    function handleTouchStart() {
+      touching = true;
+    }
+
+    function handleTouchEnd() {
+      touching = false;
+      if (!hasScrollEnd) scheduleSettle();
+    }
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", handleTouchEnd, { passive: true });
+    if (hasScrollEnd) window.addEventListener("scrollend", settle);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchEnd);
+      window.removeEventListener("scrollend", settle);
+    };
+  }, [reducedMotion]);
 
   return { expandedHeight };
 }

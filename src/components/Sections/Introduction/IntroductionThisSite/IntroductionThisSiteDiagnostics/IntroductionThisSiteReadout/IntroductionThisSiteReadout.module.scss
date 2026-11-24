@@ -1,0 +1,44 @@
+// A small instrument: label, big tabular number, badge.
+.readout {
+  display: grid;
+  gap: 0.125rem;
+  min-inline-size: 0;
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 3px solid var(--color-accent);
+  background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+
+  @media (width < 48rem) {
+    padding: var(--space-1) var(--space-2);
+  }
+}
+
+.label {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.value {
+  font-size: clamp(var(--text-lg), 4.5cqh, 1.75rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+
+.unit {
+  color: var(--color-text-muted);
+  font-size: 0.6em;
+}
+
+.badge {
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+
+  .readout:not([data-pass]) & {
+    color: var(--color-text);
+    text-decoration: underline wavy;
+  }
+}

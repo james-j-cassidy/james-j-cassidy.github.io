@@ -1,0 +1,141 @@
+@use "../../../../styles/mixins";
+
+// The flight log fills the stage: the radar behind, the display over it. Its own
+// movement replaces the default carousel; nothing fades.
+.part {
+  @include mixins.story-piece(0, 0.5, --ping);
+  @include mixins.story-piece(0, 0.6, --close, --out);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+
+  // The radar pings open from its center as the part enters, and closes back to a point
+  // as it leaves.
+  > :first-child {
+    clip-path: circle(calc(var(--ping) * (1 - var(--close)) * 80%) at 50% 50%);
+  }
+}
+
+// Title bar, screen with the map, and the briefing beside it (below it on phones).
+// Rises off the floor, hinged at its bottom edge, as the part enters; folds back down
+// flat as it leaves.
+.display {
+  @include mixins.story-piece(0.15, 0.75, --rise);
+  @include mixins.story-piece(0.3, 1, --fold, --out);
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-areas:
+    "title title"
+    "screen briefing";
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  align-content: center;
+  align-items: center;
+  gap: clamp(var(--space-2), 3cqh, var(--space-6)) var(--space-8);
+  transform-origin: center bottom;
+  // Lying flat it also sits below the stage's bottom edge, so (seen from above) none of
+  // it shows.
+  transform: translateY(calc((1 - var(--rise) + var(--fold)) * 60cqh))
+    rotateX(calc((1 - var(--rise) + var(--fold)) * 90deg));
+}
+
+// Drops in from above as the display rises.
+.titleBar {
+  @include mixins.story-piece(0.35, 0.85);
+  grid-area: title;
+  transform: translateY(calc((1 - var(--t)) * -12rem));
+}
+
+.tag {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.heading {
+  margin: var(--space-1) 0 0;
+  font-size: clamp(1.375rem, 6cqh, 3rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+// The screen: a framed chart. --t draws the route in (and switches on the waypoints and
+// brings in the jet).
+.screen {
+  @include mixins.story-piece(0.4, 0.95);
+  grid-area: screen;
+  position: relative;
+  justify-self: center;
+  // As wide as the column allows, but never taller (2:1 chart) than the stage leaves
+  // room for under the title.
+  inline-size: min(100%, calc((100cqh - 11rem) * 2));
+  padding: clamp(var(--space-2), 2cqh, var(--space-4));
+  border: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+  box-shadow:
+    inset 0 0 2rem color-mix(in srgb, var(--color-accent) 12%, transparent),
+    0 0 1.5rem color-mix(in srgb, var(--color-accent) 20%, transparent);
+
+  // HUD corner brackets.
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    border: 3px solid var(--color-accent);
+  }
+
+  &::before {
+    inset-block-start: -6px;
+    inset-inline-start: -6px;
+    border-inline-end: 0;
+    border-block-end: 0;
+  }
+
+  &::after {
+    inset-block-end: -6px;
+    inset-inline-end: -6px;
+    border-inline-start: 0;
+    border-block-start: 0;
+  }
+}
+
+// The briefing swings in from the far side, turning to face the visitor, and slides
+// back out that way as the part leaves.
+.briefingSlot {
+  @include mixins.story-piece(0.5, 1);
+  grid-area: briefing;
+  perspective: 1200px;
+  transform-origin: right center;
+  transform: translateX(
+      calc((1 - var(--t) + var(--out)) * 60vw * var(--dir, 1))
+    )
+    rotateY(calc((1 - var(--t) + var(--out)) * -60deg * var(--dir, 1)));
+
+  &:dir(rtl) {
+    transform-origin: left center;
+  }
+}
+
+// Phones: one column.
+@media (width < 48rem) {
+  .display {
+    grid-template-areas:
+      "title"
+      "screen"
+      "briefing";
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  // The chart shares the height with the title and the briefing below it.
+  .screen {
+    inline-size: min(100%, calc((100cqh - 23rem) * 2));
+    padding: var(--space-2);
+  }
+}

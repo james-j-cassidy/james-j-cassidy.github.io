@@ -1,0 +1,47 @@
+// The map keeps the chart's 2:1 shape; the waypoint markers sit over the drawing at the
+// same spots. --t (0 → 1, from the part's entrance) draws the route in; --flown (set as
+// the jet moves) lights the stretch already flown.
+.map {
+  position: relative;
+  aspect-ratio: 2;
+  inline-size: 100%;
+  direction: ltr; // a picture: never mirrored
+}
+
+.chart {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+  fill: none;
+}
+
+.grid {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.1;
+  stroke-width: 1;
+}
+
+// The route draws in from the start as the part enters.
+.route {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.45;
+  stroke-width: 3;
+  stroke-dasharray: 0.012 0.01;
+  stroke-linecap: round;
+  clip-path: inset(0 calc((1 - var(--t, 1)) * 100%) 0 0);
+}
+
+// The flown stretch, solid and glowing, up to the jet.
+.flown {
+  stroke: var(--color-accent);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: var(--flown, 0) 2;
+  filter: drop-shadow(0 0 6px var(--color-accent));
+}
+
+.waypoints {
+  position: absolute;
+  inset: 0;
+}

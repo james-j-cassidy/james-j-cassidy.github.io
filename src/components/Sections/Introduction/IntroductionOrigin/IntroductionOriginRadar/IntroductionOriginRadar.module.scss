@@ -1,0 +1,117 @@
+// Covers the stage behind the flight log.
+.radar {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+.scope {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+}
+
+.contours {
+  stroke: var(--color-decor);
+  stroke-opacity: 0.22;
+  stroke-width: 1.5;
+}
+
+.rings {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.3;
+  stroke-width: 1.5;
+
+  circle:nth-child(even) {
+    stroke-dasharray: 6 10;
+  }
+}
+
+.cross {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.18;
+  stroke-width: 1.5;
+}
+
+.ticks {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.55;
+  stroke-width: 2;
+}
+
+.center {
+  fill: var(--color-accent);
+  filter: drop-shadow(0 0 8px var(--color-accent));
+}
+
+// The sweep: a wedge that goes around once, then is gone.
+.sweep {
+  fill: var(--color-accent);
+  fill-opacity: 0.16;
+  stroke: var(--color-accent);
+  stroke-width: 3;
+  transform-origin: 800px 450px;
+  visibility: hidden;
+}
+
+.contacts[data-sweep] .sweep {
+  animation: sweep 1600ms linear both;
+}
+
+@keyframes sweep {
+  from {
+    rotate: 0deg;
+    visibility: visible;
+  }
+
+  to {
+    rotate: 360deg;
+    visibility: hidden;
+  }
+}
+
+// Contacts: small marks that flare when the sweep passes over them.
+.blip {
+  fill: var(--color-accent);
+  stroke: var(--color-accent);
+  stroke-width: 2;
+
+  circle {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+}
+
+.blipRing {
+  fill: none;
+  scale: 0;
+}
+
+.contacts[data-sweep] .blipRing {
+  animation: flare 700ms var(--ease-out) calc(200ms + var(--i) * 220ms) both;
+}
+
+@keyframes flare {
+  from {
+    scale: 0;
+  }
+
+  50% {
+    scale: 1.6;
+  }
+
+  to {
+    scale: 0;
+  }
+}
+
+// Reduced motion and flow mode: no sweep.
+:global([data-flow]) .contacts[data-sweep] {
+  .sweep,
+  .blipRing {
+    animation: none;
+  }
+}

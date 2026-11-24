@@ -1,6 +1,12 @@
-import { useEffect, useRef, type PointerEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  type ComponentType,
+  type PointerEvent,
+} from "react";
 import { SECTIONS, SECTION_LABELS } from "../../../content/sections";
 import { useNavigation } from "../../../state/navigation";
+import Introduction from "../Introduction/Introduction";
 import SectionPanel from "../SectionPanel/SectionPanel";
 import styles from "./SectionDeck.module.scss";
 
@@ -8,6 +14,11 @@ import styles from "./SectionDeck.module.scss";
 const SWIPE_MIN_DISTANCE = 60; // px
 const SWIPE_MAX_DURATION = 600; // ms
 const SWIPE_SIDEWAYS_RATIO = 1.5; // sideways travel must exceed 1.5 x vertical travel
+
+// Each built section's content, by section id. Sections not listed show a placeholder.
+const SECTION_CONTENT: Partial<Record<string, ComponentType>> = {
+  introduction: Introduction,
+};
 
 interface SwipeStart {
   x: number;
@@ -74,18 +85,23 @@ function SectionDeck() {
       onPointerUp={handlePointerUp}
       onPointerCancel={handlePointerCancel}
     >
-      {SECTIONS.map((section, index) => (
-        <SectionPanel
-          key={section.id}
-          id={section.id}
-          title={section.label}
-          placeholder={SECTION_LABELS.placeholder}
-          hidden={index !== sectionIndex}
-          headingRef={(element) => {
-            headingRefs.current[index] = element;
-          }}
-        />
-      ))}
+      {SECTIONS.map((section, index) => {
+        const Content = SECTION_CONTENT[section.id];
+        return (
+          <SectionPanel
+            key={section.id}
+            id={section.id}
+            title={section.label}
+            placeholder={SECTION_LABELS.placeholder}
+            hidden={index !== sectionIndex}
+            headingRef={(element) => {
+              headingRefs.current[index] = element;
+            }}
+          >
+            {Content && <Content />}
+          </SectionPanel>
+        );
+      })}
     </div>
   );
 }

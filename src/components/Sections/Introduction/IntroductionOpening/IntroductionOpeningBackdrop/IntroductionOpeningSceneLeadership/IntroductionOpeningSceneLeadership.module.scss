@@ -1,0 +1,92 @@
+.scene {
+  fill: none;
+}
+
+.orbits {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.22;
+  stroke-width: 1.5;
+  stroke-dasharray: 10 12;
+}
+
+.spokes {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.7;
+  stroke-width: 2.5;
+  stroke-dasharray: 1;
+  animation: draw 800ms var(--ease-out) 300ms both;
+}
+
+.ring {
+  stroke: var(--color-decor);
+  stroke-width: 2.5;
+  stroke-dasharray: 1;
+  animation: draw 1200ms var(--ease-out) 700ms both;
+}
+
+.leadNode {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pop 500ms var(--ease-out) both;
+}
+
+.hex {
+  fill: var(--color-surface);
+  stroke: var(--color-accent);
+  stroke-width: 4;
+  filter: drop-shadow(0 0 12px var(--color-accent));
+}
+
+.badge {
+  fill: var(--color-surface);
+  stroke: var(--color-decor);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px var(--color-decor));
+}
+
+.glyph {
+  stroke: var(--color-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+// Members join one after another around the circle.
+.pop {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pop 450ms var(--ease-out) calc(800ms + var(--i) * 120ms) both;
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pop {
+  from {
+    scale: 0;
+  }
+
+  70% {
+    scale: 1.15;
+  }
+
+  to {
+    scale: 1;
+  }
+}
+
+// Reduced motion and flow mode: already built.
+:global([data-flow]) {
+  .spokes,
+  .ring,
+  .leadNode,
+  .pop {
+    animation: none;
+  }
+}

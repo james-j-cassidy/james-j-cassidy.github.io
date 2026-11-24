@@ -17,6 +17,7 @@ function HeaderTabLocation({ count, currentIndex }: HeaderTabLocationProps) {
         <span
           key={index}
           className={styles.mark}
+          data-position={index}
           data-current={index === currentIndex ? "" : undefined}
         />
       ))}

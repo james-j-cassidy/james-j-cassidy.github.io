@@ -1,0 +1,46 @@
+.blueprint {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+.sheet {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+}
+
+.fine {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-opacity: 0.08;
+  stroke-width: 1;
+}
+
+.coarse {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-opacity: 0.2;
+  stroke-width: 1.5;
+}
+
+.marks {
+  stroke: var(--color-decor);
+  stroke-opacity: 0.7;
+  stroke-width: 2;
+}
+
+.dimensions {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.55;
+  stroke-width: 1.5;
+}
+
+.titleBlock {
+  stroke: var(--color-accent);
+  stroke-opacity: 0.5;
+  stroke-width: 2;
+}
