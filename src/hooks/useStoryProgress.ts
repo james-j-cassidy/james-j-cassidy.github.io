@@ -101,6 +101,7 @@ export function useStoryProgress(
           part.style.removeProperty("--in");
           part.style.removeProperty("--out");
           part.removeAttribute("data-current");
+          part.removeAttribute("data-away");
         });
         return;
       }
@@ -131,6 +132,9 @@ export function useStoryProgress(
         part.style.setProperty("--in", enter.toFixed(4));
         part.style.setProperty("--out", exit.toFixed(4));
         part.toggleAttribute("data-current", index === current);
+        // Not arrived at all, or wholly gone: hidden outright, whatever its own
+        // styles leave on stage.
+        part.toggleAttribute("data-away", enter === 0 || exit === 1);
       });
     },
     [stageRef, flow, geometry, length, count],
@@ -171,15 +175,21 @@ export function useStoryProgress(
       render(shown);
     }
 
+    // The story's own size changes too when its section is shown (hidden, it cannot be
+    // measured): show it as it now is.
+    const resized = new ResizeObserver(jump);
+    if (rootRef.current) resized.observe(rootRef.current);
+
     window.addEventListener("scroll", start, { passive: true });
     window.addEventListener("resize", jump);
     jump();
     return () => {
+      resized.disconnect();
       window.removeEventListener("scroll", start);
       window.removeEventListener("resize", jump);
       cancelAnimationFrame(frame);
     };
-  }, [render]);
+  }, [render, rootRef]);
 
   // Never rest inside a transition between parts: finish it in the direction of travel.
   useEffect(() => {
