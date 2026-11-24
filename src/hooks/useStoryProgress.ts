@@ -69,6 +69,9 @@ export function useStoryProgress(
   const [mounted, setMounted] = useState<readonly [number, number]>([0, 0]);
   const shownRef = useRef(0); // the scroll position last shown
   const snapRef = useRef(false); // the next scroll is a jump: show it at once
+  // A part landing as the header collapses (a deep link from the full header): until the
+  // collapse ends it forms in the first part's place.
+  const landingRef = useRef<number | null>(null);
 
   const geometry = useCallback((): Geometry | null => {
     const root = rootRef.current;
@@ -106,6 +109,22 @@ export function useStoryProgress(
         return;
       }
       const collapse = sizes.range > 0 ? clamp(y / sizes.range, 0, 1) : 1;
+      const landing = landingRef.current;
+      if (landing !== null) {
+        // Only the landing part, forming with the collapse as the first part would.
+        const { enter } = partProgress(0, 0, collapse);
+        setMounted((now) =>
+          now[0] === landing && now[1] === landing ? now : [landing, landing],
+        );
+        parts.forEach((part) => {
+          const here = Number(part.dataset.partIndex) === landing;
+          part.style.setProperty("--in", (here ? enter : 0).toFixed(4));
+          part.style.setProperty("--out", "0");
+          part.toggleAttribute("data-current", here);
+          part.toggleAttribute("data-away", !here || enter === 0);
+        });
+        return;
+      }
       const story = clamp((y - sizes.range) / sizes.unit, 0, length);
       // The part that takes pointer input: the one holding, or past the middle of its
       // entrance.
@@ -294,8 +313,11 @@ export function useStoryProgress(
     [flow, geometry],
   );
 
-  // Straight to a part (a deep link): the page jumps there and the story shows it at
-  // once, without playing the parts in between. In flow mode the page scrolls to it.
+  // Straight to a part (a deep link), without playing the parts in between. With the
+  // header collapsed, the page jumps there and the story shows it at once. With the full
+  // header showing, the header collapses in one smooth scroll while the part forms in the
+  // first part's place; when the collapse ends the page moves to the part's own place,
+  // where it already shows exactly as it is. In flow mode the page scrolls to it.
   const goTo = useCallback(
     (index: number) => {
       const sizes = flow ? null : geometry();
@@ -306,9 +328,40 @@ export function useStoryProgress(
         return;
       }
       const top = sizes.range + index * sizes.unit;
-      snapRef.current = true;
-      window.scrollTo({ top, behavior: "instant" });
-      render(top);
+
+      function arrive() {
+        snapRef.current = true;
+        window.scrollTo({ top, behavior: "instant" });
+        render(top);
+      }
+
+      if (window.scrollY >= sizes.range - 1) {
+        arrive();
+        return;
+      }
+
+      landingRef.current = index;
+      render(window.scrollY);
+      window.scrollTo({ top: sizes.range, behavior: "smooth" });
+
+      // When the collapse's scroll ends: on to the part's place, unless the visitor
+      // scrolled away meanwhile.
+      let done = false;
+      function finish(event?: Event) {
+        // A scroll that ended short of the collapse (the tab change's own jump to
+        // the top) is not this one.
+        if (done || (event && sizes && window.scrollY < sizes.range - 1))
+          return;
+        done = true;
+        window.removeEventListener("scrollend", finish);
+        window.clearTimeout(timer);
+        landingRef.current = null;
+        if (sizes && window.scrollY >= sizes.range - 1) arrive();
+        else render(window.scrollY);
+      }
+      window.addEventListener("scrollend", finish);
+      // Where scrollend is missing, or the visitor scrolled back up meanwhile.
+      const timer = window.setTimeout(() => finish(), 1500);
     },
     [flow, geometry, render, stageRef],
   );
