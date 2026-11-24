@@ -362,7 +362,7 @@ export const INTRODUCTION_LOOKING_FOR = {
 
 // Beyond work: a star map of personal items. PLACEHOLDERS: James supplies the items and
 // their text; only the veteran item is a known fact.
-export type BeyondWorkIcon = "compass" | "wrench" | "book" | "heart" | "wings";
+export type BeyondWorkIcon = "compass" | "wrench" | "book" | "heart" | "usaf";
 
 export interface BeyondWorkItem {
   id: string;
@@ -403,7 +403,7 @@ export const INTRODUCTION_BEYOND_WORK = {
     },
     {
       id: "veteran",
-      icon: "wings",
+      icon: "usaf", // the Air Force symbol from the header
       title: "U.S. Air Force veteran",
       body: "[Placeholder] What service still means to James today.",
     },

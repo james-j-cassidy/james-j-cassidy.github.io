@@ -1,4 +1,13 @@
 import { useId } from "react";
+import {
+  LOGO_BAR,
+  LOGO_C,
+  LOGO_FLARE,
+  LOGO_J,
+  LOGO_RING,
+  LOGO_RING_FRONT,
+  LOGO_VIEW_BOX,
+} from "./logoShapes";
 import styles from "./HeaderLogo.module.scss";
 
 interface HeaderLogoProps {
@@ -6,39 +15,111 @@ interface HeaderLogoProps {
   label: string;
 }
 
-// Italic "JC" monogram with a swoosh beneath, drawn as filled paths (no font dependency).
-// Gradient stop colors come from theme tokens via the module classes, so it follows every theme.
+// The JC logo (traced from James's artwork, see logoShapes): italic J and C in brushed
+// metal, the C's base in cyan, and a glowing orbit ring that passes behind the letters
+// and back in front of them, with a flare where it catches the light. The letters take
+// theme colors (silver on dark, dark steel on light); the ring and base stay cyan.
 function HeaderLogo({ homeHref, label }: HeaderLogoProps) {
-  // Gradient ids must be unique in the document; strip characters that are awkward inside url(#...).
-  const idBase = useId().replace(/[^a-zA-Z0-9_-]/g, "");
-  const letterGradientId = `${idBase}-letters`;
-  const swooshGradientId = `${idBase}-swoosh`;
+  // Gradient, filter and clip ids must be unique in the document; strip characters
+  // that are awkward inside url(#...).
+  const id = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const ref = (name: string) => `url(#${id}-${name})`;
 
   return (
     <a className={styles.logo} href={homeHref} aria-label={label}>
       <svg
         className={styles.mark}
-        viewBox="10 8 100 68"
+        viewBox={LOGO_VIEW_BOX}
         aria-hidden="true"
         focusable="false"
       >
         <defs>
-          <linearGradient id={letterGradientId} x1="0" y1="0" x2="0" y2="1">
-            <stop className={styles.letterTop} offset="0" />
-            <stop className={styles.letterBottom} offset="1" />
+          <linearGradient
+            id={`${id}-j`}
+            gradientUnits="userSpaceOnUse"
+            x1="360"
+            y1="420"
+            x2="600"
+            y2="800"
+          >
+            <stop className={styles.letterLight} offset="0" />
+            <stop className={styles.letterMid} offset="0.64" />
+            <stop className={styles.letterShade} offset="0.8" />
+            <stop className={styles.letterMid} offset="1" />
           </linearGradient>
-          <linearGradient id={swooshGradientId} x1="0" y1="0" x2="1" y2="0">
-            <stop className={styles.swooshStart} offset="0" />
-            <stop className={styles.swooshEnd} offset="1" />
+          <linearGradient id={`${id}-c`} x1="0" y1="0" x2="0" y2="1">
+            <stop className={styles.letterLight} offset="0" />
+            <stop className={styles.letterMid} offset="0.7" />
+            <stop className={styles.letterShade} offset="1" />
           </linearGradient>
+          <linearGradient
+            id={`${id}-ring`}
+            gradientUnits="userSpaceOnUse"
+            x1="186"
+            y1="0"
+            x2="1072"
+            y2="0"
+          >
+            <stop offset="0" stopColor="#00d0fd" />
+            <stop offset="0.13" stopColor="#0080fc" />
+            <stop offset="0.3" stopColor="#02b8ff" />
+            <stop offset="0.7" stopColor="#08d8f6" />
+            <stop offset="1" stopColor="#10f8ff" />
+          </linearGradient>
+          <linearGradient
+            id={`${id}-bar`}
+            gradientUnits="userSpaceOnUse"
+            x1="700"
+            y1="0"
+            x2="940"
+            y2="0"
+          >
+            <stop offset="0" stopColor="#01aeff" />
+            <stop offset="1" stopColor="#00f6fe" />
+          </linearGradient>
+          <radialGradient id={`${id}-flare`}>
+            <stop offset="0" stopColor="#ffffff" />
+            <stop offset="0.25" stopColor="#bffcff" />
+            <stop offset="1" stopColor="#19e0ff" stopOpacity="0" />
+          </radialGradient>
+          <filter
+            id={`${id}-glow`}
+            x="-10%"
+            y="-20%"
+            width="120%"
+            height="140%"
+          >
+            <feGaussianBlur in="SourceGraphic" stdDeviation="9" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <clipPath id={`${id}-front`}>
+            <polygon points={LOGO_RING_FRONT} />
+          </clipPath>
         </defs>
-        <g fill={`url(#${letterGradientId})`}>
-          <path d="M50 13 L67 13 L57 50 C54 62 42 66 28 64 C18 63 12 58 14 54 C16 49 21 43 28 38 C24 44 23 49 26 52 C30 55 38 54 41 47 Z" />
-          <path d="M107 19 C101 12 91 10 82 11 C68 13 61 26 60 39 C59 51 65 57 75 57 C80 57 84 55 87 52 L84 45 C82 48 80 49 78 49 C73 49 71 45 72 39 C73 29 78 22 85 22 C89 22 92 24 95 27 Z" />
-        </g>
+        <path d={LOGO_BAR} fill={ref("bar")} />
         <path
-          fill={`url(#${swooshGradientId})`}
-          d="M14 72 C45 79 92 73 110 34 C94 62 52 68 14 72 Z"
+          d={LOGO_RING}
+          fill={ref("ring")}
+          fillRule="evenodd"
+          filter={ref("glow")}
+        />
+        <path d={LOGO_J} fill={ref("j")} />
+        <path d={LOGO_C} fill={ref("c")} />
+        {/* The ring again, only where it passes in front of the letters. */}
+        <path
+          d={LOGO_RING}
+          fill={ref("ring")}
+          fillRule="evenodd"
+          clipPath={ref("front")}
+        />
+        <circle
+          cx={LOGO_FLARE.cx}
+          cy={LOGO_FLARE.cy}
+          r="44"
+          fill={ref("flare")}
         />
       </svg>
     </a>

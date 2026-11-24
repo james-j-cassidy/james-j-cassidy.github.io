@@ -111,12 +111,6 @@ $plate: polygon(
   inline-size: calc(1.6em * 74 / 68);
 }
 
-.usafEdge {
-  stroke: #5d6878;
-  stroke-width: 0.6;
-  stroke-linejoin: round;
-}
-
 // Vertical accent bar between highlights; border-inline-start flips for RTL.
 .highlight + .highlight {
   margin-inline-start: clamp(var(--space-3), 2vw, var(--space-6));

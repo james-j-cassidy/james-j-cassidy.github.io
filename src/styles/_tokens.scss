@@ -81,6 +81,10 @@
   --color-on-accent: var(--white);
   --color-decor: var(--purple-700);
   --color-focus: var(--blue-800);
+  // Logo letters: dark steel, so they stand out on the light background.
+  --logo-letter-light: #3a4f73;
+  --logo-letter-mid: var(--navy-800);
+  --logo-letter-shade: var(--navy-900);
 }
 
 @mixin dark-theme {
@@ -94,6 +98,10 @@
   --color-on-accent: var(--navy-900);
   --color-decor: var(--purple-300);
   --color-focus: var(--cyan-300);
+  // Logo letters: brushed silver, as in the original artwork.
+  --logo-letter-light: #ffffff;
+  --logo-letter-mid: #f4f6f9;
+  --logo-letter-shade: #a6b6cc;
 }
 
 :root,
