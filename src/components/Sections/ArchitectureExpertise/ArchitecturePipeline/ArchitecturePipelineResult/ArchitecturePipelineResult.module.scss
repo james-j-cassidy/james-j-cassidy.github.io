@@ -1,0 +1,67 @@
+@use "../../architecture";
+
+// A holographic screen.
+//
+// Scroll (from the part): slides in from the far side (--result-in), and off the
+// reading start on leaving (--result-out).
+.card {
+  @include architecture.screen;
+  display: grid;
+  gap: clamp(var(--space-2), 2cqh, var(--space-3));
+  transform: translateX(
+    calc(
+      ((1 - var(--result-in, 1)) - var(--result-out, 0)) * 120vw * var(--dir, 1)
+    )
+  );
+}
+
+.sheet {
+  display: grid;
+  gap: var(--space-1);
+
+  &[data-scanned] {
+    @include architecture.scan-in;
+  }
+}
+
+.headline {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: clamp(var(--text-base), 3.6cqh, var(--text-xl));
+  font-weight: 800;
+  line-height: var(--leading-tight);
+
+  &[data-caught] {
+    color: var(--fault);
+  }
+}
+
+.text {
+  margin: 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+}
+
+.proof {
+  padding-inline-start: var(--space-3);
+  border-inline-start: 3px solid var(--color-decor);
+
+  @include architecture.short-hidden(30rem);
+}
+
+.proofLabel {
+  @include architecture.label;
+}
+
+.proofText {
+  margin: 0.125rem 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-body);
+}
+
+.source {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}

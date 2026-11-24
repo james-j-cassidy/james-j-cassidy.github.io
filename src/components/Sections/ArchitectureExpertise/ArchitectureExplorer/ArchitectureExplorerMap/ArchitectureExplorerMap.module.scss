@@ -1,0 +1,327 @@
+@use "../../../../../styles/mixins";
+@use "../../architecture";
+
+// The map keeps the drawing's shape (640 × 360) and never grows taller than the stage
+// allows. The nodes sit over the drawing by percentage.
+//
+// Scroll (from the part): the parts power on one by one, growing from nothing
+// (--nodes-in), the traces draw along from each caller (--wire-in) and traffic starts
+// flowing once they are drawn. On leaving, the traffic stops, the traces are erased and
+// the parts power off, last first (--wire-out, --nodes-out).
+.map {
+  --wired: calc(
+    clamp(0, (var(--wire-in, 1) - 0.98) * 1000, 1) *
+      clamp(0, (0.02 - var(--wire-out, 0)) * 1000, 1)
+  );
+  position: relative;
+  @include architecture.fit-drawing(640, 360);
+  aspect-ratio: 640 / 360;
+  direction: ltr; // a drawing: never mirrored
+}
+
+.drawing {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  overflow: visible;
+}
+
+// A connection: drawn in, then traffic flows along it as dashes.
+.edge {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-accent) 40%, transparent);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: calc(1 - var(--wire-in, 1) - var(--wire-out, 0));
+}
+
+.flow {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: calc(var(--wired) * 3px);
+  stroke-linecap: round;
+  stroke-dasharray: 6 14;
+  filter: drop-shadow(0 0 4px var(--color-accent));
+
+  // Traffic moves for under 5 seconds each time the part arrives or chaos changes
+  // something (WCAG 2.2.2), then holds still.
+  :global([data-current]) & {
+    animation: flow 1.4s linear 3;
+  }
+}
+
+// Carrying the extra load: thicker and faster.
+[data-state="busy"] .flow {
+  stroke-width: calc(var(--wired) * 5px);
+
+  :global([data-current]) & {
+    animation: flow 0.6s linear 8;
+  }
+}
+
+// Broken: no traffic, a dashed fault line.
+[data-state="cut"] {
+  .edge {
+    stroke: color-mix(in srgb, var(--fault) 45%, transparent);
+  }
+
+  .flow {
+    stroke: var(--fault);
+    stroke-dasharray: 3 9;
+    filter: none;
+
+    :global([data-current]) & {
+      animation: none;
+    }
+  }
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+// The link a standby copy takes over by.
+.takeover {
+  fill: none;
+  stroke: var(--caution);
+  stroke-width: 3;
+  stroke-dasharray: 4 6;
+  animation: flow 1s linear 4;
+}
+
+// The circuit breaker on the API's connection to the database: closed, a lever across
+// its terminals; open, the lever lifts and its label shows.
+.breaker {
+  scale: var(--wired);
+}
+
+.breakerCase {
+  fill: var(--color-surface);
+  stroke: var(--color-decor);
+  stroke-width: 2;
+}
+
+.terminal {
+  fill: var(--color-accent);
+}
+
+.lever {
+  stroke: var(--color-accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transform-origin: -12px 0;
+  transition: rotate var(--duration-slow) var(--ease-out);
+
+  .breaker[data-open] & {
+    stroke: var(--fault);
+    rotate: -40deg;
+  }
+}
+
+.breakerLabel {
+  fill: var(--fault);
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  text-anchor: middle;
+  scale: 0;
+  transition: scale var(--duration-base) var(--ease-out);
+
+  .breaker[data-open] & {
+    scale: 1;
+  }
+
+  @media (width < 48rem) {
+    display: none;
+  }
+}
+
+// The queue's backlog meter: its cells fill one after another while work piles up.
+.backlog {
+  scale: var(--wired);
+}
+
+.cell {
+  fill: none;
+  stroke: var(--color-decor);
+  stroke-width: 1.5;
+
+  .backlog[data-filling] & {
+    animation: fill-cell 300ms var(--ease-out) both;
+    animation-delay: calc(var(--cell) * 220ms);
+  }
+}
+
+@keyframes fill-cell {
+  to {
+    fill: var(--caution);
+    stroke: var(--caution);
+  }
+}
+
+.backlogLabel {
+  fill: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+
+  .backlog[data-filling] & {
+    fill: var(--caution);
+  }
+
+  @media (width < 48rem) {
+    display: none;
+  }
+}
+
+.nodes {
+  position: absolute;
+  inset: 0;
+}
+
+// A part: an icon over its name, at least 44 by 44. Redundant parts show a second
+// card behind them.
+.node {
+  --power: clamp(0, calc((var(--nodes-in, 1) - var(--order) * 0.09) / 0.45), 1);
+  --off: clamp(
+    0,
+    calc((var(--nodes-out, 0) - (6 - var(--order)) * 0.07) / 0.5),
+    1
+  );
+  position: absolute;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.125rem;
+  inline-size: 15%;
+  min-inline-size: var(--target-min);
+  block-size: 14.5%;
+  min-block-size: var(--target-min);
+  padding: 0.25rem;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--color-accent) 22%, transparent);
+  color: var(--color-text);
+  font: inherit;
+  font-size: clamp(0.75rem, 2cqh, 0.9375rem);
+  font-weight: 700;
+  line-height: 1.1;
+  cursor: pointer;
+  translate: -50% -50%;
+  scale: calc(var(--power) * (1 - var(--off)));
+  transition:
+    box-shadow var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out);
+
+  &[aria-selected="true"] {
+    border-width: 3px;
+    background: color-mix(
+      in srgb,
+      var(--color-accent) 16%,
+      var(--color-surface)
+    );
+    box-shadow: 0 0 22px
+      color-mix(in srgb, var(--color-accent) 55%, transparent);
+  }
+
+  &[data-down] {
+    border-style: dashed;
+    border-color: var(--fault);
+    background: color-mix(in srgb, var(--fault) 10%, var(--color-surface));
+    box-shadow: 0 0 22px color-mix(in srgb, var(--fault) 40%, transparent);
+    color: var(--fault);
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+}
+
+.icon {
+  @include mixins.stroke-icon(clamp(1rem, 4cqh, 1.5rem));
+}
+
+.label {
+  white-space: nowrap;
+
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+// "✕ Down", a badge on the part's corner.
+.downMark {
+  position: absolute;
+  inset-block-start: -1.1rem;
+  inset-inline-end: -0.75rem;
+  padding: 0 0.375rem;
+  border-radius: var(--radius-full);
+  background: var(--fault);
+  color: var(--color-surface);
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.5;
+  animation: pop 300ms var(--ease-out) both;
+}
+
+.downWord {
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+// The standby copy rises into place when its part goes down.
+.standby {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.125rem;
+  inline-size: 15%;
+  min-inline-size: var(--target-min);
+  block-size: 14.5%;
+  min-block-size: var(--target-min);
+  border: 2px solid var(--caution);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--caution) 12%, var(--color-surface));
+  box-shadow: 0 0 20px color-mix(in srgb, var(--caution) 40%, transparent);
+  color: var(--caution);
+  font-size: clamp(0.75rem, 2cqh, 0.9375rem);
+  font-weight: 800;
+  translate: -50% -50%;
+  animation: pop 450ms var(--ease-out) both;
+
+  svg {
+    @include mixins.stroke-icon(clamp(1rem, 4cqh, 1.5rem));
+  }
+}
+
+@keyframes pop {
+  from {
+    scale: 0;
+  }
+
+  to {
+    scale: 1;
+  }
+}
+
+:global([data-flow]) {
+  .map g .flow,
+  .map .takeover,
+  .downMark,
+  .standby {
+    animation: none;
+  }
+
+  .backlog[data-filling] .cell {
+    animation: none;
+    fill: var(--caution);
+    stroke: var(--caution);
+  }
+}

@@ -1,0 +1,200 @@
+@use "../../../../../styles/mixins";
+
+// A column standing on the ground line: the number, its label, then the mountain. The
+// whole column is the target.
+//
+// Scroll (from the part): each peak rises in turn (--t), and sinks back, last first, on
+// leaving; its number counts with it.
+.peak {
+  --flag-h: clamp(1.25rem, 6cqh, 2.25rem);
+  --t: calc(
+    clamp(0, (var(--peak-in, 1) - var(--order) * 0.08) / 0.6, 1) *
+      (1 - clamp(0, (var(--peak-out, 0) - (5 - var(--order)) * 0.08) / 0.6, 1))
+  );
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.125rem;
+  min-inline-size: 0;
+  min-block-size: var(--target-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+
+  &[aria-selected="true"] {
+    z-index: 1; // its mountain in front of its neighbors'
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+// The number: pops up with its peak and counts up as the peak rises.
+.figure {
+  position: relative;
+  z-index: 1;
+  color: var(--rise);
+  font-size: clamp(var(--text-lg), 6.5cqh, 2.5rem);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+  scale: clamp(0, var(--t) * 3, 1);
+  transform-origin: 50% 100%;
+
+  .peak[aria-selected="true"] & {
+    text-shadow: 0 0 18px var(--rise-glow);
+  }
+
+  @media (width < 48rem) {
+    font-size: var(--text-base);
+  }
+}
+
+.count {
+  --peak-count: calc(var(--t) * var(--target));
+  counter-reset: n var(--peak-count);
+
+  &::before {
+    content: counter(n);
+  }
+
+  &[data-decimal] {
+    --peak-tenth: mod(var(--peak-count), 10);
+    --peak-whole: calc((var(--peak-count) - var(--peak-tenth)) / 10);
+    counter-reset: whole var(--peak-whole) tenth var(--peak-tenth);
+
+    &::before {
+      content: counter(whole) "." counter(tenth);
+    }
+  }
+}
+
+@property --peak-count {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --peak-tenth {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --peak-whole {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.visuallyHidden {
+  @include mixins.visually-hidden;
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+  max-inline-size: 10ch;
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  scale: clamp(0, var(--t) * 3, 1);
+  transform-origin: 50% 100%;
+
+  @container stage (height < 30rem) {
+    @include mixins.visually-hidden;
+  }
+
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+// The mountain: wider than its column so the range overlaps like real ridges, with a
+// glowing cap. Grows up from the ground.
+.mountain {
+  position: relative;
+  inline-size: 165%;
+  block-size: calc(var(--h) * var(--range-h, 12rem));
+  margin-block-start: calc(var(--flag-h) + var(--space-1)); // room for the flag
+  pointer-events: none;
+  transform-origin: 50% 100%;
+  scale: 1 var(--t);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    background: linear-gradient(
+      180deg,
+      var(--rise-glow) 0 16%,
+      color-mix(in srgb, var(--rise-fill) 38%, var(--color-surface)) 16% 100%
+    );
+  }
+
+  .peak:hover &::before {
+    background: linear-gradient(
+      180deg,
+      var(--rise-glow) 0 16%,
+      color-mix(in srgb, var(--rise-fill) 55%, var(--color-surface)) 16% 100%
+    );
+  }
+
+  .peak[aria-selected="true"] &::before {
+    background: linear-gradient(
+      180deg,
+      var(--rise-glow) 0 16%,
+      var(--rise-fill) 16% 100%
+    );
+  }
+}
+
+// The flag on the chosen summit: a pole and a pennant that springs up when planted.
+.flag {
+  position: absolute;
+  inset-block-end: 100%;
+  inset-inline-start: 50%;
+  inline-size: 2px;
+  block-size: var(--flag-h);
+  background: var(--color-text);
+  transform-origin: 50% 100%;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 2px;
+    inline-size: 1.1rem;
+    block-size: 0.8rem;
+    background: var(--rise);
+    clip-path: polygon(0 0, 100% 50%, 0 100%);
+  }
+
+  &[data-planted] {
+    animation: plant 500ms var(--ease-out) both;
+  }
+}
+
+@keyframes plant {
+  from {
+    scale: 1 0;
+  }
+
+  to {
+    scale: 1;
+  }
+}
+
+:global([data-flow]) .flag[data-planted] {
+  animation: none;
+}

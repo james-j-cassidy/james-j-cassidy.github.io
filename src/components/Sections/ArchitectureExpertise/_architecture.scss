@@ -1,0 +1,295 @@
+@use "../../../styles/mixins";
+
+// Shared looks for the Architecture Expertise tab's later parts: the blueprint
+// backdrop, the holographic screen and the pieces every part repeats. (Part 1 keeps its
+// own copper board.)
+
+// Signal colors for text and marks. Each reaches 7:1 (AAA) on the page background and
+// the surface in both themes:
+//   --fault   #9b1c1c on #f4f8ff 7.7:1 · #ffabab on #0f1f45 9.0:1
+//   --caution #6b4500 on #f4f8ff 8.0:1 · #ffd27a on #0f1f45 11.3:1
+@mixin signals {
+  --fault: light-dark(#9b1c1c, #ffabab);
+  --caution: light-dark(#6b4500, #ffd27a);
+}
+
+// A part whose layout fits its drawing to the room left: exactly the stage's height,
+// so that room is known. In flow mode it is as tall as its content.
+@mixin fit-part {
+  block-size: 100cqh;
+
+  :global([data-flow]) & {
+    block-size: auto;
+  }
+}
+
+// A part that choreographs its own movement: the default carousel is replaced.
+@mixin part {
+  @include signals;
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+  @include fit-part;
+}
+
+// The full-stage backdrop: a blueprint grid under a soft glow. Opens as a circle from
+// ($x, $y) as the part arrives (--bg-in), and closes back into it as it leaves
+// (--bg-out). Decorative.
+@mixin backdrop($x, $y) {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      55% 60% at $x $y,
+      color-mix(in srgb, var(--color-accent) 13%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--color-decor) 13%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 2.5rem 2.5rem,
+    linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--color-decor) 13%, transparent) 1px,
+        transparent 1px
+      )
+      0 0 / 2.5rem 2.5rem,
+    var(--color-bg);
+  clip-path: circle(
+    calc(var(--bg-in, 1) * (1 - var(--bg-out, 0)) * 150%) at $x $y
+  );
+  pointer-events: none;
+}
+
+// The layout over the backdrop.
+@mixin layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: center;
+}
+
+// The small uppercase line over a part's heading.
+@mixin tag {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+@mixin heading {
+  margin: var(--space-1) 0 0;
+  font-size: clamp(1.375rem, 6cqh, 3rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+
+  @media (width < 48rem) {
+    font-size: var(--text-xl);
+  }
+}
+
+// The line under a heading.
+@mixin intro {
+  margin: var(--space-2) 0 0;
+  max-inline-size: 46ch;
+  line-height: var(--leading-body);
+
+  @container stage (height < 30rem) {
+    @include mixins.visually-hidden;
+  }
+
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+// The title slides in from the reading start, and off the far side.
+@mixin title-slide {
+  transform: translateX(
+    calc(((var(--title-out) - (1 - var(--title-in))) * 120vw) * var(--dir, 1))
+  );
+}
+
+// A step that is 0 only while $in or $out is within 2% of its end: pieces scale to
+// nothing there, past edge-on, where layers inside could still show.
+@mixin shown($in, $out) {
+  --shown: calc(
+    clamp(0, (var(#{$in}, 1) - 0.02) * 1000, 1) *
+      clamp(0, (0.98 - var(#{$out}, 0)) * 1000, 1)
+  );
+}
+
+// A holographic screen: accent frame with corner brackets and faint scan lines.
+@mixin screen {
+  position: relative;
+  padding: clamp(var(--space-3), 3cqh, var(--space-6));
+  border: 1px solid var(--color-accent);
+  background:
+    linear-gradient(var(--color-accent), var(--color-accent)) top left / 1.25rem
+      3px no-repeat,
+    linear-gradient(var(--color-accent), var(--color-accent)) top left / 3px
+      1.25rem no-repeat,
+    linear-gradient(var(--color-accent), var(--color-accent)) bottom right /
+      1.25rem 3px no-repeat,
+    linear-gradient(var(--color-accent), var(--color-accent)) bottom right / 3px
+      1.25rem no-repeat,
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 3px,
+      color-mix(in srgb, var(--color-accent) 6%, transparent) 3px 4px
+    ),
+    var(--color-surface);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--color-accent) 28%, transparent);
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+
+  @media (width < 48rem) {
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+// A small uppercase label inside a screen.
+@mixin label {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+// A new choice scans into a screen from the top down.
+@mixin scan-in {
+  animation: scan-in 550ms var(--ease-out) both;
+
+  :global([data-flow]) & {
+    animation: none;
+  }
+}
+
+@keyframes scan-in {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+
+  to {
+    clip-path: inset(0);
+  }
+}
+
+// Visually hidden on phones (still read).
+@mixin compact-hidden {
+  @media (width < 48rem) {
+    @include mixins.visually-hidden;
+  }
+}
+
+// Visually hidden on short stages and phones (still read).
+@mixin short-hidden($height: 34rem) {
+  @container stage (height < #{$height}) {
+    @include mixins.visually-hidden;
+  }
+
+  @include compact-hidden;
+}
+
+// A switch: a track with a sliding knob, then its words. At least 44 tall.
+@mixin switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--target-min);
+  padding: 0 var(--space-1);
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: start;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+}
+
+@mixin switch-track($on) {
+  position: relative;
+  flex: none;
+  inline-size: 3.25rem;
+  block-size: 1.75rem;
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  background: var(--color-bg);
+
+  #{$on} & {
+    background: color-mix(in srgb, var(--color-accent) 35%, var(--color-bg));
+  }
+}
+
+@mixin switch-knob($on) {
+  position: absolute;
+  inset-block: 3px;
+  inset-inline-start: 3px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 10px var(--color-accent);
+  transition: translate var(--duration-slow) var(--ease-out);
+
+  #{$on} & {
+    translate: 1.5rem 0;
+  }
+
+  #{$on}:dir(rtl) & {
+    translate: -1.5rem 0;
+  }
+}
+
+// A slot that hands its drawing whatever room the layout leaves (put it in a
+// `minmax(0, 1fr)` row), so the drawing fits both ways and nothing below it is pushed
+// off the stage. In flow mode the slot sizes to its drawing instead.
+@mixin fit-slot {
+  container-type: size;
+  align-self: stretch; // its height is the row's, never its content's
+  display: grid;
+  place-items: center;
+  min-block-size: 6rem;
+  min-inline-size: 0;
+
+  :global([data-flow]) & {
+    container-type: normal;
+    min-block-size: 0;
+  }
+}
+
+// A drawing of $width × $height inside a fit-slot: as large as fits.
+@mixin fit-drawing($width, $height) {
+  inline-size: min(100cqw, calc(100cqh * #{$width} / #{$height}));
+
+  :global([data-flow]) & {
+    inline-size: min(100%, 40rem);
+  }
+}
+
+// The layout's rows: the flexible row takes what is left. In flow mode every row sizes
+// to its content.
+@mixin fit-rows($rows) {
+  grid-template-rows: $rows;
+  align-content: stretch;
+
+  :global([data-flow]) & {
+    grid-template-rows: none;
+    align-content: center;
+  }
+}

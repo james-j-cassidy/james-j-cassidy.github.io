@@ -1,0 +1,54 @@
+// Two by two (one column on phones).
+.reasons {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+
+  @media (width < 48rem) {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
+}
+
+// A reason. Scroll (from the part): slides in from the far side in turn (--arrive), and
+// away to the reading start, last first, on leaving.
+.reason {
+  --arrive: clamp(0, (var(--reasons-in, 1) - var(--order) * 0.1) / 0.6, 1);
+  --leave: clamp(
+    0,
+    (var(--reasons-out, 0) - (3 - var(--order)) * 0.1) / 0.6,
+    1
+  );
+  min-block-size: var(--target-min);
+  padding: var(--space-1) var(--space-3);
+  border: 2px solid color-mix(in srgb, var(--rise) 60%, transparent);
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 800;
+  text-align: center;
+  cursor: pointer;
+  translate: calc(((1 - var(--arrive)) - var(--leave)) * 120vw * var(--dir, 1))
+    0;
+
+  &:hover {
+    border-color: var(--rise);
+  }
+
+  &[aria-selected="true"] {
+    border-color: var(--rise);
+    background: var(--rise);
+    box-shadow: 0 0 24px color-mix(in srgb, var(--rise-glow) 55%, transparent);
+    color: var(--on-rise);
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+
+  @media (width < 48rem) {
+    padding: 0 var(--space-2);
+  }
+}

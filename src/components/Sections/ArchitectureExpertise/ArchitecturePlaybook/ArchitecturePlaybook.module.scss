@@ -1,0 +1,198 @@
+@use "../../../../styles/mixins";
+@use "../architecture";
+
+// The scene and its slider on one side, the step's screen on the other. Its own
+// movement replaces the default carousel; nothing fades. (The scene's pieces read
+// their own progress.)
+.part {
+  @include architecture.part;
+  @include mixins.story-piece(0, 0.4, --bg-in);
+  @include mixins.story-piece(0.1, 0.55, --title-in);
+  @include mixins.story-piece(0.15, 0.5, --users-in);
+  @include mixins.story-piece(0.2, 0.65, --legacy-in);
+  @include mixins.story-piece(0.3, 0.75, --cloud-in);
+  @include mixins.story-piece(0.15, 0.75, --scene-in);
+  @include mixins.story-piece(0.6, 0.95, --routes-in);
+  @include mixins.story-piece(0.5, 1, --card-in);
+  @include mixins.story-piece(0.6, 1, --slider-in);
+  @include mixins.story-piece(0, 0.3, --routes-out, --out);
+  @include mixins.story-piece(0.1, 0.55, --legacy-out, --out);
+  @include mixins.story-piece(0.15, 0.6, --cloud-out, --out);
+  @include mixins.story-piece(0.2, 0.6, --users-out, --out);
+  @include mixins.story-piece(0.1, 0.6, --scene-out, --out);
+  @include mixins.story-piece(0, 0.5, --card-out, --out);
+  @include mixins.story-piece(0, 0.5, --slider-out, --out);
+  @include mixins.story-piece(0.3, 0.8, --title-out, --out);
+  @include mixins.story-piece(0.6, 1, --bg-out, --out);
+}
+
+.backdrop {
+  @include architecture.backdrop(35%, 65%);
+}
+
+.layout {
+  @include architecture.layout;
+  grid-template-areas:
+    "title step"
+    "scene step"
+    "slider step";
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+  align-items: center;
+  gap: clamp(var(--space-2), 2.4cqh, var(--space-6)) var(--space-8);
+  @include architecture.fit-rows(auto minmax(0, 1fr) auto);
+}
+
+.titleBar {
+  grid-area: title;
+  @include architecture.title-slide;
+}
+
+.tag {
+  @include architecture.tag;
+}
+
+.heading {
+  @include architecture.heading;
+}
+
+.intro {
+  @include architecture.intro;
+}
+
+.sceneSlot {
+  grid-area: scene;
+  min-inline-size: 0;
+  @include architecture.fit-slot;
+}
+
+.stepSlot {
+  grid-area: step;
+  min-inline-size: 0;
+}
+
+// The slider: its label, the track and the step numbers under it.
+//
+// Scroll (from the part): rises from below the stage, and sinks back.
+.sliderSlot {
+  grid-area: slider;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0 var(--space-3);
+  min-inline-size: 0;
+  transform: translateY(
+    calc((1 - var(--slider-in, 1) + var(--slider-out, 0)) * 80cqh)
+  );
+}
+
+.sliderLabel {
+  @include architecture.label;
+  grid-row: span 2;
+}
+
+// A range input at least 44 tall: a glowing track filled up to the thumb.
+.slider {
+  inline-size: 100%;
+  block-size: var(--target-min);
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+
+  &::-webkit-slider-runnable-track {
+    block-size: 6px;
+    border-radius: var(--radius-full);
+    background: linear-gradient(
+      90deg,
+      var(--color-accent) calc(var(--fill) * 100%),
+      color-mix(in srgb, var(--color-accent) 25%, transparent) 0
+    );
+  }
+
+  &::-moz-range-track {
+    block-size: 6px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--color-accent) 25%, transparent);
+  }
+
+  &::-moz-range-progress {
+    block-size: 6px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+  }
+
+  &::-webkit-slider-thumb {
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    margin-block-start: calc((6px - 1.75rem) / 2);
+    border: 3px solid var(--color-surface);
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 12px var(--color-accent);
+    appearance: none;
+  }
+
+  &::-moz-range-thumb {
+    inline-size: 1.75rem;
+    block-size: 1.75rem;
+    border: 3px solid var(--color-surface);
+    border-radius: 50%;
+    background: var(--color-accent);
+    box-shadow: 0 0 12px var(--color-accent);
+  }
+
+  &:dir(rtl)::-webkit-slider-runnable-track {
+    background: linear-gradient(
+      -90deg,
+      var(--color-accent) calc(var(--fill) * 100%),
+      color-mix(in srgb, var(--color-accent) 25%, transparent) 0
+    );
+  }
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+}
+
+.ticks {
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0 0.5rem;
+  list-style: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+
+  li[data-reached] {
+    color: var(--color-accent);
+  }
+}
+
+// Tablets and phones: title, scene, slider, then the step.
+@media (width < 64rem) {
+  .layout {
+    grid-template-areas:
+      "title"
+      "scene"
+      "slider"
+      "step";
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-2);
+    @include architecture.fit-rows(auto minmax(0, 1fr) auto auto);
+  }
+}
+
+@media (width < 48rem) {
+  .sliderSlot {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sliderLabel {
+    @include mixins.visually-hidden;
+  }
+
+  .ticks {
+    display: none;
+  }
+}

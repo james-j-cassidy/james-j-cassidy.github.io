@@ -62,12 +62,13 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
 
-  // Short stages and phones: still read, not shown (the tab already names it).
+  // Short stages, tablets and phones: still read, not shown (the tab and the sub-tab
+  // bar already name it).
   @container stage (height < 34rem) {
     @include mixins.visually-hidden;
   }
 
-  @media (width < 48rem) {
+  @media (width < 64rem) {
     @include mixins.visually-hidden;
   }
 }
@@ -100,6 +101,15 @@
       "card"
       "highlights";
     grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-2);
+  }
+
+  .railSlot {
+    gap: var(--space-1);
+  }
+
+  .highlights ul {
+    gap: var(--space-1);
   }
 
   // An open case study becomes a detail view: the card and the other highlights step
@@ -116,5 +126,12 @@
   .railSlot,
   .cardSlot {
     transform: none;
+  }
+}
+
+// Tablets: less room between the rail and the card.
+@media (48rem <= width < 64rem) {
+  .layout {
+    row-gap: var(--space-3);
   }
 }

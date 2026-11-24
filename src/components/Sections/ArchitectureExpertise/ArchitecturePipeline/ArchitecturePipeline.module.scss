@@ -1,0 +1,80 @@
+@use "../../../../styles/mixins";
+@use "../architecture";
+
+// The title, the gates across the stage, then the changes beside the result. Its own
+// movement replaces the default carousel; nothing fades. (The gates and changes read
+// their own pieces.)
+.part {
+  @include architecture.part;
+  @include mixins.story-piece(0, 0.4, --bg-in);
+  @include mixins.story-piece(0.1, 0.55, --title-in);
+  @include mixins.story-piece(0.2, 0.6, --belt-in);
+  @include mixins.story-piece(0.3, 0.9, --gates-in);
+  @include mixins.story-piece(0.45, 1, --changes-in);
+  @include mixins.story-piece(0.55, 1, --result-in);
+  @include mixins.story-piece(0, 0.6, --gates-out, --out);
+  @include mixins.story-piece(0.3, 0.7, --belt-out, --out);
+  @include mixins.story-piece(0, 0.55, --changes-out, --out);
+  @include mixins.story-piece(0, 0.5, --result-out, --out);
+  @include mixins.story-piece(0.3, 0.8, --title-out, --out);
+  @include mixins.story-piece(0.6, 1, --bg-out, --out);
+}
+
+.backdrop {
+  @include architecture.backdrop(50%, 45%);
+}
+
+.layout {
+  @include architecture.layout;
+  grid-template-areas:
+    "title title"
+    "track track"
+    "changes result";
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(var(--space-2), 3cqh, var(--space-6)) var(--space-8);
+}
+
+.titleBar {
+  grid-area: title;
+  @include architecture.title-slide;
+}
+
+.tag {
+  @include architecture.tag;
+}
+
+.heading {
+  @include architecture.heading;
+}
+
+.intro {
+  @include architecture.intro;
+}
+
+.trackSlot {
+  grid-area: track;
+  min-inline-size: 0;
+}
+
+.changesSlot {
+  grid-area: changes;
+  min-inline-size: 0;
+}
+
+.resultSlot {
+  grid-area: result;
+  min-inline-size: 0;
+}
+
+@media (width < 64rem) {
+  .layout {
+    grid-template-areas:
+      "title"
+      "track"
+      "changes"
+      "result";
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-2);
+  }
+}

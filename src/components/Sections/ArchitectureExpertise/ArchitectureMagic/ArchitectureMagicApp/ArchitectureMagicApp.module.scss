@@ -1,0 +1,277 @@
+@use "../../../../../styles/mixins";
+@use "../../architecture";
+
+// Front of house.
+//
+// Scroll (from the part): slides in from the reading start (--user-in), and off the
+// way it came on leaving (--user-out).
+.pane {
+  display: grid;
+  gap: var(--space-2);
+  min-inline-size: 0;
+  transform: translateX(
+    calc(
+      ((var(--user-out, 0) - (1 - var(--user-in, 1))) * 120vw) * var(--dir, 1)
+    )
+  );
+}
+
+.paneLabel {
+  @include architecture.label;
+  @include architecture.compact-hidden;
+}
+
+// The app: a light card with a title bar, its tasks and its messages.
+.app {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: var(--space-2);
+  min-block-size: clamp(9rem, 32cqh, 14rem);
+  padding: var(--space-3);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--color-accent) 25%, transparent);
+
+  @media (width < 48rem) {
+    min-block-size: 0;
+    padding: var(--space-2);
+  }
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.appTitle {
+  margin: 0;
+  font-weight: 800;
+}
+
+.add {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-block-size: var(--target-min);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-bg);
+  color: var(--color-on-accent);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 800;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: wait;
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+}
+
+.tasks {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-sm);
+}
+
+.empty {
+  color: var(--color-text-muted);
+}
+
+// A task: its mark, its words and its state in words, never color alone. A new one
+// slides into the list.
+.task {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.25rem var(--space-2);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--color-accent) 8%, transparent);
+  animation: slide-in 300ms var(--ease-out) both;
+
+  &[data-status="failed"] {
+    background: color-mix(in srgb, var(--caution) 14%, transparent);
+  }
+}
+
+@keyframes slide-in {
+  from {
+    translate: 0 -0.5rem;
+    clip-path: inset(0 0 100% 0);
+  }
+
+  to {
+    translate: 0 0;
+    clip-path: inset(0);
+  }
+}
+
+.mark {
+  inline-size: 1.25rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--color-accent);
+
+  [data-status="failed"] & {
+    color: var(--caution);
+  }
+}
+
+.text {
+  font-weight: 600;
+}
+
+.status {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  [data-status="saved"] & {
+    color: var(--color-accent);
+  }
+
+  [data-status="failed"] & {
+    color: var(--caution);
+  }
+}
+
+.messages {
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.wait {
+  margin: 0;
+  font-weight: 700;
+}
+
+// Naive: the server's raw error, pushed at the user.
+.error {
+  margin: 0;
+  padding: var(--space-2);
+  border: 2px solid var(--fault);
+  border-radius: var(--radius-sm);
+  color: var(--fault);
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+// Magic: a plain, honest message and a way forward.
+.honest {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-inline-start: 3px solid var(--caution);
+
+  p {
+    flex: 1 1 12rem;
+    margin: 0;
+    line-height: var(--leading-body);
+  }
+}
+
+.retry {
+  min-block-size: var(--target-min);
+  padding: 0 var(--space-3);
+  border: 2px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--color-accent);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline-offset: 2px;
+  }
+}
+
+// Naive: the whole app locks behind stripes and a spinner while the server answers.
+.app[data-blocking]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--color-text-muted) 22%, transparent) 0 6px,
+    transparent 6px 12px
+  );
+  cursor: wait;
+}
+
+.spinner {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  z-index: 1;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  margin: -1.25rem;
+  border: 4px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
+  border-block-start-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+.readout {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+
+  strong {
+    color: var(--color-text);
+  }
+}
+
+:global([data-flow]) {
+  .task {
+    animation: none;
+  }
+
+  .spinner {
+    animation-duration: 3s;
+  }
+}
+
+// Phones: the newest task only.
+@media (width < 48rem) {
+  .task:nth-last-child(n + 2) {
+    display: none;
+  }
+
+  .honest p {
+    flex-basis: 10rem;
+  }
+}
+
+// Short stages: the newest task only.
+@container stage (height < 34rem) {
+  .task:nth-last-child(n + 2) {
+    display: none;
+  }
+}

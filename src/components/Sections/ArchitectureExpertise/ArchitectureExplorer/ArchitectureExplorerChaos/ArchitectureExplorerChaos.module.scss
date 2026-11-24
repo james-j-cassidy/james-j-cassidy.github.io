@@ -1,0 +1,84 @@
+@use "../../architecture";
+
+// A control strip under the map.
+//
+// Scroll (from the part): rises from below the stage, and sinks back (--controls).
+.chaos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 var(--space-4);
+  padding: 0 var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--color-decor) 70%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--color-decor) 22%, transparent);
+  transform: translateY(
+    calc((1 - var(--controls-in, 1) + var(--controls-out, 0)) * 80cqh)
+  );
+
+  @media (width < 48rem) {
+    padding: 0 var(--space-2);
+  }
+}
+
+.switch {
+  @include architecture.switch;
+}
+
+.track {
+  @include architecture.switch-track('.switch[aria-checked="true"]');
+}
+
+.knob {
+  @include architecture.switch-knob('.switch[aria-checked="true"]');
+}
+
+.switch[aria-checked="true"] .track {
+  border-color: var(--fault);
+  background: color-mix(in srgb, var(--fault) 30%, var(--color-bg));
+}
+
+.switch[aria-checked="true"] .knob {
+  background: var(--fault);
+  box-shadow: 0 0 10px var(--fault);
+}
+
+// The status: a light and words, never color alone.
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding-block: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 700;
+
+  &[data-degraded] {
+    color: var(--caution);
+  }
+}
+
+.light {
+  flex: none;
+  inline-size: 0.75rem;
+  block-size: 0.75rem;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent);
+
+  .status[data-degraded] & {
+    background: var(--caution);
+    box-shadow: 0 0 8px var(--caution);
+  }
+}
+
+.statusLabel {
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  .status[data-degraded] & {
+    color: inherit;
+  }
+}

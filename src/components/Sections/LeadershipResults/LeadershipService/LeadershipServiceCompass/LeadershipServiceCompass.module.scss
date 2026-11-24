@@ -1,0 +1,165 @@
+@use "../../../../../styles/mixins";
+@use "../../leadership";
+
+// Square, as large as the column and the stage allow; --R is the points' distance from
+// the center (in the compass's own width).
+//
+// Scroll (from the part): the ring spins in from nothing (--ring-in) and spins away to
+// nothing on leaving (--ring-out); the symbol turns to face the visitor; the points
+// settle on the ring one by one.
+.compass {
+  --R: 41cqi;
+  --compass-t: calc(var(--ring-in, 1) * (1 - var(--ring-out, 0)));
+  position: relative;
+  inline-size: min(100%, 74cqh);
+  aspect-ratio: 1;
+  margin-inline: auto;
+  container: compass / inline-size;
+  direction: ltr; // a drawing: never mirrored
+
+  @media (width < 48rem) {
+    inline-size: clamp(10rem, 40cqh, 13rem);
+  }
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  scale: var(--compass-t);
+  rotate: calc((1 - var(--ring-in, 1)) * -270deg + var(--ring-out, 0) * 270deg);
+}
+
+.rim {
+  fill: color-mix(in srgb, var(--color-surface) 80%, transparent);
+  stroke: var(--rise-fill);
+  stroke-width: 3;
+  filter: drop-shadow(0 0 6px var(--rise-glow));
+}
+
+.inner {
+  fill: none;
+  stroke: color-mix(in srgb, var(--rise-glow) 40%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.tick {
+  stroke: color-mix(in srgb, var(--rise-glow) 45%, transparent);
+  stroke-width: 1;
+}
+
+.tickMajor {
+  stroke: var(--rise-glow);
+  stroke-width: 2;
+}
+
+// The needle: a slim warm diamond from the center to the ring, pointing at the chosen
+// value. Swings with the ring on the scroll, and eases round on a choice.
+.needle {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: 7%;
+  block-size: 40%;
+  margin-inline-start: -3.5%;
+  background: linear-gradient(180deg, var(--rise-fill), var(--rise-glow));
+  clip-path: polygon(50% 0, 100% 78%, 50% 100%, 0 78%);
+  filter: drop-shadow(0 0 6px var(--rise-glow));
+  transform-origin: 50% 100%;
+  translate: 0 -100%;
+  scale: var(--compass-t);
+  rotate: calc(var(--compass-needle) + (1 - var(--ring-in, 1)) * 540deg);
+  transition: --compass-needle 700ms var(--ease-out); // the choice eases; the scroll does not
+}
+
+@property --compass-needle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+// The Air Force symbol at the heart, on a round plate. Turns from edge-on to face the
+// visitor, and edge-on again on leaving; scaled to nothing beyond edge-on.
+.emblem {
+  @include leadership.shown(--ring-in, --ring-out);
+  position: absolute;
+  inset: 34%;
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+  background: var(--color-surface);
+  box-shadow:
+    0 0 0 3px var(--rise),
+    0 0 28px color-mix(in srgb, var(--rise-glow) 50%, transparent);
+  transform: perspective(600px)
+    rotateY(calc((1 - var(--ring-in, 1)) * 90deg + var(--ring-out, 0) * 90deg));
+  scale: var(--shown);
+}
+
+.symbol {
+  inline-size: 20cqi;
+  block-size: auto;
+}
+
+.visuallyHidden {
+  @include mixins.visually-hidden;
+}
+
+.points {
+  position: absolute;
+  inset: 0;
+}
+
+// A value on the ring at --a (0° at the top, clockwise). Settles onto the ring in turn,
+// and lifts off, last first, on leaving.
+.point {
+  --settle: calc(
+    clamp(0, (var(--ring-in, 1) - 0.4 - var(--order) * 0.12) / 0.36, 1) *
+      (1 - clamp(0, (var(--ring-out, 0) - (2 - var(--order)) * 0.1) / 0.5, 1))
+  );
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  max-inline-size: 9rem;
+  min-block-size: var(--target-min);
+  padding: var(--space-1) var(--space-3);
+  border: 2px solid var(--rise);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--rise-glow) 40%, transparent);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 800;
+  line-height: 1.2;
+  cursor: pointer;
+  transform: translate(-50%, -50%) rotate(var(--a))
+    translateY(calc(var(--R) * -1)) rotate(calc(var(--a) * -1));
+  scale: var(--settle);
+
+  &:hover {
+    box-shadow: 0 0 22px var(--rise-glow);
+  }
+
+  &[aria-selected="true"] {
+    background: var(--rise);
+    box-shadow: 0 0 26px var(--rise-glow);
+    color: var(--on-rise);
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+
+  @media (width < 48rem) {
+    max-inline-size: 7rem;
+    padding: 0.125rem var(--space-2);
+    font-size: 0.75rem;
+  }
+}
+
+:global([data-flow]) .needle {
+  transition: none;
+}

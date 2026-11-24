@@ -1,0 +1,227 @@
+// The elevator's footprint scales with the stage's height. --floor (1 to 4) is where the
+// car is; it eases to a new floor once the doors have closed.
+.elevator {
+  inline-size: clamp(9rem, 56cqh, 17rem);
+  direction: ltr; // a drawing: never mirrored
+  transition: --floor 900ms var(--ease-out) 250ms;
+
+  @media (width < 48rem) {
+    inline-size: clamp(8rem, 34cqh, 10rem);
+  }
+}
+
+@property --floor {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+// The glass shaft: rails down both sides. A size container, so the car and beams are
+// laid out in its own height.
+//
+// Scroll (from the part): rises into view from the bottom up (--shaft-in), and closes
+// from the bottom up after the car has left through the top (--shaft-out).
+.shaft {
+  position: relative;
+  block-size: clamp(11rem, 70cqh, 21rem);
+  overflow: hidden;
+  container: shaft / size;
+  border-inline: 3px solid color-mix(in srgb, var(--rise) 70%, transparent);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--rise-glow) 10%, transparent),
+    transparent 30% 70%,
+    color-mix(in srgb, var(--rise-glow) 10%, transparent)
+  );
+  clip-path: inset(
+    calc((1 - var(--shaft-in, 1)) * 100%) 0 calc(var(--shaft-out, 0) * 100%) 0
+  );
+
+  @media (width < 48rem) {
+    block-size: clamp(9rem, 38cqh, 12rem);
+  }
+}
+
+// A floor's beam across the shaft, with its number. The car's floor line is 79% down
+// the shaft; the beams sit 70% of the shaft apart, so the world slides past as the car
+// moves.
+.beam {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: calc(79cqh + (var(--floor) - var(--level)) * 70cqh);
+  block-size: 4px;
+  background: color-mix(in srgb, var(--rise) 60%, transparent);
+}
+
+.beamNumber {
+  position: absolute;
+  inset-block-start: 6px;
+  inset-inline-start: 4px;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+// The car, carrying the whole team. Scroll: climbs up into the shaft from below
+// (--car-in), and on up out of the top on leaving (--car-out).
+.car {
+  position: absolute;
+  inset-block-start: 15cqh;
+  inset-inline: 10%;
+  block-size: 64cqh;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 3cqh;
+  padding: 3cqh 5%;
+  border: 3px solid var(--rise);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  box-shadow: 0 0 26px color-mix(in srgb, var(--rise-glow) 45%, transparent);
+  translate: 0
+    calc((1 - var(--car-in, 1)) * 110cqh - var(--car-out, 0) * 110cqh);
+}
+
+// Over the doors: which way it is going and the floor.
+.indicator {
+  justify-self: center;
+  margin: 0;
+  padding: 0 0.5em;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--rise);
+  font-size: clamp(0.75rem, 7cqh, 1.125rem);
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+.arrow {
+  margin-inline-end: 0.3em;
+  font-size: 0.75em;
+}
+
+// The window onto the team: full dawn behind them, in both themes. The doors close
+// over it.
+.window {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: linear-gradient(180deg, var(--rise-glow), var(--rise-fill));
+}
+
+.team {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+// The team in silhouette against the dawn: night blue in both themes.
+.person {
+  fill: #0a1530;
+}
+
+.hands {
+  fill: none;
+  stroke: #0a1530;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+
+// Lending strengths: on that floor, warm sparks pass from hand to hand.
+.spark {
+  fill: #fff7ed;
+  stroke: #0a1530;
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  scale: 0;
+
+  .car[data-floor="lend"] & {
+    animation: lend 1.8s ease-in-out infinite;
+    animation-delay: calc(var(--order) * 300ms);
+  }
+}
+
+@keyframes lend {
+  0%,
+  100% {
+    scale: 0.4;
+    translate: -14px 0;
+  }
+
+  50% {
+    scale: 1.2;
+    translate: 14px -6px;
+  }
+}
+
+// The doors: two glass panels that meet in the middle. --open is how far apart they
+// are: open once the car has arrived on the scroll (--doors-in), closed on leaving
+// (--doors-out), and closed for the ride whenever a floor is chosen (--shut).
+.doors {
+  --shut: 0;
+  position: absolute;
+  inset: 0;
+
+  &[data-riding] {
+    animation: ride 1.45s linear both;
+  }
+}
+
+@keyframes ride {
+  0% {
+    --shut: 0;
+  }
+
+  18%,
+  76% {
+    --shut: 1;
+  }
+
+  100% {
+    --shut: 0;
+  }
+}
+
+@property --shut {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.door {
+  --open: calc(
+    var(--doors-in, 1) * (1 - var(--doors-out, 0)) * (1 - var(--shut))
+  );
+  position: absolute;
+  inset-block: 0;
+  inline-size: 50%;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--rise) 70%, var(--color-surface)),
+    color-mix(in srgb, var(--rise) 45%, var(--color-surface))
+  );
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rise) 80%, transparent);
+
+  &[data-side="start"] {
+    inset-inline-start: 0;
+    translate: calc(var(--open) * -100%) 0;
+  }
+
+  &[data-side="end"] {
+    inset-inline-end: 0;
+    translate: calc(var(--open) * 100%) 0;
+  }
+}
+
+:global([data-flow]) {
+  .elevator {
+    transition: none;
+  }
+
+  .doors[data-riding],
+  .car[data-floor="lend"] .spark {
+    animation: none;
+  }
+}

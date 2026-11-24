@@ -44,6 +44,16 @@ export interface Job {
 }
 
 export const PROFESSIONAL_JOURNEY_LABELS = {
+  chainsLabel: "Journey",
+  chains: {
+    career: "Career",
+    credentials: "Education & credentials",
+  },
+  // Phones: the same, shorter.
+  chainsShort: {
+    career: "Career",
+    credentials: "Education",
+  },
   tag: "Professional journey",
   railLabel: "Career timeline",
   current: "Present",
@@ -471,5 +481,127 @@ export const JOBS: readonly Job[] = [
       accentLight: "#312e81", // indigo-900: 10.7:1
       motif: "dots",
     },
+  },
+];
+
+// ── Education and credentials ─────────────────────────────────────────────────────
+
+export type CredentialLevel =
+  "master" | "bachelor" | "associate" | "certification";
+
+export type CredentialSort = "importance" | "newest" | "oldest" | "type";
+
+export interface Credential {
+  id: string;
+  short: string; // on the credentials rail
+  monogram: string; // the backdrop's watermark
+  title: string;
+  detail?: string; // a concentration or honors
+  issuer: string;
+  level: CredentialLevel;
+  // Year and month awarded ("2014-03"), or null where James has not confirmed it yet:
+  // shown without a date and sorted as the earliest.
+  awarded: string | null;
+  importance: number; // 1 = most important; the default order
+  certificate: string; // the certificate's scan, under public/
+  certificateNote?: string; // what was hidden on the scan
+}
+
+export const CREDENTIALS_LABELS = {
+  tag: "Professional journey",
+  railLabel: "Credentials",
+  sortLabel: "Sort",
+  sorts: {
+    importance: "Most important",
+    newest: "Newest",
+    oldest: "Oldest",
+    type: "Type",
+  } satisfies Record<CredentialSort, string>,
+  sortedBy: (sort: string) => `Credentials, sorted by ${sort.toLowerCase()}`,
+  view: "View the certificate full size",
+  certificateOf: (title: string) => `Certificate: ${title}`,
+  close: "Close",
+  levels: {
+    master: "Master's degree",
+    bachelor: "Bachelor's degree",
+    associate: "Associate degree",
+    certification: "Certification",
+  } satisfies Record<CredentialLevel, string>,
+  months: [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ],
+};
+
+// From James's certificates (also on LinkedIn). The default order (importance) is for
+// senior architect and technical lead roles; James can change it.
+export const CREDENTIALS: readonly Credential[] = [
+  {
+    id: "ms-computer-science",
+    short: "MS CS",
+    monogram: "MS",
+    title: "Master of Science in Computer Science",
+    detail: "Concentration in Software Engineering",
+    issuer: "Colorado Technical University",
+    level: "master",
+    awarded: "2014-03",
+    importance: 1,
+    certificate: "credentials/ms-computer-science.webp",
+  },
+  {
+    id: "master-project-management",
+    short: "MPM",
+    monogram: "MPM",
+    title: "Master of Project Management",
+    issuer: "Keller Graduate School of Management, DeVry University",
+    level: "master",
+    awarded: "2011-10",
+    importance: 2,
+    certificate: "credentials/master-project-management.webp",
+  },
+  {
+    id: "bs-game-simulation",
+    short: "BS",
+    monogram: "BS",
+    title: "Bachelor of Science in Game and Simulation Programming",
+    detail: "Cum laude",
+    issuer: "DeVry University",
+    level: "bachelor",
+    awarded: "2010-06",
+    importance: 3,
+    certificate: "credentials/bs-game-simulation.webp",
+  },
+  {
+    id: "comptia-project-plus",
+    short: "Project+",
+    monogram: "P+",
+    title: "CompTIA Project+",
+    issuer: "CompTIA",
+    level: "certification",
+    awarded: "2013-07",
+    importance: 4,
+    certificate: "credentials/comptia-project-plus.webp",
+    certificateNote: "Career ID and verification code hidden.",
+  },
+  {
+    id: "aas-computer-science-technology",
+    short: "AAS",
+    monogram: "AAS",
+    title: "Associate in Applied Science, Computer Science Technology",
+    issuer: "Community College of the Air Force",
+    level: "associate",
+    awarded: "2006-10",
+    importance: 5,
+    certificate: "credentials/aas-computer-science-technology.webp",
   },
 ];

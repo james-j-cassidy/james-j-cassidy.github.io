@@ -1,0 +1,103 @@
+@use "../../../../styles/mixins";
+
+// The board fills the stage: the copper behind, the layout over it. Its own movement
+// replaces the default carousel; nothing fades. Each piece reads its own progress (the
+// chips' deal and the route's trace are in the board's styles).
+.part {
+  @include mixins.story-piece(0, 0.4, --bg-in);
+  @include mixins.story-piece(0.1, 0.55, --title-in);
+  @include mixins.story-piece(0.15, 0.6, --board-in);
+  @include mixins.story-piece(0.35, 0.95, --deal-in);
+  @include mixins.story-piece(0.5, 0.9, --trace-in);
+  @include mixins.story-piece(0.5, 1, --screen-in);
+  @include mixins.story-piece(0.6, 1, --traits-in);
+  @include mixins.story-piece(0, 0.45, --deal-out, --out);
+  @include mixins.story-piece(0.05, 0.4, --trace-out, --out);
+  @include mixins.story-piece(0, 0.5, --screen-out, --out);
+  @include mixins.story-piece(0, 0.5, --traits-out, --out);
+  @include mixins.story-piece(0.4, 0.9, --board-out, --out);
+  @include mixins.story-piece(0.35, 0.85, --title-out, --out);
+  @include mixins.story-piece(0.6, 1, --bg-out, --out);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+}
+
+// Title across the top; the board and its switches on one side, the screen on the other
+// (stacked on phones). Each slot gives its piece depth to swing in.
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-areas:
+    "title title"
+    "board screen"
+    "traits screen";
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  grid-template-rows: auto auto auto;
+  align-content: center;
+  align-items: center;
+  gap: clamp(var(--space-2), 2.4cqh, var(--space-6)) var(--space-8);
+}
+
+// Slides in from the reading start, and off the far side.
+.titleBar {
+  grid-area: title;
+  transform: translateX(
+    calc(((var(--title-out) - (1 - var(--title-in))) * 120vw) * var(--dir, 1))
+  );
+}
+
+.tag {
+  margin: 0;
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.heading {
+  margin: var(--space-1) 0 0;
+  font-size: clamp(1.375rem, 6cqh, 3rem);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.boardSlot {
+  grid-area: board;
+  align-self: end;
+  min-inline-size: 0;
+  perspective: 1200px;
+}
+
+.traitsSlot {
+  grid-area: traits;
+  align-self: start;
+  min-inline-size: 0;
+}
+
+.screenSlot {
+  grid-area: screen;
+  min-inline-size: 0;
+  perspective: 1200px;
+}
+
+// Phones: title, board, switches, then the screen.
+@media (width < 48rem) {
+  .layout {
+    grid-template-areas:
+      "title"
+      "board"
+      "traits"
+      "screen";
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    row-gap: var(--space-2);
+  }
+
+  .heading {
+    font-size: var(--text-xl);
+  }
+}

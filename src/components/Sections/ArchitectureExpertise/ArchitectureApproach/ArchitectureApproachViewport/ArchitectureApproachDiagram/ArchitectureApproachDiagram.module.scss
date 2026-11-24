@@ -1,0 +1,219 @@
+// The drawing scales with the stage's height, and never wider than its screen.
+.diagram {
+  display: block;
+  inline-size: 100%;
+  max-block-size: clamp(5rem, 24cqh, 12rem);
+  overflow: visible;
+  direction: ltr; // a drawing: never mirrored
+
+  text {
+    direction: ltr;
+  }
+
+  @media (width < 48rem) {
+    max-block-size: clamp(4rem, 17cqh, 7rem);
+  }
+}
+
+// Strokes that draw themselves in when the stage is chosen.
+.line,
+.box,
+.timebox {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.box {
+  fill: color-mix(in srgb, var(--color-accent) 8%, var(--color-surface));
+}
+
+.timebox {
+  stroke-width: 8;
+}
+
+// Arrowheads, crow's feet and clock hands: pop in once their lines are drawn.
+.pop {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+// A gauge's unlit track and the divider between two drawings.
+.track,
+.divider {
+  fill: none;
+  stroke: color-mix(in srgb, var(--color-text-muted) 45%, transparent);
+  stroke-width: 8;
+}
+
+.divider {
+  stroke-width: 1.5;
+  stroke-dasharray: 4 6;
+}
+
+// The tick in a chosen option's box.
+.tick {
+  fill: none;
+  stroke: var(--color-on-accent);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lifeline {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 5;
+}
+
+.reply {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2.5;
+  stroke-dasharray: 7 5;
+}
+
+// Filled blocks: wireframe panels, activation bars and result bars.
+.block {
+  fill: color-mix(in srgb, var(--color-decor) 22%, transparent);
+  stroke: var(--color-decor);
+  stroke-width: 1.5;
+}
+
+.bar {
+  fill: color-mix(in srgb, var(--color-text-muted) 30%, transparent);
+  stroke: var(--color-text-muted);
+  stroke-width: 1.5;
+}
+
+.barLit {
+  fill: var(--color-accent);
+}
+
+.label,
+.small,
+.start,
+.row,
+.verdict {
+  fill: var(--color-text);
+  font-family: inherit;
+  font-weight: 700;
+}
+
+.label {
+  font-size: 15px;
+  text-anchor: middle;
+}
+
+.small {
+  font-size: 13px;
+  text-anchor: middle;
+}
+
+.start {
+  font-size: 14px;
+}
+
+.row {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.verdict {
+  font-size: 18px;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
+// Chosen by the visitor: strokes draw, then the heads, blocks and words pop in.
+.diagram[data-drawn] {
+  .line,
+  .box,
+  .timebox {
+    stroke-dasharray: 1;
+    animation: draw 650ms var(--ease-out) both;
+  }
+
+  .pop,
+  .tick,
+  .block,
+  .bar,
+  .barLit,
+  .label,
+  .small,
+  .start,
+  .row,
+  .verdict {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pop 320ms 420ms var(--ease-out) both;
+  }
+
+  .bar,
+  .barLit,
+  .reply {
+    transform-box: fill-box;
+    transform-origin: left center;
+    animation: grow 520ms 260ms var(--ease-out) both;
+  }
+
+  .reply {
+    transform-origin: right center;
+  }
+
+  .lifeline {
+    transform-box: fill-box;
+    transform-origin: center top;
+    animation: grow-down 520ms var(--ease-out) both;
+  }
+}
+
+@keyframes draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pop {
+  from {
+    scale: 0;
+  }
+
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes grow {
+  from {
+    scale: 0 1;
+  }
+
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes grow-down {
+  from {
+    scale: 1 0;
+  }
+
+  to {
+    scale: 1;
+  }
+}
+
+:global([data-flow]) .diagram[data-drawn] * {
+  animation: none;
+}

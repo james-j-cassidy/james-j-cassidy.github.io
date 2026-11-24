@@ -1,0 +1,176 @@
+@use "../../../../../../styles/mixins";
+
+// A chip placed over the board's drawing. The button is only the target (at least 44px
+// tall, even on phones); the card inside carries the faces and the flip.
+//
+// Scroll (from the part): the chips are dealt onto the board one by one, spinning in
+// from nothing (--deal), and on leaving spin off to nothing, last first (--scatter).
+.chip {
+  --deal: clamp(0, calc((var(--deal-in, 1) - var(--order) * 0.08) / 0.5), 1);
+  --scatter: clamp(
+    0,
+    calc((var(--deal-out, 0) - (6 - var(--order)) * 0.08) / 0.5),
+    1
+  );
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+  perspective: 600px;
+  scale: calc(var(--deal) * (1 - var(--scatter)));
+  rotate: calc((1 - var(--deal)) * -180deg + var(--scatter) * 180deg);
+
+  // The target reaches 44 by 44 where the chip is drawn smaller (phones).
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: min(0px, calc((100% - var(--target-min)) / 2));
+    inset-block: min(0px, calc((100% - var(--target-min)) / 2));
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+  }
+}
+
+.card {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  transform-style: preserve-3d;
+  transition: transform 600ms var(--ease-out);
+
+  .chip[data-skipped] & {
+    transform: rotateX(180deg);
+  }
+}
+
+.front,
+.back {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.125rem;
+  border-radius: var(--radius-sm);
+  line-height: 1.1;
+  backface-visibility: hidden;
+}
+
+// Lit: an accent chip with pins along its edges.
+.front {
+  border: 2px solid var(--color-accent);
+  background:
+    repeating-linear-gradient(
+        90deg,
+        var(--color-accent) 0 3px,
+        transparent 3px 12px
+      )
+      top / 100% 4px no-repeat,
+    repeating-linear-gradient(
+        90deg,
+        var(--color-accent) 0 3px,
+        transparent 3px 12px
+      )
+      bottom / 100% 4px no-repeat,
+    var(--color-surface);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--color-accent) 45%, transparent);
+
+  .chip:hover & {
+    box-shadow: 0 0 22px var(--color-accent);
+  }
+
+  .chip[aria-selected="true"] & {
+    background:
+      repeating-linear-gradient(
+          90deg,
+          var(--color-on-accent) 0 3px,
+          transparent 3px 12px
+        )
+        top / 100% 4px no-repeat,
+      repeating-linear-gradient(
+          90deg,
+          var(--color-on-accent) 0 3px,
+          transparent 3px 12px
+        )
+        bottom / 100% 4px no-repeat,
+      var(--color-accent-bg);
+    box-shadow:
+      0 0 0 3px var(--color-bg),
+      0 0 0 5px var(--color-accent),
+      0 0 26px var(--color-accent);
+    color: var(--color-on-accent);
+  }
+}
+
+// Not needed: a dashed outline on the plain surface.
+.back {
+  border: 2px dashed var(--color-text-muted);
+  background: var(--color-bg);
+  transform: rotateX(180deg);
+
+  .chip[aria-selected="true"] & {
+    border-style: solid;
+    border-color: var(--color-text);
+    box-shadow:
+      0 0 0 3px var(--color-bg),
+      0 0 0 5px var(--color-text);
+  }
+}
+
+.number {
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.1em;
+
+  // Shown on the back only on phones, where it stands for the whole chip.
+  .back & {
+    display: none;
+    text-decoration: line-through;
+  }
+}
+
+.name {
+  font-size: clamp(0.75rem, 2.4cqh, var(--text-base));
+  font-weight: 800;
+
+  .back & {
+    text-decoration: line-through;
+  }
+}
+
+.skipped {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 700;
+
+  .chip[aria-selected="true"] & {
+    color: var(--color-text);
+  }
+}
+
+// Phones: the chips are small; the number (or "Not needed" mark) shows and the viewport
+// names the stage.
+@media (width < 48rem) {
+  .front .name {
+    @include mixins.visually-hidden;
+  }
+
+  .back .number {
+    display: block;
+  }
+
+  .back .name,
+  .back .skipped {
+    @include mixins.visually-hidden;
+  }
+}
+
+:global([data-flow]) .card {
+  transition: none;
+}

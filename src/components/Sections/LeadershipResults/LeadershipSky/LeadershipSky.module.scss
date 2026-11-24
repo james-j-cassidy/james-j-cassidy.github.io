@@ -1,0 +1,13 @@
+// Placed and clipped like every part's backdrop; the part's own class gives the colors
+// (the default here has no specificity, so the part's always wins).
+.sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+:where(.sky) {
+  background: var(--color-bg);
+}

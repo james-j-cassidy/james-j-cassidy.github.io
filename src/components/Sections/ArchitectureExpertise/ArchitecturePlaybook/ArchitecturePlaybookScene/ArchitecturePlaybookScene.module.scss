@@ -1,0 +1,275 @@
+@use "../../architecture";
+
+// The scene keeps its drawing's shape (640 × 340) and never grows taller than the stage
+// allows. It is a drawing, never mirrored.
+//
+// Scroll (from the part) moves pieces with `translate` and the routes' drawing; the
+// migration's own changes use `transform` and `scale`, so the two never fight. Enters:
+// the users drop in, the legacy app slides in from the start side and the cloud from the
+// far side, then the routes draw down from the users. Leaves: the routes are erased, the
+// users lift and the two systems slide off the way they came.
+.scene {
+  --shown: calc(
+    clamp(0, (var(--scene-in, 1) - 0.02) * 1000, 1) *
+      clamp(0, (0.98 - var(--scene-out, 0)) * 1000, 1)
+  );
+  --legacy-shift: calc(
+    (1 - var(--legacy-in, 1)) * -700px - var(--legacy-out, 0) * 700px
+  );
+  --cloud-shift: calc(
+    (1 - var(--cloud-in, 1)) * 700px + var(--cloud-out, 0) * 700px
+  );
+  display: block;
+  @include architecture.fit-drawing(640, 340);
+  direction: ltr;
+
+  text {
+    fill: var(--color-text);
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    text-anchor: middle;
+  }
+}
+
+.users {
+  translate: 0 calc((1 - var(--users-in, 1) + var(--users-out, 0)) * -120px);
+
+  circle,
+  path {
+    fill: none;
+    stroke: var(--color-accent);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+
+  text {
+    text-anchor: start;
+  }
+}
+
+// A route's width is its share of the jobs.
+.routes path {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: calc(1 - var(--routes-in, 1) - var(--routes-out, 0));
+  filter: drop-shadow(0 0 4px var(--color-accent));
+  transition: stroke-width var(--duration-slow) var(--ease-out);
+}
+
+.direct {
+  stroke-width: 6px;
+
+  .scene[data-facade] & {
+    stroke-width: 0;
+  }
+}
+
+.toFacade {
+  stroke-width: 0;
+
+  .scene[data-facade] & {
+    stroke-width: 6px;
+  }
+}
+
+.toLegacy {
+  stroke-width: 0;
+
+  .scene[data-facade] & {
+    stroke-width: calc(var(--legacy-share) * 8px);
+  }
+}
+
+.toCloud {
+  stroke-width: 0;
+
+  .scene[data-facade] & {
+    stroke-width: calc(var(--cloud-share) * 8px);
+  }
+}
+
+// The facade drops into place when the step puts it in front.
+.facade {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  transition: transform var(--duration-slow) var(--ease-out);
+  scale: var(--shown);
+
+  .scene[data-facade] & {
+    transform: scale(1);
+  }
+
+  rect {
+    fill: var(--color-surface);
+    stroke: var(--color-decor);
+    stroke-width: 3;
+  }
+}
+
+.legacy {
+  translate: var(--legacy-shift) 0;
+}
+
+// Retiring folds the legacy app and its database down to nothing.
+.legacyApp,
+.legacyData {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transition: transform var(--duration-slow) var(--ease-out);
+
+  .scene[data-retired] & {
+    transform: scale(0);
+  }
+}
+
+.window {
+  fill: var(--color-surface);
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+
+  .cloud & {
+    stroke: var(--color-accent);
+    stroke-width: 2.5;
+  }
+}
+
+.titleBar {
+  fill: none;
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+}
+
+.dot {
+  fill: var(--color-text-muted);
+}
+
+.scene .boxLabel {
+  text-anchor: start;
+}
+
+// The strangler fig grows around the old app with every step.
+.vine {
+  fill: none;
+  stroke: var(--color-decor);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: calc(1 - var(--growth));
+  transition: stroke-dashoffset 700ms var(--ease-out);
+}
+
+.cylinder {
+  fill: var(--color-surface);
+  stroke: var(--color-text-muted);
+  stroke-width: 2;
+
+  .cloud & {
+    stroke: var(--color-accent);
+  }
+}
+
+.scene .dataLabel {
+  font-size: 14px;
+}
+
+.cloud {
+  translate: var(--cloud-shift) 0;
+}
+
+.cloudIcon {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+}
+
+// The archive takes the old system's place once it is retired.
+.archive {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  transform: scale(0);
+  transition: transform var(--duration-slow) var(--ease-out);
+  scale: var(--shown);
+
+  .scene[data-retired] & {
+    transform: scale(1);
+    transition-delay: 300ms;
+  }
+
+  rect,
+  path {
+    fill: var(--color-surface);
+    stroke: var(--color-decor);
+    stroke-width: 2.5;
+  }
+
+  path {
+    fill: none;
+  }
+}
+
+// Sync arrows stretch between the databases while both still need the data.
+.sync {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scaleX(0);
+  transition: transform var(--duration-slow) var(--ease-out);
+  scale: var(--shown);
+
+  .scene[data-sync] & {
+    transform: scaleX(1);
+  }
+
+  path {
+    fill: none;
+    stroke: var(--caution);
+    stroke-width: 3;
+    stroke-dasharray: 8 6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+// A job slides across to the cloud when it moves, one after another.
+.job {
+  translate: var(--legacy-shift) 0;
+  transform: translateX(0);
+  transition: transform 700ms var(--ease-out);
+  transition-delay: calc(var(--order) * 150ms);
+
+  &[data-moved] {
+    translate: var(--cloud-shift) 0;
+    transform: translateX(var(--across));
+  }
+
+  rect {
+    fill: color-mix(in srgb, var(--color-text-muted) 14%, var(--color-surface));
+    stroke: var(--color-text-muted);
+    stroke-width: 1.5;
+  }
+
+  &[data-moved] rect {
+    fill: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
+    stroke: var(--color-accent);
+  }
+
+  text {
+    font-size: 15px;
+  }
+}
+
+:global([data-flow]) {
+  .routes path,
+  .facade,
+  .legacyApp,
+  .legacyData,
+  .vine,
+  .archive,
+  .sync,
+  .job {
+    transition: none;
+  }
+}

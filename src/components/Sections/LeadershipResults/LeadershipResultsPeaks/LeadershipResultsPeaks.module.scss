@@ -1,0 +1,124 @@
+@use "../../../../styles/mixins";
+@use "../leadership";
+
+// The range fills the stage's lower half, the words and story above it. Its own
+// movement replaces the default carousel; nothing fades. (Each peak reads its own piece
+// of --peak-in and --peak-out.)
+.part {
+  @include mixins.story-piece(0, 0.4, --sky-in);
+  @include mixins.story-piece(0.1, 0.55, --title-in);
+  @include mixins.story-piece(0.2, 0.5, --ground-in);
+  @include mixins.story-piece(0.3, 1, --peak-in);
+  @include mixins.story-piece(0.45, 1, --card-in);
+  @include mixins.story-piece(0, 0.6, --peak-out, --out);
+  @include mixins.story-piece(0, 0.5, --card-out, --out);
+  @include mixins.story-piece(0.3, 0.8, --title-out, --out);
+  @include mixins.story-piece(0.5, 0.8, --ground-out, --out);
+  @include mixins.story-piece(0.6, 1, --sky-out, --out);
+  position: relative;
+  align-self: stretch;
+  display: grid;
+  transform: none;
+}
+
+// Morning: the warmth has climbed higher than at daybreak. Opens as a circle from the
+// ground's middle, and closes back into it.
+.sky {
+  background:
+    radial-gradient(
+      70% 55% at 50% 100%,
+      color-mix(in srgb, var(--rise-glow) 30%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(180deg, var(--dawn-high) 0%, var(--dawn-mid) 100%);
+  clip-path: circle(
+    calc(var(--sky-in) * (1 - var(--sky-out)) * 120%) at 50% 100%
+  );
+}
+
+// Title and story across the top, the range along the bottom.
+.layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-areas:
+    "title story"
+    "range range";
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  grid-template-rows: auto auto;
+  align-content: center;
+  align-items: start;
+  gap: clamp(var(--space-2), 3cqh, var(--space-8)) var(--space-8);
+}
+
+// Slides in from the reading start, and off the far side.
+.titleBar {
+  grid-area: title;
+  transform: translateX(
+    calc(((var(--title-out) - (1 - var(--title-in))) * 120vw) * var(--dir, 1))
+  );
+}
+
+.tag {
+  @include leadership.tag;
+}
+
+.heading {
+  @include leadership.heading;
+}
+
+.intro {
+  margin: var(--space-2) 0 0;
+  color: var(--rise);
+  font-weight: 700;
+}
+
+// Slides in from the far side, and off the reading start.
+.storySlot {
+  grid-area: story;
+  min-inline-size: 0;
+  transform: translateX(
+    calc(((1 - var(--card-in)) - var(--card-out)) * 120vw * var(--dir, 1))
+  );
+}
+
+// The peaks side by side on the ground line, which draws across from the middle.
+.range {
+  --range-h: clamp(5rem, 30cqh, 15rem);
+  position: relative;
+  grid-area: range;
+  display: grid;
+  grid-template-columns: repeat(var(--count, 6), minmax(0, 1fr));
+  align-items: end;
+  direction: ltr; // a skyline: never mirrored
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
+    block-size: 3px;
+    background: var(--rise-glow);
+    box-shadow: 0 0 14px var(--rise-glow);
+    scale: calc(var(--ground-in) * (1 - var(--ground-out))) 1;
+  }
+}
+
+@media (width < 48rem) {
+  .layout {
+    grid-template-areas:
+      "title"
+      "story"
+      "range";
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-2);
+  }
+
+  .intro {
+    @include mixins.visually-hidden;
+  }
+
+  .range {
+    --range-h: clamp(4rem, 20cqh, 8rem);
+  }
+}

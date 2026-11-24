@@ -80,8 +80,13 @@
 .years {
   font-variant-numeric: tabular-nums;
 
-  // Short stages and phones: the company names carry the rail.
+  // Short stages and phones: the company names carry the rail (the card shows the
+  // dates).
   @container stage (height < 30rem) {
+    @include mixins.visually-hidden;
+  }
+
+  @media (width < 48rem) {
     @include mixins.visually-hidden;
   }
 }

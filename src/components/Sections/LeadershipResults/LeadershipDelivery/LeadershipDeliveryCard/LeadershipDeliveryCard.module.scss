@@ -1,0 +1,57 @@
+@use "../../leadership";
+
+.card {
+  @include leadership.card;
+}
+
+.sheet {
+  display: grid;
+  gap: clamp(var(--space-1), 1.2cqh, var(--space-3));
+
+  &[data-printed] {
+    @include leadership.rise-print;
+  }
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(var(--text-lg), 4.4cqh, 1.75rem);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+}
+
+.body {
+  margin: 0;
+  line-height: var(--leading-body);
+}
+
+// What it delivered: big and warm, with a rising arrow.
+.proof {
+  margin: 0;
+  color: var(--rise);
+  font-size: clamp(var(--text-base), 3.4cqh, var(--text-xl));
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.arrow {
+  font-size: 0.8em;
+}
+
+.source {
+  @include leadership.source;
+}
+
+@media (width < 48rem) {
+  .card {
+    padding: var(--space-2) var(--space-3);
+  }
+
+  .title {
+    font-size: var(--text-base);
+  }
+
+  .body {
+    font-size: var(--text-sm);
+  }
+}

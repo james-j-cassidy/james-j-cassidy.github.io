@@ -112,9 +112,11 @@ export function useHeaderCollapse(headerRef: RefObject<HTMLElement | null>) {
       `${Math.max(0, mainFull - mainCompact)}px`,
     );
     setExpandedHeight(expanded);
+    // Rounded up: a jump there must land at or past the collapse's end (the browser
+    // rounds the scroll position), or the collapse would settle back open.
     useNavigation
       .getState()
-      .setCollapsedSectionTop(Math.max(0, mainFull - mainCompact));
+      .setCollapsedSectionTop(Math.ceil(Math.max(0, mainFull - mainCompact)));
     apply();
   }, [headerRef, apply]);
 
@@ -162,7 +164,8 @@ export function useHeaderCollapse(headerRef: RefObject<HTMLElement | null>) {
       if (!sizes || touching) return;
       const range = sizes.mainFull - sizes.mainCompact;
       const y = window.scrollY;
-      if (range <= 0 || y <= 0 || y >= range) return;
+      // Within a pixel of either end counts as there (scroll positions are rounded).
+      if (range <= 0 || y <= 0 || y >= range - 1) return;
       window.scrollTo({ top: direction < 0 ? 0 : range, behavior: "smooth" });
     }
 
