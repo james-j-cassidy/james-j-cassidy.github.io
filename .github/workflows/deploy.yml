@@ -20,11 +20,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
+      # The npm that wrote package-lock.json; Node 22's own npm 10 misreads its
+      # optional WebAssembly entries and stops npm ci.
+      - run: npm install -g npm@11.6.2
       - run: npm ci
       - run: npm run lint
       - run: npm run build
