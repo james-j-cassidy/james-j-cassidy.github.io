@@ -27,6 +27,8 @@ export type StackCategory =
   | "realtime"
   | "ai"
   | "editor"
+  | "database"
+  | "game-engine"
   | "diagramming"
   | "tracking"
   | "assistant";
@@ -77,6 +79,8 @@ export const TECH_STACK_LABELS = {
     realtime: "Real time",
     ai: "AI",
     editor: "Editor and IDE",
+    database: "Database tool",
+    "game-engine": "Game engine",
     diagramming: "Diagramming",
     tracking: "Work tracking",
     assistant: "AI assistant",
@@ -420,6 +424,43 @@ export const STACK: readonly StackItem[] = [
     category: "editor",
     jobs: [],
     about: "Microsoft's lightweight, extensible code editor.",
+  },
+  {
+    id: "pgadmin",
+    name: "pgAdmin",
+    monogram: "pgA",
+    kind: "tools",
+    category: "database",
+    jobs: [],
+    about: "The open-source administration and query tool for PostgreSQL.",
+  },
+  {
+    id: "ssms",
+    name: "SQL Server Management Studio",
+    monogram: "SSMS",
+    kind: "tools",
+    category: "database",
+    jobs: [],
+    about: "Microsoft's tool for managing and querying SQL Server.",
+  },
+  {
+    id: "unreal-engine",
+    name: "Unreal Engine",
+    monogram: "UE",
+    kind: "tools",
+    category: "game-engine",
+    jobs: [],
+    about: "Epic Games' real-time 3D engine, for building games for fun.",
+  },
+  {
+    id: "unity",
+    name: "Unity",
+    monogram: "Un",
+    kind: "tools",
+    category: "game-engine",
+    jobs: [],
+    about:
+      "A cross-platform game engine scripted in C#, for building games for fun.",
   },
   {
     id: "lucidchart",

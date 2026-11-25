@@ -23,6 +23,8 @@ const CATEGORY_ORDER: readonly StackCategory[] = [
   "realtime",
   "ai",
   "editor",
+  "database",
+  "game-engine",
   "diagramming",
   "tracking",
   "assistant",
