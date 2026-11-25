@@ -1,5 +1,8 @@
 import type { ComponentType } from "react";
+import { ARCHITECTURE_PARTS } from "../../../content/architectureExpertise";
+import { usePartGoTo } from "../../../hooks/useDeepLink";
 import Story from "../Story/Story";
+import Prologue from "../Prologue/Prologue";
 import type { StoryPartProps } from "../Story/StoryPart/StoryPart";
 import ArchitectureApproach from "./ArchitectureApproach/ArchitectureApproach";
 import ArchitectureExplorer from "./ArchitectureExplorer/ArchitectureExplorer";
@@ -24,8 +27,12 @@ const PARTS: readonly ComponentType<StoryPartProps>[] = [
 // The Architecture Expertise tab's scroll story, built like the Introduction: the stage
 // stays pinned while scrolling plays each part's movement, forward and backward.
 function ArchitectureExpertise() {
+  const goTo = usePartGoTo(
+    "architecture-expertise",
+    Object.keys(ARCHITECTURE_PARTS),
+  );
   return (
-    <Story>
+    <Story goTo={goTo} prologue={<Prologue section="architecture-expertise" />}>
       {PARTS.map((Part, index) => (
         <Part key={index} index={index} />
       ))}

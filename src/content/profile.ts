@@ -12,7 +12,7 @@ export interface Profile {
 export const PROFILE: Profile = {
   name: "James Joseph Cassidy",
   portraitAlt: "Portrait of James Joseph Cassidy",
-  title: "Software Engineer & Technical Leader",
+  title: "Software Architect & Technical Leader",
   highlights: [{ text: "25+ Years" }, { text: "USAF Veteran", icon: "usaf" }],
   skillGroups: [
     [".NET", "C#", "Azure", "React", "PostgreSQL"],

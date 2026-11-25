@@ -13,7 +13,8 @@
 // The whole row is the button: metric, title, chevron. At least 44 tall.
 .toggle {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  // A fixed metric column, so every title in a job starts at the same place.
+  grid-template-columns: 7.5rem minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--space-4);
   inline-size: 100%;
@@ -35,6 +36,7 @@
   }
 
   @media (width < 48rem) {
+    grid-template-columns: 5rem minmax(0, 1fr) auto;
     gap: var(--space-3);
     padding: var(--space-1) var(--space-3);
   }

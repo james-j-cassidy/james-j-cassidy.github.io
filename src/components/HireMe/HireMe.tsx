@@ -147,6 +147,8 @@ function HireMe() {
   const [checked, setChecked] = useState(false); // Send was pressed: show errors
   const [trap, setTrap] = useState("");
   const openedAt = useRef(0);
+  // One per send; a reply that arrives after the form closed (or a newer send) is ignored.
+  const sendId = useRef(0);
   const errors = checked ? validate(draft) : {};
   const errorCount = Object.keys(errors).length;
 
@@ -167,6 +169,7 @@ function HireMe() {
 
   // Closing after a send clears the form for the next offer.
   function close() {
+    sendId.current += 1;
     if (status === "sent" || status === "opened") {
       setDraft(EMPTY);
       setPeriodChosen(false);
@@ -231,17 +234,24 @@ function HireMe() {
       return;
     }
     setStatus("sending");
+    const id = (sendId.current += 1);
+    let next: Status = "failed";
     try {
-      // A plain-text body: a simple request, sent without asking the script first.
+      // A plain-text body: a simple request, sent without asking the script first. It
+      // gives up after 15 seconds rather than leave the visitor waiting.
       const response = await fetch(HIRE_ME_ENDPOINT, {
         method: "POST",
         body: offerPayload(offer(), openFor(openedAt.current), trap),
+        signal: AbortSignal.timeout(15000),
       });
-      const result = (await response.json()) as { ok?: boolean };
-      setStatus(result.ok ? "sent" : "failed");
+      if (response.ok) {
+        const result = (await response.json()) as { ok?: boolean };
+        if (result.ok) next = "sent";
+      }
     } catch {
-      setStatus("failed");
+      // A network failure or the timeout: "failed", with the email fallback.
     }
+    if (id === sendId.current) setStatus(next);
   }
 
   // A field's error, written under it and tied to it.
@@ -814,6 +824,7 @@ function HireMe() {
               </div>
             </>
           )}
+          {status !== "sent" && <p className={styles.privacy}>{L.privacy}</p>}
           <p className={styles.status} role="status">
             {status === "opened" && L.openedEmail}
             {status === "failed" && (

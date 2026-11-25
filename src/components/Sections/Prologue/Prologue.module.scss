@@ -1,0 +1,176 @@
+@use "../../../styles/mixins";
+
+// The band: the scene on one side and the words with the cue on the other, within the
+// site's margins. It fits whatever height the header leaves (its box in the story's
+// stage is the "prologue" size container).
+// Each tab's colors come from its own root (the sunrise, the channel); the rest use the
+// site's accent.
+.prologue {
+  --glow: var(--rise-glow, var(--signal, var(--color-accent)));
+  --ink: var(--rise, var(--signal, var(--color-accent)));
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-8);
+  block-size: 100%;
+  padding-block: clamp(var(--space-2), 4cqh, var(--space-6));
+  padding-inline: max(var(--space-4), calc((100% - 72rem) / 2));
+  background:
+    radial-gradient(
+      60% 90% at 30% 100%,
+      color-mix(in srgb, var(--glow) 14%, transparent),
+      transparent 70%
+    ),
+    var(--color-bg);
+  border-block-start: 1px solid color-mix(in srgb, var(--glow) 30%, transparent);
+}
+
+.scene {
+  position: relative;
+  align-self: stretch;
+  min-inline-size: 0;
+}
+
+.words {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-1);
+  min-inline-size: 0;
+}
+
+.tag {
+  margin: 0;
+  color: var(--ink);
+  font-size: var(--text-sm);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(var(--text-xl), 9cqh, 2.25rem);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+}
+
+.line {
+  margin: 0;
+  max-inline-size: 30rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  line-height: var(--leading-body);
+}
+
+// The cue: a pill that begins the tab, its chevron bobbing (still with reduced motion).
+.cue {
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-block-size: var(--target-min);
+  margin-block-start: var(--space-2);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--ink);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 0 18px color-mix(in srgb, var(--glow) 30%, transparent);
+
+  svg {
+    @include mixins.stroke-icon(1.125rem);
+    color: var(--ink);
+    animation: bob 1600ms var(--ease-out) infinite;
+  }
+
+  &:hover {
+    box-shadow: 0 0 26px color-mix(in srgb, var(--glow) 50%, transparent);
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+}
+
+@keyframes bob {
+  50% {
+    translate: 0 0.25rem;
+  }
+}
+
+// Shorter bands: the words lose their line, then the band becomes one row: the cue's
+// words and button alone, the scene and the rest still read.
+@container prologue (height < 13rem) {
+  .line {
+    @include mixins.visually-hidden;
+  }
+}
+
+// Phones: one column, the words first and the scene in the room left below them; they
+// never overlap. Without room for both, the scene is left out.
+@media (width < 48rem) {
+  .prologue {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .words {
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .scene {
+    grid-row: 2;
+  }
+}
+
+@container prologue (width < 48rem) and (height < 20rem) {
+  .scene {
+    display: none;
+  }
+
+  .prologue {
+    grid-template-rows: auto;
+    align-content: center;
+  }
+}
+
+// Shortest bands (most phones): the cue alone, centered; it comes last so it wins.
+@container prologue (height < 8.5rem) {
+  .prologue {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-content: center;
+    padding-block: 0;
+  }
+
+  .scene,
+  .tag,
+  .title {
+    @include mixins.visually-hidden;
+  }
+
+  .words {
+    justify-items: center;
+  }
+
+  .cue {
+    margin: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion]) .cue svg {
+    animation: none;
+  }
+}
+
+:root[data-motion="reduce"] .cue svg {
+  animation: none;
+}

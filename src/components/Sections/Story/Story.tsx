@@ -12,6 +12,9 @@ import { storyLength } from "./storyTiming";
 
 interface StoryProps {
   children: ReactNode; // the parts (StoryPart), in order
+  // The tab's opening scene: fills the stage below the full header, and moves away as
+  // the header collapses and the first part forms (see Prologue).
+  prologue?: ReactNode;
   // Go straight to a part (a deep link); a new `request` repeats the jump.
   goTo?: { index: number; request: number };
 }
@@ -22,7 +25,7 @@ interface StoryProps {
 // Only the parts on stage are mounted, as the scroll reaches them (see useStoryProgress).
 // With reduced motion, or on a stage too short for the layouts (large zoom), the parts
 // flow one after another, all mounted.
-function Story({ children, goTo }: StoryProps) {
+function Story({ children, goTo, prologue }: StoryProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const parts = Children.toArray(children);
@@ -53,6 +56,11 @@ function Story({ children, goTo }: StoryProps) {
       onFocus={handleFocus}
     >
       <div ref={stageRef} className={styles.stage}>
+        {prologue && !flow && (
+          <div className={styles.prologue} data-prologue="">
+            {prologue}
+          </div>
+        )}
         {parts.slice(mounted[0], mounted[1] + 1)}
       </div>
     </div>

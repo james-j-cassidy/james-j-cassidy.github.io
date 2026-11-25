@@ -1,6 +1,6 @@
-// The Hire Me form: an offer, written on the site and sent from the visitor's own email
-// app (no server). English; kept out of components so translations can replace it per
-// language.
+// The Hire Me form: an offer, written on the site and sent to James's own Google Sheet
+// through its Apps Script (tools/hire-me-sheet), with his email address as the fallback.
+// English; kept out of components so translations can replace it per language.
 
 export type Engagement = "full-time" | "contract" | "consulting";
 export type WorkPlace = "remote" | "hybrid" | "on-site";
@@ -62,7 +62,6 @@ export const BENEFITS = [
     label: "Training and certifications",
     detail: "Budget or programs, e.g. $5,000 a year",
   },
-  { id: "relocation", label: "Relocation help", detail: "What it covers" },
   {
     id: "flexible",
     label: "Flexible hours",
@@ -103,8 +102,7 @@ export const HIRE_ME_LABELS = {
     "full-time": "A permanent position.",
     contract: "A fixed-term engagement.",
     // Only the time James actually offers, and no reason given.
-    consulting:
-      "Weekday evenings, outside my current employer's field; an occasional Sunday meeting by arrangement.",
+    consulting: "Weekday evenings, outside my current employer's field.",
   } satisfies Record<Engagement, string>,
   roleLabel: "The role",
   jobTitle: "Job title",
@@ -166,6 +164,9 @@ export const HIRE_ME_LABELS = {
   optional: "optional",
   required: "required",
   send: "Send",
+  // What happens to what the visitor sends, shown beside Send.
+  privacy:
+    "Saved to my private Google Sheet and email, and used only to reply to you.",
   sending: "Sending…",
   sentTitle: "Sent",
   sentText: (email: string) =>

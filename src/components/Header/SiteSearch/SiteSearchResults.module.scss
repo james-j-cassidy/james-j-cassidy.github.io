@@ -1,0 +1,60 @@
+// Results: rows of at least 44px, the highlighted one lit and ringed. Text on the surface
+// keeps 7:1; matches are marked with weight and an underline, not color alone.
+.list {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  padding: var(--space-2);
+  list-style: none;
+}
+
+.option {
+  display: grid;
+  gap: 0.125rem;
+  min-block-size: var(--target-min);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  cursor: pointer;
+
+  &[aria-selected="true"] {
+    background: color-mix(
+      in srgb,
+      var(--color-accent) 16%,
+      var(--color-surface)
+    );
+    box-shadow: inset 0 0 0 2px var(--color-accent);
+  }
+
+  mark {
+    background: none;
+    color: inherit;
+    font-weight: 800;
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+  }
+}
+
+.title {
+  font-weight: 700;
+  line-height: var(--leading-tight);
+}
+
+.where {
+  color: var(--color-accent-text);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.snippet {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
+.empty {
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-text-muted);
+}

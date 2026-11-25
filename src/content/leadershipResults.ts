@@ -110,7 +110,7 @@ export const LEADERSHIP_RESULTS = {
       value: 43,
       suffix: "%",
       display: "43%",
-      label: "faster delivery",
+      label: "less time to deliver",
       story:
         "Brought stakeholders in early with rapid prototypes, so products reached people sooner.",
       source: "U.S. Air Force",

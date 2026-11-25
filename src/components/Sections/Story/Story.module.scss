@@ -36,6 +36,32 @@
   }
 }
 
+// The prologue: the part of the stage the full header leaves showing (its height, less
+// the header's collapse), at the stage's foot. It slides down out of the stage over the
+// first half of the collapse (--opening, from the story), as the first part forms.
+.prologue {
+  --leave: clamp(0, var(--opening, 0) / 0.5, 1);
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: 1;
+  block-size: calc(var(--stage-height) - var(--header-collapse-range, 0px));
+  translate: 0 calc(var(--leave) * 100%);
+  // Only its own controls take the pointer (Prologue), so it never blocks the part.
+  pointer-events: none;
+  // The prologue lays itself out by this box's size.
+  container: prologue / size;
+
+  // Slid away: not drawn, and its scene's loops paused.
+  .stage[data-opened] > & {
+    visibility: hidden;
+
+    * {
+      animation-play-state: paused;
+    }
+  }
+}
+
 // Flow mode: no track and no pinning; the parts follow one another as ordinary content.
 .story[data-flow] {
   block-size: auto;

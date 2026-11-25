@@ -490,7 +490,7 @@ export const JOBS: readonly Job[] = [
         id: "prototypes",
         title: "Faster delivery with prototypes",
         metric: "43%",
-        metricLabel: "faster delivery",
+        metricLabel: "less time to deliver",
         challenge: "Products took too long to reach the people using them.",
         approach:
           "Involved stakeholders early with prototypes and rapid application development.",

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CREDENTIALS,
   CREDENTIALS_LABELS,
@@ -6,8 +6,10 @@ import {
   PROFESSIONAL_JOURNEY_LABELS,
   type CredentialSort,
 } from "../../../content/professionalJourney";
+import { useDeepLink, type PartGoTo } from "../../../hooks/useDeepLink";
 import { toSectionStart } from "../../../state/navigation";
 import Story from "../Story/Story";
+import Prologue from "../Prologue/Prologue";
 import SortSelect from "../SubSections/SortSelect/SortSelect";
 import SubSections from "../SubSections/SubSections";
 import SubTabs, { type SubTab } from "../SubSections/SubTabs/SubTabs";
@@ -40,6 +42,31 @@ function ProfessionalJourney() {
   const [direction, setDirection] = useState<-1 | 0 | 1>(0);
   const [sort, setSort] = useState<CredentialSort>("importance");
   const credentials = sortCredentials(CREDENTIALS, sort);
+  const [goTo, setGoTo] = useState<PartGoTo>();
+  const sortRef = useRef(sort); // the order a deep link is placed in
+  useEffect(() => {
+    sortRef.current = sort;
+  }, [sort]);
+
+  // Deep links: #professional-journey/job-<id> opens Career at that job;
+  // #professional-journey/cred-<id> opens Education & credentials at that credential.
+  useDeepLink("professional-journey", (key) => {
+    const [kind, ...rest] = key.split("-");
+    const id = rest.join("-");
+    const chain: JourneyChain | null =
+      kind === "job" ? "career" : kind === "cred" ? "credentials" : null;
+    if (!chain) return;
+    const index =
+      chain === "career"
+        ? JOBS.findIndex((job) => job.id === id)
+        : sortCredentials(CREDENTIALS, sortRef.current).findIndex(
+            (credential) => credential.id === id,
+          );
+    if (index < 0) return;
+    setDirection(0);
+    setCurrent(chain);
+    setGoTo((now) => ({ index, request: (now?.request ?? 0) + 1 }));
+  });
   const tabs: readonly SubTab<JourneyChain>[] = ORDER.map((id) => ({
     id,
     label: chains[id],
@@ -47,9 +74,12 @@ function ProfessionalJourney() {
     icon: ICONS[id],
   }));
 
+  const journeyPrologue = <Prologue section="professional-journey" />;
+
   function show(chain: JourneyChain) {
     if (chain === current) return;
     toSectionStart();
+    setGoTo(undefined);
     setDirection(ORDER.indexOf(chain) > ORDER.indexOf(current) ? 1 : -1);
     setCurrent(chain);
   }
@@ -57,6 +87,7 @@ function ProfessionalJourney() {
   function reorder(next: CredentialSort) {
     if (next === sort) return;
     toSectionStart();
+    setGoTo(undefined);
     setDirection(0);
     setSort(next);
   }
@@ -84,13 +115,17 @@ function ProfessionalJourney() {
       }
     >
       {current === "career" ? (
-        <Story key="career">
+        <Story key="career" goTo={goTo} prologue={journeyPrologue}>
           {JOBS.map((job, index) => (
             <JobPart key={job.id} index={index} job={job} jobs={JOBS} />
           ))}
         </Story>
       ) : (
-        <Story key={`credentials-${sort}`}>
+        <Story
+          key={`credentials-${sort}`}
+          goTo={goTo}
+          prologue={journeyPrologue}
+        >
           {credentials.map((credential, index) => (
             <CredentialPart
               key={credential.id}

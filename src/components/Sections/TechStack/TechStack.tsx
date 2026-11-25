@@ -7,6 +7,7 @@ import {
 } from "../../../content/techStack";
 import { toSectionStart } from "../../../state/navigation";
 import Story from "../Story/Story";
+import Prologue from "../Prologue/Prologue";
 import SortSelect from "../SubSections/SortSelect/SortSelect";
 import SubSections from "../SubSections/SubSections";
 import SubTabs, { type SubTab } from "../SubSections/SubTabs/SubTabs";
@@ -107,7 +108,11 @@ function TechStack() {
         </>
       }
     >
-      <Story key={`${kind}-${sort}`} goTo={goTo}>
+      <Story
+        key={`${kind}-${sort}`}
+        goTo={goTo}
+        prologue={<Prologue section="tech-stack" />}
+      >
         {items.map((item, index) => (
           <TechPart key={item.id} index={index} item={item} items={items} />
         ))}

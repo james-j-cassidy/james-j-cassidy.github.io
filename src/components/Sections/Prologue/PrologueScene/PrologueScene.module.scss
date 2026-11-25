@@ -1,0 +1,303 @@
+// Line art in the tab's ink (--ink, --glow from the prologue); text in it reaches 7:1.
+.scene {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: hidden; // the conveyor's belt runs off its edges
+}
+
+.line {
+  stroke: color-mix(in srgb, var(--ink) 70%, transparent);
+}
+
+.panel {
+  fill: color-mix(in srgb, var(--glow) 10%, var(--color-surface));
+  stroke: var(--ink);
+}
+
+.dot {
+  fill: var(--glow);
+  stroke: none;
+}
+
+// Boot: each line types itself in turn; the cursor blinks after the last.
+.type {
+  fill: var(--color-text);
+  stroke: none;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 15px;
+  font-weight: 700;
+  clip-path: inset(0 100% 0 0);
+  animation: type 8s steps(28, end) infinite;
+  animation-delay: calc(var(--order) * 0.9s);
+}
+
+@keyframes type {
+  0% {
+    clip-path: inset(0 100% 0 0);
+  }
+
+  12%,
+  88% {
+    clip-path: inset(0 0 0 0);
+  }
+
+  100% {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+.cursor {
+  fill: var(--glow);
+  stroke: none;
+  animation: blink 1s steps(1, end) infinite;
+}
+
+@keyframes blink {
+  50% {
+    visibility: hidden;
+  }
+}
+
+// Flight: the route, its stops lighting in turn, and the plane flying it.
+.route {
+  stroke: color-mix(in srgb, var(--ink) 55%, transparent);
+  stroke-dasharray: 6 8;
+}
+
+.stop {
+  fill: var(--color-bg);
+  stroke: var(--ink);
+  animation: light 9s linear infinite;
+  animation-delay: calc(var(--order) * 1.1s);
+}
+
+@keyframes light {
+  0%,
+  12% {
+    fill: var(--glow);
+  }
+
+  13%,
+  100% {
+    fill: var(--color-bg);
+  }
+}
+
+.plane {
+  fill: var(--color-text);
+  stroke: none;
+}
+
+// Blueprint: boxes and links draw themselves in turn, hold, and clear for the next pass.
+.grid {
+  stroke: color-mix(in srgb, var(--ink) 16%, transparent);
+  stroke-width: 1;
+}
+
+.draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 7s var(--ease-out) infinite;
+  animation-delay: calc(var(--order) * 0.35s);
+}
+
+@keyframes draw {
+  0% {
+    stroke-dashoffset: 1;
+  }
+
+  25%,
+  85% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: -1;
+  }
+}
+
+// Conveyor: the chips ride left in an endless belt; the rollers turn.
+.roller {
+  stroke: color-mix(in srgb, var(--ink) 60%, transparent);
+  stroke-dasharray: 10 8;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    rotate: -360deg;
+  }
+}
+
+// Two copies of the chips side by side; moving one copy's width loops seamlessly.
+.belt {
+  transform-box: fill-box;
+  animation: ride 40s linear infinite;
+}
+
+@keyframes ride {
+  to {
+    translate: -50% 0;
+  }
+}
+
+.chip {
+  fill: var(--color-surface);
+  stroke: var(--ink);
+}
+
+.chipText {
+  fill: var(--ink);
+  stroke: none;
+  font-size: 15px;
+  font-weight: 900;
+  text-anchor: middle;
+}
+
+// Launch: the rocket hovers, the flame flickers, the stars twinkle.
+.rocket {
+  animation: hover 3s ease-in-out infinite;
+}
+
+@keyframes hover {
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+.flame {
+  fill: var(--glow);
+  stroke: none;
+  transform-box: fill-box;
+  transform-origin: center top;
+  animation: flicker 300ms steps(2, end) infinite alternate;
+}
+
+@keyframes flicker {
+  to {
+    scale: 0.8 1.25;
+  }
+}
+
+.star {
+  stroke: color-mix(in srgb, var(--ink) 70%, transparent);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: twinkle 2.4s ease-in-out infinite;
+  animation-delay: calc(var(--order) * 0.4s);
+}
+
+@keyframes twinkle {
+  50% {
+    scale: 0.4;
+  }
+}
+
+// Dawn: the sun rises a little over the ridge and settles, its rays turning slowly.
+.sunRise {
+  animation: rise 8s ease-in-out infinite;
+}
+
+@keyframes rise {
+  50% {
+    translate: 0 -14px;
+  }
+}
+
+.rays {
+  transform-box: view-box;
+  transform-origin: 240px 110px;
+  animation: spin 30s linear infinite reverse;
+}
+
+.ray {
+  stroke: color-mix(in srgb, var(--glow) 70%, transparent);
+  stroke-width: 3;
+}
+
+.sun {
+  fill: var(--glow);
+  stroke: var(--ink);
+  filter: drop-shadow(0 0 12px var(--glow));
+}
+
+.ridge {
+  fill: var(--color-bg);
+  stroke: none;
+}
+
+// Signal: rings spread from the dish in turn; the bars fill one by one.
+.pulse {
+  stroke: var(--glow);
+  transform-box: fill-box;
+  transform-origin: center;
+  scale: 0.1;
+  animation: pulse 4s var(--ease-out) infinite;
+  animation-delay: calc(var(--order) * 1s);
+}
+
+@keyframes pulse {
+  0% {
+    scale: 0.1;
+    stroke-width: 4;
+  }
+
+  100% {
+    scale: 1;
+    stroke-width: 0.5;
+  }
+}
+
+.bar {
+  fill: var(--glow);
+  fill-opacity: 0.2;
+  stroke: var(--ink);
+  animation: charge 3s steps(1, end) infinite;
+  animation-delay: calc(var(--order) * 0.4s);
+}
+
+@keyframes charge {
+  30%,
+  80% {
+    fill-opacity: 1;
+  }
+}
+
+// Reduced motion: every scene holds still, fully drawn.
+@mixin still {
+  .scene * {
+    animation: none !important;
+  }
+
+  .type {
+    clip-path: none;
+  }
+
+  .draw {
+    stroke-dashoffset: 0;
+  }
+
+  .pulse {
+    scale: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion]) {
+    @include still;
+  }
+}
+
+:root[data-motion="reduce"] {
+  @include still;
+}
