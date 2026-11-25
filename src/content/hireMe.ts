@@ -13,7 +13,7 @@ export const HIRE_ME_TO = "cassidy.james.j@gmail.com";
 // (tools/hire-me-sheet). Public by design: all it does is receive offers. Empty, Send
 // opens the visitor's email app instead.
 export const HIRE_ME_ENDPOINT =
-  "https://script.google.com/macros/s/AKfycbwgA17yOAahg2R0uTQMR0jPFkf6EDacg_Av9fRNiIqheMkUeIR1p7vRxf12rQzk0eXs/exec";
+  "https://script.google.com/macros/s/AKfycbx6iXXgKvywjwDvbl8YkyW1fitanx-ltpgWl0VXZLzTuTjP5XxbNo6sNUg7lLkbEvqX/exec";
 
 // The currencies a pay range can be in: code, sign and name.
 export const CURRENCIES = [
