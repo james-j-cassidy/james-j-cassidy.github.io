@@ -77,6 +77,8 @@
   --color-text: var(--navy-900);
   --color-text-muted: var(--slate-600);
   --color-accent: var(--blue-800);
+  // Accent text on accent-tinted surfaces (selected tabs, highlighted rows): 7:1 there.
+  --color-accent-text: var(--blue-800);
   --color-accent-bg: var(--blue-700);
   --color-on-accent: var(--white);
   --color-decor: var(--purple-700);
@@ -94,6 +96,8 @@
   --color-text: var(--ice-100);
   --color-text-muted: var(--slate-300);
   --color-accent: var(--cyan-300);
+  // Accent text on accent-tinted surfaces: lighter than the accent, 8:1 on its tints.
+  --color-accent-text: #b3e5ff;
   --color-accent-bg: var(--cyan-300);
   --color-on-accent: var(--navy-900);
   --color-decor: var(--purple-300);

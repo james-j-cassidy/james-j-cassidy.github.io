@@ -35,7 +35,7 @@ export const INTRODUCTION_OPENING = {
     {
       id: "architecture",
       tag: "Module 01 · Architecture",
-      title: "Architecting platforms, hands-on!",
+      title: "Architecting platforms, hands-on",
       action: "Explore",
       detail: {
         tag: "Scan complete · Architecture",
@@ -51,7 +51,7 @@ export const INTRODUCTION_OPENING = {
     {
       id: "leadership",
       tag: "Module 02 · Leadership",
-      title: "Leading the people who build them!",
+      title: "Leading the people who build them",
       action: "Explore",
       detail: {
         tag: "Scan complete · Leadership",
@@ -298,7 +298,7 @@ export const INTRODUCTION_THIS_SITE = {
         "A language selector with right-to-left support built in.",
         "Headings and landmarks give screen readers the outline.",
       ],
-      tags: ["i18n-ready", "WCAG AAA"],
+      tags: ["i18n-ready", "WCAG AAA contrast"],
     },
   ] satisfies readonly SiteLayer[],
 };
@@ -433,7 +433,7 @@ export const INTRODUCTION_NEXT_STEP = {
   unlocked: "Unlocked",
   nextTag: "Next level",
   nextTitle: "Professional Journey",
-  nextLine: "From the first job to today, most recent first.",
+  nextLine: "From today back to the U.S. Air Force.",
   enter: "Enter Professional Journey",
   contact: "Or skip ahead and get in touch",
   achievements: [

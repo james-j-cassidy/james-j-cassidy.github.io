@@ -136,6 +136,13 @@
   aspect-ratio: 1;
   border-radius: 50%;
   background: color-mix(in srgb, var(--rise-glow) 25%, transparent);
+
+  // On the chosen stage: a ring instead of a tint, so its number keeps the full 7:1 of
+  // the stage's own colors.
+  [aria-selected="true"] > & {
+    background: none;
+    box-shadow: inset 0 0 0 2px currentColor;
+  }
 }
 
 // The hub: stays still and upright at the center.

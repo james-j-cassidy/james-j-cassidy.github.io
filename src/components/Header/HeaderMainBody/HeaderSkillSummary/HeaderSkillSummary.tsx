@@ -45,8 +45,9 @@ function HeaderSkillSummary({
               aria-labelledby={labelledBy}
               aria-live={live}
             >
-              {/* The name links to the skill's full page. */}
-              <h2 className={styles.name}>
+              {/* The name links to the skill's full page. Not a heading: it changes as the
+                  skills rotate, and the page's headings are its sections. */}
+              <p className={styles.name}>
                 <a className={styles.nameLink} href={fullPageHref}>
                   {skill.name}
                   <span className={styles.learnMore}>{learnMoreLabel}</span>
@@ -62,7 +63,7 @@ function HeaderSkillSummary({
                     <path d="M5 12h14M13 6l6 6-6 6" />
                   </svg>
                 </a>
-              </h2>
+              </p>
               <p className={styles.text}>{skill.summary}</p>
             </div>
           ) : (

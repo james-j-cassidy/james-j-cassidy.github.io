@@ -1,0 +1,100 @@
+@use "../../../../../styles/mixins";
+
+// The screen over a dimmed page, framed in the project's accent. It grows into place
+// when opened (not faded); reduced motion shows it at once.
+.dialog {
+  inline-size: fit-content;
+  max-inline-size: 94vw;
+  max-block-size: 94dvh;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  overflow: visible;
+
+  &::backdrop {
+    background: rgb(4 9 22 / 82%);
+  }
+
+  &[open] {
+    animation: grow var(--duration-slow) var(--ease-out);
+  }
+
+  :global([data-flow]) & {
+    animation: none;
+  }
+}
+
+@keyframes grow {
+  from {
+    scale: 0.9;
+  }
+}
+
+.frame {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: var(--space-4);
+  border: 2px solid var(--project-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: 0 0 40px
+    color-mix(in srgb, var(--project-accent) 35%, transparent);
+
+  @media (width < 48rem) {
+    padding: var(--space-3);
+  }
+}
+
+// The screen, whole, as large as the window allows.
+.image {
+  display: block;
+  inline-size: auto;
+  max-inline-size: min(100%, 90rem);
+  block-size: auto;
+  max-block-size: 76dvh;
+  border-radius: var(--radius-sm);
+}
+
+.caption {
+  display: grid;
+  gap: 0.125rem;
+  padding-inline-end: calc(var(--target-min) + var(--space-2));
+}
+
+.title {
+  font-weight: 800;
+  line-height: var(--leading-tight);
+}
+
+.note {
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-style: italic;
+}
+
+// Close: a 44 × 44 button at the frame's lower corner, beside the caption.
+.close {
+  position: absolute;
+  inset-block-end: var(--space-3);
+  inset-inline-end: var(--space-3);
+  display: grid;
+  place-items: center;
+  inline-size: var(--target-min);
+  block-size: var(--target-min);
+  border: 1px solid var(--project-accent);
+  border-radius: 50%;
+  background: var(--color-bg);
+  color: var(--project-accent);
+  cursor: pointer;
+
+  svg {
+    @include mixins.stroke-icon(1.25rem);
+  }
+
+  &:focus-visible {
+    outline-offset: 3px;
+  }
+}

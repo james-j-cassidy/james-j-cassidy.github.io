@@ -1,5 +1,8 @@
 import type { ComponentType } from "react";
+import { LEADERSHIP_PARTS } from "../../../content/leadershipResults";
+import { usePartGoTo } from "../../../hooks/useDeepLink";
 import Story from "../Story/Story";
+import Prologue from "../Prologue/Prologue";
 import type { StoryPartProps } from "../Story/StoryPart/StoryPart";
 import LeadershipDelivery from "./LeadershipDelivery/LeadershipDelivery";
 import LeadershipHardCalls from "./LeadershipHardCalls/LeadershipHardCalls";
@@ -25,9 +28,10 @@ const PARTS: readonly ComponentType<StoryPartProps>[] = [
 // how James leads, climbs through results, teams, delivery and hard calls, looks back
 // at where it started, and reaches the summit with the people who were there.
 function LeadershipResults() {
+  const goTo = usePartGoTo("leadership-results", Object.keys(LEADERSHIP_PARTS));
   return (
     <div className={styles.leadership}>
-      <Story>
+      <Story goTo={goTo} prologue={<Prologue section="leadership-results" />}>
         {PARTS.map((Part, index) => (
           <Part key={index} index={index} />
         ))}

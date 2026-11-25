@@ -93,6 +93,7 @@ export function useStoryProgress(
       const parts = partsOf(stage);
       const sizes = flow ? null : geometry();
       if (!sizes) {
+        stage.style.removeProperty("--opening");
         // Flow mode shows every part; a story that cannot be measured (its section is
         // hidden) keeps what it has, so nothing extra mounts while it is away.
         if (flow) {
@@ -109,6 +110,14 @@ export function useStoryProgress(
         return;
       }
       const collapse = sizes.range > 0 ? clamp(y / sizes.range, 0, 1) : 1;
+      // How far the header has collapsed (0 → 1), for the story's prologue. Once the
+      // header starts to collapse the prologue leaves the keyboard's reach, and once it
+      // has slid away it stops drawing (its scene's loops pause).
+      stage.style.setProperty("--opening", collapse.toFixed(4));
+      stage
+        .querySelector("[data-prologue]")
+        ?.toggleAttribute("inert", collapse > 0);
+      stage.toggleAttribute("data-opened", collapse >= 0.5);
       const landing = landingRef.current;
       if (landing !== null) {
         // Only the landing part, forming with the collapse as the first part would.
@@ -164,8 +173,17 @@ export function useStoryProgress(
     render(shownRef.current);
   }, [mounted, render]);
 
+  // Only the story in the section showing listens to the scroll: the hidden sections'
+  // stories sleep (no listeners, no frames) until their section is shown again.
+  const sectionIndex = useNavigation((state) => state.sectionIndex);
+  const isHidden = useCallback(
+    () => Boolean(rootRef.current?.closest("section")?.hidden),
+    [rootRef],
+  );
+
   // Glide toward the scroll position, frame by frame, until caught up.
   useEffect(() => {
+    if (isHidden()) return;
     let shown = window.scrollY;
     let frame = 0;
     let last = 0;
@@ -208,11 +226,11 @@ export function useStoryProgress(
       window.removeEventListener("resize", jump);
       cancelAnimationFrame(frame);
     };
-  }, [render, rootRef]);
+  }, [render, rootRef, isHidden, sectionIndex]);
 
   // Never rest inside a transition between parts: finish it in the direction of travel.
   useEffect(() => {
-    if (flow) return;
+    if (flow || isHidden()) return;
     const hasScrollEnd = "onscrollend" in window;
     let lastY = window.scrollY;
     let direction = 0;
@@ -269,7 +287,7 @@ export function useStoryProgress(
       window.removeEventListener("touchcancel", handleTouchEnd);
       window.removeEventListener("scrollend", settle);
     };
-  }, [flow, geometry, length]);
+  }, [flow, geometry, length, isHidden, sectionIndex]);
 
   // Flow mode when the stage would be too short for any part's layout (large zoom, a
   // phone on its side). Decided from the window alone, never from content, so it cannot

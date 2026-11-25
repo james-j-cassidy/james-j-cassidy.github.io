@@ -8,6 +8,7 @@ import { SECTIONS, SECTION_LABELS } from "../../../content/sections";
 import { useNavigation } from "../../../state/navigation";
 import ArchitectureExpertise from "../ArchitectureExpertise/ArchitectureExpertise";
 import Contact from "../Contact/Contact";
+import FeaturedProjects from "../FeaturedProjects/FeaturedProjects";
 import Introduction from "../Introduction/Introduction";
 import LeadershipResults from "../LeadershipResults/LeadershipResults";
 import ProfessionalJourney from "../ProfessionalJourney/ProfessionalJourney";
@@ -26,6 +27,7 @@ const SECTION_CONTENT: Partial<Record<string, ComponentType>> = {
   "professional-journey": ProfessionalJourney,
   "architecture-expertise": ArchitectureExpertise,
   "tech-stack": TechStack,
+  "featured-projects": FeaturedProjects,
   "leadership-results": LeadershipResults,
   contact: Contact,
 };
@@ -49,6 +51,12 @@ function SectionDeck() {
   const isFirstRender = useRef(true);
 
   // Moving to a section puts focus on its heading (not on first load).
+  // The window's title names the section showing, so tabs, history and screen readers
+  // can tell the sections apart.
+  useEffect(() => {
+    document.title = `${SECTIONS[sectionIndex].label} · James Joseph Cassidy`;
+  }, [sectionIndex]);
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;

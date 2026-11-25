@@ -5,8 +5,15 @@ import type { ThemePreference } from "../state/preferences";
 export const SEARCH_LABELS = {
   label: "Search the site",
   placeholder: "Search my experience…",
-  // Shown under the phone search field until the search index is built.
-  hint: "Type to search my experience.",
+  // Shown under the phone search field before anything is typed.
+  hint: "Search jobs, technologies, credentials, projects and more.",
+  results: "Results",
+  // Announced as the results change.
+  found: (count: number) =>
+    count === 0
+      ? "No matches"
+      : `${count} ${count === 1 ? "result" : "results"}. Use the arrow keys to choose one.`,
+  none: (query: string) => `Nothing matches “${query}”.`,
 };
 
 export const THEME_LABELS: {

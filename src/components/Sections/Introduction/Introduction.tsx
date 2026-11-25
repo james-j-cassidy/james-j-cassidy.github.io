@@ -1,5 +1,8 @@
 import type { ComponentType } from "react";
+import { INTRODUCTION_PARTS } from "../../../content/introduction";
+import { usePartGoTo } from "../../../hooks/useDeepLink";
 import Story from "../Story/Story";
+import Prologue from "../Prologue/Prologue";
 import type { StoryPartProps } from "../Story/StoryPart/StoryPart";
 import IntroductionBeyondWork from "./IntroductionBeyondWork/IntroductionBeyondWork";
 import IntroductionLookingFor from "./IntroductionLookingFor/IntroductionLookingFor";
@@ -24,8 +27,9 @@ const PARTS: readonly ComponentType<StoryPartProps>[] = [
 // The Introduction section's scroll story: the stage stays pinned while scrolling plays
 // each part's morph into the next, forward and backward.
 function Introduction() {
+  const goTo = usePartGoTo("introduction", Object.keys(INTRODUCTION_PARTS));
   return (
-    <Story>
+    <Story goTo={goTo} prologue={<Prologue section="introduction" />}>
       {PARTS.map((Part, index) => (
         <Part key={index} index={index} />
       ))}
